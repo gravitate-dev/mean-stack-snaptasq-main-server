@@ -7940,14 +7940,14 @@ footer {
 
 @media (max-width: 767px) {
   .hide-when-collapsed-navbar {
-    display: none; } }
+    display: none !important; } }
 
 .show-only-when-collapsed-navbar {
-  display: none; }
+  display: none !important; }
 
 @media (max-width: 767px) {
   .show-only-when-collapsed-navbar {
-    display: inline; } }
+    display: inline !important; } }
 
 .navbar-absolute {
   position: absolute !important;

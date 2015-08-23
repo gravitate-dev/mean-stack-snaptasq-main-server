@@ -1,15 +1,15 @@
 .hide-when-collapsed-navbar {
 @media (max-width: 767px) {
-display:none;
+display:none !important;
 }  
 }
 
 .show-only-when-collapsed-navbar {
-  display:none;
+  display:none !important;
 }
 .show-only-when-collapsed-navbar {
 @media (max-width: 767px) {
-display:inline;
+display:inline !important;
 }
   
 }

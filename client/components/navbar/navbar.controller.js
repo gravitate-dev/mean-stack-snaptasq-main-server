@@ -9,12 +9,12 @@ angular.module('snaptasqApp')
             reqLogin: true,
             reqBeta: true
         }, {
-            'title': 'Applied',
+            'title': 'Applied Tasqs',
             'link': '/tasks/applied',
             reqLogin: true,
             reqBeta: true
         }, {
-            'title': 'Chosen',
+            'title': 'Chosen Tasqs',
             'link': '/tasks/chosen',
             count: function() {
                 return $scope.responsibleCount;

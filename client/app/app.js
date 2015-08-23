@@ -224,16 +224,12 @@ function GlobalCtrl($scope, BadgeAlerts, localStorageService, $q, $templateCache
         });
 
     })(jQuery, ResponsiveBootstrapToolkit);
-
-    $scope.shouldShowSnapLogoHeader = function() {
+    $scope.isViewCompact = function() {
             if ($scope.viewport == "xs" || $scope.viewport == "sm")
-                return false;
+                return true;
             if ($scope._isMobile)
-                return false;
-            if (!$scope.isMainPage)
-                return false;
-            return true;
-
+                return true;
+            return false;
         }
         //When true people who go to sign up, will be required to enter a beta code
         //before they are allowed to login.
