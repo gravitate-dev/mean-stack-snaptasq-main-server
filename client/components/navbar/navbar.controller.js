@@ -91,11 +91,13 @@ angular.module('snaptasqApp')
 
         /* Notifications from the server from this week */
         $scope.notifications = [];
+        /*
         $interval(function() {
             Notify.get(function(notifications) {
                 $scope.notifications = notifications;
             });
         }, 5000);
+        */
         Notify.get(function(notifications) {
             $scope.notifications = notifications;
         });
