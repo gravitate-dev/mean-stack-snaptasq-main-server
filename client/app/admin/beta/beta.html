@@ -1,0 +1,56 @@
+<div class="container top-buffer">
+    <section name="change-pass" class="panel panel-primary">
+        <div class="panel-heading">
+            Create Beta Code
+        </div>
+        <div class="panel-body">
+            <form class="form" name="form" ng-submit="generateBetaCode(form)" novalidate>
+
+                <div class="form-group">
+                    <label>Number of Beta Code Uses (max: 100)</label>
+
+                    <input type="number" value="0" name="codeUses" class="form-control" ng-model="codeUses" />
+                    <p class="help-block" ng-show="codeUses > 100">
+                        Code uses can only be 100 or less.
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label>Beta Code Prefix (i.e. SNAPT-ASQ2015-X3IA-F523)</label>
+
+                    <input type="text" maxlength="10" name="codePrefix" class="form-control" ng-model="codePrefix" capitalize/>
+                    <p class="help-block" ng-show="codePrefix.length > 10">
+                        Limited to 10 characters
+                    </p>
+
+                    <strong> Example Preview Beta code : {{previewCode}}</strong>
+                </div>
+                <button class="btn btn-lg btn-primary" type="submit">Generate</button>
+                <div ng-if="generatedBetaCode"> Your Code is {{generatedBetaCode}}</div>
+            </form>
+        </div>
+    </section>
+
+    <section name="view-codes" class="panel panel-seondary">
+        <div class="row well" ng-repeat="code in betaCodes">
+            <div class="col-md-4">
+                <h2>{{code.name}}</h2>
+            </div>
+            <div class="col-md-4">
+                <div class="lead">Uses : {{code.uses}}/{{code.maxUses}}</div>
+                <div class="lead">Created : {{code.created | date:'longDate'}}</div>
+                <div class="lead">Status : {{code.status}}</div>
+            </div>
+            <div class="col-md-4">
+                <div class="top-buffer">
+                    <button ng-show="code.status=='active'" class="btn btn-warning" ng-click="deactivate(code);">Deactivate</button>
+                    <button ng-show="code.status=='inactive'" class="btn btn-success" ng-click="activate(code);">Activate</button>
+                    <button class="btn btn-danger" ng-click="delete(code);">Delete</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+</div>

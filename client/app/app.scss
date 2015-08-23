@@ -1,0 +1,121 @@
+$snapYellow: #fcd11a;
+
+$icon-font-path: "/bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
+$fa-font-path: "/bower_components/font-awesome/fonts";
+
+@import '../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap';
+@import '../bower_components/font-awesome/scss/font-awesome';
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+@mixin headings($from: 1, $to: 6){
+    @for $i from $from through $to{
+      h#{$i}{
+        @content
+      }
+    }
+}
+.fb-comments, .fb-comments span, .fb-comments.fb_iframe_widget span iframe {
+    width: 100% !important;
+}
+
+/* fix the well */
+.well {
+    box-sizing: border-box;
+}
+/**
+ * App-wide Styles
+ */
+
+.snapTasqBg {
+  background-position: right bottom !important; /*Positioning*/
+  background-repeat: no-repeat !important;
+  background-image:url('../assets/logos/snaptasq.png') !important;
+  background-size: 100% 100% !important;
+}
+.browsehappy {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+* {
+	font-family: 'Open Sans', sans-serif;
+}
+.noselect {
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-o-user-select: none;
+user-select: none;
+}
+
+/** RESET **/
+/* Fixes a bug where the container isnt full screen */
+html,body
+{
+    margin: 0px;
+    padding: 0px;
+    overflow-x: hidden; 
+    min-height:100%;
+    min-width:100%;
+}
+
+// This is to mimic the header spacings
+.header-buffer { 
+margin-top: 20px;
+margin-bottom: 10px;
+}
+
+.top-buffer { margin-top:20px; }
+.anti-top-buffer { margin-top:-20px; }
+.bot-buffer { margin-bottom:20px; }
+.anti-bot-buffer { margin-bottom:-20px; }
+.bot-buffer2 { margin-bottom:40px; }
+
+// Component styles are injected through grunt
+// injector
+@import 'ToS/privacy/privacy.scss';
+@import 'ToS/terms/terms.scss';
+@import 'account/connect/connect.scss';
+@import 'account/signin/signin.scss';
+@import 'admin/admin.scss';
+@import 'btnz.scss';
+@import 'carousel.scss';
+@import 'communities/communities.scss';
+@import 'main-feed-animations.scss';
+@import 'main/main.scss';
+@import 'pricePoints/pricePoints.scss';
+@import 'requestBeta/requestBeta.scss';
+@import 'task/task.scss';
+@import 'commentBox/commentBox.directive.scss';
+@import 'footer/footer.scss';
+@import 'modal/modal.scss';
+@import 'navbar/navbar.scss';
+@import 'navbar/notifications-navbar.scss';
+// endinjector
+
+
+.small-map .angular-google-map-container {
+        height:100px;
+    }
+*:fullscreen, *:fullscreen .angular-google-map, *:fullscreen .angular-google-map-container {
+  position:fixed;
+  top:0; 
+  right:0; 
+  bottom:0; 
+  left:0;
+  margin:0;
+  box-sizing:border-box;
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain;
+}
+
+//css fix for viewport on ie
+@-webkit-viewport   { width: device-width; }
+@-moz-viewport      { width: device-width; }
+@-ms-viewport       { width: device-width; }
+@-o-viewport        { width: device-width; }
+@viewport           { width: device-width; }

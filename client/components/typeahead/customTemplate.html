@@ -1,0 +1,12 @@
+<div class="typeahead-results">
+    <div ng-if="match && match.model.noresults">
+        <a href="/task/create">
+                    No results found for that would you like to make a <strong>new task for {{match.model.name}}?</strong>
+                </a>
+    </div>
+    <div ng-if="match && !match.model.noresults">
+        <a href="#">
+            <span bind-html-unsafe="match.label | typeaheadHighlight:query"></span>
+        </a>
+    </div>
+</div>

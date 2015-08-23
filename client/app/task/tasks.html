@@ -1,0 +1,26 @@
+<div class="container top-buffer">
+    <div id="actionButtons">
+        <div class="row bot-buffer">
+            <div class="col-md-2">
+                <a href="/task/create">
+                    <button class="btn btn-info">Create New</button>
+                </a>
+            </div>
+
+        </div>
+    </div>
+    <div ng-if="tasks.length==0" class="ngcloak row top-buffer">
+        <div class="col-md-12">
+            <span ng-if="typeTasks=='mine'">You have no tasks yet.</span>
+            <span ng-if="typeTasks=='applied'">You have not applied to any tasks yet.</span>
+        </div>
+    </div>
+
+    <div class="top-buffer">
+        <div ng-show="display.mode=='list'">
+            <div class="well top-buffer" ng-repeat="task in tasks | searchTaskFilter:filter">
+                <div class="task-view-compact-list" task="task"></div>
+            </div>
+        </div>
+    </div>
+</div>

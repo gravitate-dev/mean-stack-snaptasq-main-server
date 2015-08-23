@@ -1,0 +1,25 @@
+/*This closes the gap from the footer*/
+.anti-footer {
+	margin-bottom:-71px;
+}
+footer {
+padding-bottom: 40px;
+background:$snapYellow;
+color:white;
+padding-top: 70px;
+//border-top: 1px solid #E5E5E5;
+
+a {
+	color:white;
+	@media (max-width: 767px) {
+	font-size: 10px;
+	}
+}
+
+@include headings(){
+	color:black !important;
+}
+
+
+
+}

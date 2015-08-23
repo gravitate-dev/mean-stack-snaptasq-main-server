@@ -1,0 +1,14 @@
+.sass-cache/
+**/node_modules/
+**/bower_components/
+bower_components/
+test/temp
+node_modules/
+/dist
+demo
+local.env.js
+.idea
+.DS_Store
+release.txt
+fixtures/bower.json
+fixtures/package.json

@@ -1,0 +1,35 @@
+<div class="row ng-cloak" ng-if="_me._id && task.tasker.id==_me._id">
+    <div class="col-md-12">
+        <p ng-if="!task.tasker.confirmed" class="lead text-info">{{task.ownerName}} has chosen you to help. Do you accept?
+            <button ng-if="!task.tasker.confirmed" class="btn btn-success" ng-click="taskerConfirmTask(task,true);">Accept</button>
+            <button ng-if="!task.tasker.confirmed" class="btn btn-error" ng-click="taskerConfirmTask(task,false);">Reject</button>
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9 col-sm-9 col-xs-12">
+        <div style="float:left;margin-right:10px;">
+            <img src="{{task.ownerPic}}" style="height:50px;width:50px;" />
+        </div>
+        <div>
+            <strong>{{task.ownerName}}</strong>&nbsp;<span>{{task.created | date:'MMM d, y h:mm a'}}</span>&nbsp;<span class="badge badge-info">{{task.status | capslock}}</span>
+            <span style="position:relative;z-index:2;" ng-if="task.payout" class="fa-stack fa-sm">
+				<i class="fa fa-circle-thin fa-stack-2x"></i>
+				<i class="fa fa-dollar fa-stack-1x"></i>
+			</span>
+        </div>
+        <div class="single-line-dots" style="font-size:1.5em;"><a href="/task/view/{{task._id}}">{{task.name}}</a></div>
+    </div>
+    <div class="col-md-3 col-sm-3 col-xs-12">
+        <div style="display:inline;padding-right:5px;" id="applicantIcon">
+            <a href="" ng-click="showApplicants(task)"><span style="font-size:2em;">&nbsp;{{task.applicants.length}}</span><i class="fa fa-user fa-2x"></i></a>
+        </div>
+        <div style="display:inline;color:green" id="moneyIcon" ng-if="task.payout">
+            <i class="fa fa-dollar fa-2x"></i><span style="font-size:2em;">{{task.payout}}</span>
+        </div>
+        <div id="currentTasker" ng-if="task.tasker.id && task.tasker.confirmed">
+            <img ng-if="task.tasker.pic" src="{{task.tasker.pic}}" style="height:50px;width:50px;margin-right:5px;" /><a ng-if="task.tasker.fbId" href="http://www.facebook.com/{{task.tasker.fbId}}">{{task.tasker.name}}</a><span ng-if="!task.tasker.fbId">{{task.tasker.name}} is helping out</span>
+        </div>
+    </div>
+</div>
+<!-- if i am the tasker i will see this -->

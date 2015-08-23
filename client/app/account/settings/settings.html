@@ -1,0 +1,61 @@
+<div class="container top-buffer">
+    <section ng-if="_me.requiresBeta && _beta" name="enter-beta-code" class="panel panel-danger">
+        <div class="panel-heading">
+            <i class="fa fa-warning"></i>&nbsp;Enter a beta code! <span class="badge">1</span>
+        </div>
+        <div class="panel-body">
+            <p>You need to enter a beta code to complete your account regisitration</p>
+            <a href="/beta">
+                <button class="btn btn-primary">Enter beta code</button>
+            </a>
+        </div>
+    </section>
+    <section name="link-fb-account" ng-if="userCanFbConnect" class="panel panel-primary">
+        <div class="panel-heading">
+            Link Facebook Account
+        </div>
+        <div class="panel-body">
+            <button id="btn-fbsignup" type="button" class="btn btn-primary" ng-click="loginOauth('facebook');"><i class="fa fa-facebook"></i>   Continue with Facebook</button>
+        </div>
+    </section>
+    <section name="change-pass" class="panel panel-primary">
+        <div class="panel-heading">
+            Change Password
+        </div>
+        <div class="panel-body">
+            <form class="form" name="form" ng-submit="changePassword(form)" novalidate>
+
+                <div class="form-group">
+                    <label>Current Password</label>
+
+                    <input type="password" name="password" class="form-control" ng-model="user.oldPassword" mongoose-error/>
+                    <p class="help-block" ng-show="form.password.$error.mongoose">
+                        {{ errors.other }}
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label>New Password</label>
+
+                    <input type="password" name="newPassword" class="form-control" ng-model="user.newPassword" ng-minlength="3" required/>
+                    <a href="/forgot">Forgot your password?</a>
+                    <p class="help-block" ng-show="(form.newPassword.$error.minlength || form.newPassword.$error.required) && (form.newPassword.$dirty || submitted)">
+                        Password must be at least 3 characters.
+                    </p>
+                </div>
+
+                <p class="help-block"> {{ message }} </p>
+
+                <button class="btn btn-primary" type="submit">Save changes</button>
+            </form>
+        </div>
+    </section>
+    <section name="delete-account" class="panel panel-danger">
+        <div class="panel-heading">
+            Delete Accont
+        </div>
+        <div class="panel-body">
+            <button class="btn btn-danger" ng-click="showDeleteAccountModal()">Delete</button>
+        </div>
+    </section>
+</div>

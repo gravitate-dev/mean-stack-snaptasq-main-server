@@ -1,0 +1,132 @@
+.main-top-image-controls {
+ margin-bottom:0px;
+ padding-top:160px;
+ h1 {
+ text-transform: uppercase;
+ text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+ color:white;
+ margin:0;
+ font-size:50pt;
+ }
+ h3 {
+ margin-top:5px;
+ color:white;
+ font-size:20pt;
+ font-weight:bold;
+ }
+
+ 
+#mainsearch {
+   padding-left:15px;
+   color:black;
+   width:600px;
+   border: 2px black solid;
+}
+.typeahead-results {
+  width:600px;
+}
+
+ @media (max-width: 767px) {
+  padding-top:80px;
+  h1 {font-size:30px;}
+  h3 {font-size:14px;}
+  #mainsearch {
+  width:300px;
+  padding:10px;
+  }
+  .typeahead-results, .typeahead-results * { 
+    width:300px; 
+    padding:0px;
+  }
+
+  }
+}
+
+.mini-slogans {
+  color:black;
+  @media (max-width: 767px) {
+    font-size: 15px;
+  }
+}
+
+.main-slogans {
+  font-size: 30px;
+  margin:0;
+  margin-bottom:15px;
+  color:black;
+  @media (max-width: 767px) {
+    font-size: 20px;
+  }
+}
+
+
+
+
+.thing-form {
+    margin: 20px 0;
+}
+
+#banner {
+    border-bottom: none;
+    margin-top: -20px;
+}
+
+#banner h1 {
+    font-size: 60px;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+
+.hero-unit {
+    position: relative;
+    padding: 30px 15px;
+    color: #F5F5F5;
+    text-align: center;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    background: #4393B9;
+}
+
+.marketing {
+    padding-left:25px;
+    padding-right:25px;
+    padding-bottom:50px;
+    .loud {
+        font-size:27px;
+    }
+    p {
+    font-size:18px;
+    }
+}
+
+
+.mosaicRollover{
+    display:inline-block;
+}
+.mosaicRollover:hover:after  {
+  opacity: .5;
+  background:yellow;
+  transition:200ms;
+}
+
+.mosaicRollover:after {
+  display:inline-block;
+  position: absolute;
+  content:"";
+  background:yellow;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  opacity: 0.5;
+  z-index:2;
+}
+.tinted-image {
+  background: 
+    /* top, transparent red, faked with gradient */ 
+    linear-gradient(
+      rgba(255, 0, 0, 0.45), 
+      rgba(255, 0, 0, 0.45)
+    ),
+    /* bottom, image */
+    url(../assets/images/main/top_image.png) no-repeat center 20%
+}

@@ -1,0 +1,19 @@
+<div class="row">
+    <div class="col-md-12">
+        <div style="float:left;margin-right:10px;">
+            <img src="{{task.ownerPic}}" style="height:50px;width:50px;" />
+        </div>
+        <div>
+            <strong>{{task.ownerName}}</strong>&nbsp;<span>{{task.created | date:'MMM d, y h:mm a'}}</span>
+            <span style="position:relative;z-index:2;" ng-if="task.reward.money" class="fa-stack fa-sm">
+				<i class="fa fa-circle-thin fa-stack-2x"></i>
+				<i class="fa fa-dollar fa-stack-1x"></i>
+			</span>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div style="font-size:1.5em;"><a href="/task/view/{{task._id}}">{{task.name}}</a></div>
+    </div>
+</div>

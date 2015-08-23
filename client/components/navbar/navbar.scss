@@ -1,0 +1,170 @@
+.hide-when-collapsed-navbar {
+@media (max-width: 767px) {
+display:none;
+}  
+}
+
+.show-only-when-collapsed-navbar {
+  display:none;
+}
+.show-only-when-collapsed-navbar {
+@media (max-width: 767px) {
+display:inline;
+}
+  
+}
+.navbar-absolute {
+    position: absolute !important;
+    margin: 0;
+    z-index:800;
+  }
+
+.navbar-absolute + div {
+    margin-top: 68px;
+}
+
+
+.navbar {
+	margin-bottom:0px !important;
+	z-index: 800;
+} 
+
+
+#top {
+	opacity:1;
+}
+// from http://work.smarchal.com/twbscolor/
+.navbar {
+	border:0px;
+}
+
+$bgDefault      : rgba(252, 209, 26, 0.7);
+$bgHighlight    : rgba(252, 209, 26, 0.7);
+$colDefault     : #000000;
+$colHighlight   : #1c7bc0;
+$dropDown       : true;
+
+.navbar-default {
+  background-color: $bgDefault;
+  border-color: $bgHighlight;
+  .navbar-brand {
+    color: $colDefault;
+    &:hover, &:focus { 
+      color: $colHighlight; }}
+  .navbar-text {
+    color: $colDefault; }
+  .navbar-nav {
+    > li {
+      > a {
+        color: $colDefault;
+        &:hover,  &:focus {
+          color: $colHighlight; }}
+      @if $dropDown {
+        > .dropdown-menu {
+          background-color: $bgDefault;
+          > li > a {
+            color: $colDefault;
+            &:hover,  &:focus {
+              color: $colHighlight;
+              background-color: $bgHighlight; }}
+          .divider {
+            background-color: $bgHighlight;}}}
+    }
+    > .active {
+      > a, > a:hover, > a:focus {
+        color: $colHighlight;
+        background-color: $bgHighlight }}
+    > .open {
+      > a, > a:hover, > a:focus {
+        color: $colHighlight;
+        background-color: $bgHighlight; }}}
+  .navbar-toggle {
+    border-color: $bgHighlight;
+    &:hover, &:focus {
+      background-color: $bgHighlight; }
+    .icon-bar {
+      background-color: $colDefault; }}
+  .navbar-collapse,
+  .navbar-form {
+    border-color: $colDefault; }
+  .navbar-link {
+    color: $colDefault;
+    &:hover {
+      color: $colHighlight; }}}
+
+
+$bgDefault      : rgba(252, 209, 26, 1);
+$bgHighlight    : rgba(252, 209, 26, 1);
+$colDefault     : #000000;
+$colHighlight   : #1c7bc0;
+$dropDown       : true;
+.navbar-default.navbar-full-opacity {
+  background-color: $bgDefault;
+  border-color: $bgHighlight;
+  .navbar-brand {
+    color: $colDefault;
+    &:hover, &:focus { 
+      color: $colHighlight; }}
+  .navbar-text {
+    color: $colDefault; }
+  .navbar-nav {
+    > li {
+      > a {
+        color: $colDefault;
+        &:hover,  &:focus {
+          color: $colHighlight; }}
+      @if $dropDown {
+        > .dropdown-menu {
+          background-color: $bgDefault;
+          > li > a {
+            color: $colDefault;
+            &:hover,  &:focus {
+              color: $colHighlight;
+              background-color: $bgHighlight}}
+          .divider {
+            background-color: $bgHighlight;}}}
+    }
+    > .active {
+      > a, > a:hover, > a:focus {
+        color: $colHighlight;
+        background-color: $bgDefault; }}
+    > .open {
+      > a, > a:hover, > a:focus {
+        color: $colHighlight;
+        background-color: $bgHighlight}}}
+  .navbar-toggle {
+    border-color: $bgHighlight;
+    &:hover, &:focus {
+      background-color: $bgHighlight }
+    .icon-bar {
+      background-color: $colDefault }}
+  .navbar-collapse,
+  .navbar-form {
+    border-color: $colDefault; }
+  .navbar-link {
+    color: $colDefault;
+    &:hover {
+      color: $colHighlight; }}}
+
+
+
+#signUpButton:hover{
+  color: $colHighlight !important;
+}
+
+li.dropdown {
+  padding-top:0px;
+  padding-bottom:0px;
+}
+
+
+
+/* Make navbar hover */
+ul.nav li.dropdown:hover > ul.dropdown-menu {
+    display: block;    
+}
+
+.nav li.active > a {
+  background-color: $bgDefault;
+  color: $colHighlight !important;
+}

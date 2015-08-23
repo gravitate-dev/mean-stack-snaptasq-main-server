@@ -1,0 +1,52 @@
+<div class="detailBox">
+    <div class="titleBox">
+        <p>
+            <img style="padding-right:10px;" src="http://lorempixel.com/50/50/people/5" />
+            <label>{{commentBox.name}}</label>
+            <button type="button" class="close" aria-hidden="true" ng-click="close()"><i class="fa fa-minus-square"></i></button>
+        </p>
+
+    </div>
+    <div class="commentBox">
+        <p class="taskDescription">{{commentBox.description}}</p>
+    </div>
+    <div class="actionBox">
+        <ul class="commentList">
+            <li>
+                <div class="commenterImage">
+                    <img src="http://lorempixel.com/50/50/people/6" />
+                </div>
+                <div class="commentText">
+                    <p class="">I can help.</p> <span class="date sub-text">on {{commentBox.date}}</span>
+
+                </div>
+            </li>
+            <li>
+                <div class="commenterImage">
+                    <img src="http://lorempixel.com/50/50/people/7" />
+                </div>
+                <div class="commentText">
+                    <p class="">Has accepted this task.</p> <span class="date sub-text">on {{commentBox.date}}</span>
+
+                </div>
+            </li>
+            <li>
+                <div class="commenterImage">
+                    <img src="http://lorempixel.com/50/50/people/9" />
+                </div>
+                <div class="commentText">
+                    <p class="">Hello this is a test comment.</p> <span class="date sub-text">on {{commentBox.date}}</span>
+
+                </div>
+            </li>
+        </ul>
+        <form class="form-inline" role="form">
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="Your comments" />
+            </div>
+            <div class="form-group">
+                <button class="btn btn-default">Add</button>
+            </div>
+        </form>
+    </div>
+</div>

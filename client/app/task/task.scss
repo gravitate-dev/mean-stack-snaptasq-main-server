@@ -1,0 +1,164 @@
+.single-line-dots {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* for picture container on the tasks */
+.container-outer { overflow: scroll }
+.container-inner { width: 10000px; }
+
+.gigante {
+    background-color:red !important;
+    width:400px !important;
+    height:300px !important;
+}
+
+.angular-google-map-container { height: 400px; }
+.small-map {
+  .angular-google-maps-container {
+    height: 300px;
+  }
+}
+
+.angular-google-map-container.fullscreen {
+  position: fixed;
+  width:100%;
+  height: 100%;
+}
+
+
+#custom-search-form {
+    margin:0;
+    margin-top: 5px;
+    padding: 0;
+}
+
+#custom-search-form .search-query {
+    padding-right: 3px;
+    padding-right: 4px \9;
+    padding-left: 3px;
+    padding-left: 4px \9;
+    /* IE7-8 doesn't have border-radius, so don't indent the padding */
+
+    margin-bottom: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-transition: width  0.2s ease-in-out;
+-moz-transition:width  0.2s ease-in-out;
+-o-transition: width  0.2s ease-in-out;
+transition: width  0.2s ease-in-out;
+}
+
+#custom-search-form button {
+    border: 0;
+    background: none;
+    /** belows styles are working good */
+    padding: 2px 5px;
+    margin-top: 2px;
+    position: relative;
+    left: -28px;
+    /* IE7-8 doesn't have border-radius, so don't indent the padding */
+    margin-bottom: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.search-query:focus + button {
+    z-index: 3;   
+}   
+.search-query:focus{
+    width: 260px;
+}   
+
+
+.isotope-item {
+  z-index: 2;
+}
+
+.isotope-hidden.isotope-item {
+  pointer-events: none;
+  z-index: 1;
+}
+
+
+.isotope,
+.isotope .isotope-item {
+  -webkit-transition-duration: 0.8s;
+     -moz-transition-duration: 0.8s;
+      -ms-transition-duration: 0.8s;
+       -o-transition-duration: 0.8s;
+          transition-duration: 0.8s;
+}
+
+.isotope {
+  -webkit-transition-property: height, width;
+     -moz-transition-property: height, width;
+      -ms-transition-property: height, width;
+       -o-transition-property: height, width;
+          transition-property: height, width;
+}
+
+.isotope .isotope-item {
+  -webkit-transition-property: -webkit-transform, opacity;
+     -moz-transition-property:    -moz-transform, opacity;
+      -ms-transition-property:     -ms-transform, opacity;
+       -o-transition-property:      -o-transform, opacity;
+          transition-property:         transform, opacity;
+}
+
+/**** disabling Isotope CSS3 transitions ****/
+
+.isotope.no-transition,
+.isotope.no-transition .isotope-item,
+.isotope .isotope-item.no-transition {
+  -webkit-transition-duration: 0s;
+     -moz-transition-duration: 0s;
+      -ms-transition-duration: 0s;
+       -o-transition-duration: 0s;
+          transition-duration: 0s;
+}
+
+/* End: Recommended Isotope styles */
+
+
+
+/* disable CSS transitions for containers with infinite scrolling*/
+.isotope.infinite-scrolling {
+  -webkit-transition: none;
+     -moz-transition: none;
+      -ms-transition: none;
+       -o-transition: none;
+          transition: none;
+}
+.kindling{width:110px;height:110px;margin:5px;float:left;overflow:hidden;position:relative;background:#888;color:#222;-webkit-border-top-right-radius:1.2em;-moz-border-radius-topright:1.2em;border-top-right-radius:1.2em}
+.kindling.alkali{background:#F00;background:red}
+.kindling.alkaline-earth{background:#F80;background:#f90}
+.kindling.lanthanoid{background:#FF0;background:#cf0}
+.kindling.actinoid{background:#0F0;background:#3f0}
+.kindling.transition{background:#0F8;background:#0f6}
+.kindling.post-transition{background:#0FF;background:cyan}
+.kindling.metalloid{background:#08F;background:#06f}
+.kindling.other.nonmetal{background:#00F;background:#30f}
+.kindling.halogen{background:#F0F;background:#c0f}
+.kindling.noble-gas{background:#F08;background:#f09}
+.kindling.purple{background:#CC00FF}
+.kindling.orange{background:#FF9900}
+.kindling.blue{background:#0099FF}
+.kindling.green{background:#CCFF00}
+.kindling *{position:absolute;margin:0}
+.kindling .symbol{left:0.2em;top:0.4em;font-size:3.8em;line-height:1.0em;color:#FFF}
+.kindling.large .symbol{font-size:4.5em}
+.kindling.fake .symbol{color:#000}
+.kindling .name{left:0.5em;bottom:1.6em;font-size:1.05em}
+.kindling .weight{font-size:0.9em;left:0.5em;bottom:0.5em}
+.kindling .number{font-size:1.25em;font-weight:bold;color:rgba(0,0,0,0.5);right:0.5em;top:0.5em}
+.kindling.width2{width:230px}
+.kindling.height2{height:230px}
+.kindling.width2.height2{font-size:2.0em}
+.kindling.large,.variable-sizes .kindling.large,.variable-sizes .kindling.large.width2.height2{font-size:3.0em;width:350px;height:350px;z-index:100}
+.kindling:hover{cursor:pointer}
+.kindling:hover h3{text-shadow:0 0 10px #fff,0 0 10px #fff}
+.kindling:hover h2{color:white}

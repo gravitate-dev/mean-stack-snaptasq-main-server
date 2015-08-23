@@ -1,0 +1,134 @@
+<div style="
+background: url(assets/images/main/top_image.png) no-repeat center 20%;
+background-size: cover;
+min-height:750px;">
+    <div ng-attr-style="margin: auto; text-align: center;" class="text-center">
+        <section class="main-top-image-controls">
+            <h1>Friends help friends</h1>
+            <h3>get help from the people you already know</h3>
+            <div style="margin-top:15px; pointer-events: all;">
+                <input id="mainsearch" scroll-on-click="-15px" autofocus="autofocus" type="text" ng-model="searchTask" typeahead="task.name for task in commonTasks | filter:$viewValue | limitTo:8 | typeAheadNoResultsOnEmpty:$viewValue" class="input-lg" placeholder="What do you need done?"
+                typeahead-template-url="components/typeahead/customTemplate.html" typeahead-on-select="handleSearch($item, $model, $label)" />
+            </div>
+        </section>
+    </div>
+</div>
+<div class="container-fluid" ng-attr-style="background:{{snapYellowCSS}};padding-bottom:40px;border-bottom:1px solid black;">
+    <!-- how it works -->
+    <div class="row" style="margin-top:35px;">
+        <h2 class="text-center main-slogans">this is how snaptasq works</h2>
+    </div>
+    <div class="row" style="display: table;margin: 0 auto;">
+        <div style="display: table;margin: 0 auto;">
+            <div class="text-center col-md-4 col-sm-4 col-xs-4" style="padding: 0;display:inline-block;float:left;">
+                <div ng-attr-style="background:{{snapYellowCSS}};">
+                    <img src="assets/images/main/snaptasq_steps1.png" class="" ng-attr-style="background:{{snapYellowCSS}};max-width:100%;" />
+                </div>
+                <h2 class="mini-slogans" style="color:black;">create your tasq</h2>
+                <!-- <h4>describe your tasq.</h4> -->
+            </div>
+
+            <div class="text-center col-md-4 col-sm-4 col-xs-4" style="padding: 0;display:inline-block;float:left;">
+                <div ng-attr-style="background:{{snapYellowCSS}};">
+                    <img src="assets/images/main/snaptasq_steps2.png" class="" ng-attr-style="background:{{snapYellowCSS}};max-width:100%;" />
+                </div>
+                <h2 class="mini-slogans">share with friends</h2>
+                <!-- <h4>next, share your tasq on your social networks.</h4> -->
+            </div>
+            <div class="text-center col-md-4 col-sm-4 col-xs-4" style="padding: 0;display:inline-block;float:left;">
+                <div ng-attr-style="background:{{snapYellowCSS}};">
+                    <img src="assets/images/main/snaptasq_steps3.png" class="" ng-attr-style="background:{{snapYellowCSS}};max-width:100%;" />
+                </div>
+                <h2 class="mini-slogans">tasq accomplished</h2>
+                <!-- <h4>now that your friends will help, your tasq will be finished.</h4> -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <header class="hero-unit" style="padding-top:50px;background:#fcd11a" id="wallFeed">
+    <div class="container-fluid">
+    <div class="row">
+    <div class="col-md-12">
+        <slick dots="true" infinite="true" arrows="true" nextArrow="true" prevArrow="true" speed="300" slides-to-show="1" slides-to-scroll="1">
+            <div ng-repeat="slide in slides" class="col-md-12">
+                <img class="noselect" draggable="false" ng-src="{{slide.image}}" style="margin:auto;max-width:30%;max-height:50%">
+            </div>
+        </slick>
+        <p class="lead" style="color:black;">swipe to see more</p>
+    </div>
+    </div>
+    </div>
+</header> -->
+<div style="background:#f5f6f6">
+    <div class="container marketing">
+        <!-- task panels -->
+        <div class="row" style="margin-top:20px;margin-bottom:20px;">
+            <h2 class="text-center main-slogans">get any tasq done in a snap</h2>
+        </div>
+        <div style="padding-top:5px;padding-bottom:5px;">
+            <div ng-repeat="task in advertisedTasks  | limitTo:3:0" class="col-md-4 col-sm-4 col-xs-6" style="cursor:pointer; padding-right:5px;padding-left:5px;" ng-click="launchTaskCreateWithName(task.prefill);">
+                <img style="width: 100%;height:100%;object-fit: contain;overflow: hidden;" ng-src="{{task.img}}" />
+                <div class="text-center" style="position:relative;z-index:2;bottom:100px;color:white;">
+                    <strong style="font-size:1.4em;">{{task.name}}</strong>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="padding-top:5px;padding-bottom:5px;">
+            <div ng-repeat="task in advertisedTasks  | limitTo:3:3" class="col-md-4 col-sm-4 col-xs-6" style="cursor:pointer; padding-right:5px;padding-left:5px;" ng-click="launchTaskCreateWithName(task.prefill);">
+                <img style="width: 100%;height:100%;object-fit: contain;overflow: hidden;" class="mosaicRollover" ng-src="{{task.img}}" ng-click="" />
+                <div class="text-center" style="position:relative;z-index:2;bottom:100px;color:white;">
+                    <strong style="font-size:1.4em;">{{task.name}}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</div>
+<div class="container marketing">
+    <!-- why use -->
+    <div class="row" style="margin-top:35px;">
+        <h1 class="text-center">why snaptasq?</h1>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <img src="assets/images/main/why1.png" width="128px" />
+            <p class="loud">help from your friends
+                <p>Who better to ensure the task gets done right than your friends. You can even handpick who you would like to handle the task.</p>
+        </div>
+        <!-- /.col-lg-4 -->
+        <div class="col-lg-4">
+            <img src="assets/images/main/why2.png" width="128px" />
+            <p class="loud">safety assured</p>
+            <p>Only your friends can see your tasks. This helps keep you safe and protected.</p>
+        </div>
+        <!-- /.col-lg-4 -->
+        <div class="col-lg-4">
+            <img src="assets/images/main/why3.png" width="128px" />
+            <p class="loud">never by strangers</p>
+            <p>Unlike our competitors, we only let your friends apply for your tasks to avoid any issues.</p>
+        </div>
+        <!-- /.col-lg-4 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-4">
+            <img src="assets/images/main/why4.png" width="128px" />
+            <p class="loud">instant communication</p>
+            <p>Message your friends to coordinate your task easily.</p>
+        </div>
+        <!-- /.col-lg-4 -->
+        <div class="col-lg-4">
+            <img src="assets/images/main/why5.png" width="128px" />
+            <p class="loud">group sourcing</p>
+            <p>We ensure that your task will have multiple backups readily available for you.</p>
+        </div>
+        <!-- /.col-lg-4 -->
+        <div class="col-lg-4">
+            <img src="assets/images/main/why6.png" width="128px" />
+            <p class="loud">offer incentives</p>
+            <p>Our service is free. However, you can offer taskers cash rewards in person.</p>
+        </div>
+        <!-- /.col-lg-4 -->
+    </div>
+    <!-- /.row -->
+</div>

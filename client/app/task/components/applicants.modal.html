@@ -1,0 +1,10 @@
+<div class="row" ng-controller="TaskApplicantList">
+    <div class="col-md-12">
+        <button class="btn btn-warning bot-buffer" ng-if="modal.task.ownerId==_me._id" ng-click="setTasker(modal.task);" ng:disabled="!modal.task.tasker.id">Set to unpicked</button>
+    </div>
+    <div class="col-md-12" ng-repeat="item in modal.task.applicants">
+        <img ng-if="item.pic" src="{{item.pic}}" style="height:50px;width:50px;margin-right:5px;" /><a ng-if="item.fbId" href="http://www.facebook.com/{{item.fbId}}">{{item.name}}</a><span ng-if="!item.fbId">{{item.name}}</span>
+        <button ng-if="modal.task.ownerId==_me._id && modal.task.tasker.id!=item.id" class="btn btn-info pull-right" ng-click="setTasker(modal.task,item.id);">Set as tasker</button>
+        <button ng-if="modal.task.tasker.id==item.id" class="btn btn-success pull-right" ng:disabled="true">Chosen</button>
+    </div>
+</div>

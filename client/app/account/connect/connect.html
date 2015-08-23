@@ -1,0 +1,43 @@
+<div class="container">
+    <div class="row" ng-show="currentUser.verification.status==false">
+        <div class="col-sm-12">
+            <h1>Verify Your Email</h1>
+            <p>It is probably in your inbox already. If its not you can send another email with the button below.</p>
+        </div>
+        <div class="col-sm-12">
+            <form class="form" name="formEmailVerification" ng-submit="sendVerificationEmail(formEmailVerification)">
+                <input type="hidden" ng-model="captchaResponse" name="captchaResponse">
+                <br>
+                <div style="margin-bottom:10px;" vc-recaptcha key="'6LfjmgcTAAAAAFerg8_alh6LFcb4QQvrF8Gg4qz1'" on-success="captchaResponse=response"></div>
+                <button class="btn btn-primary" type="submit"><i class="fa fa-envelope-o"></i>&nbsp;Resend Email Verification</button>
+            </form>
+        </div>
+    </div>
+    <div ng-if="currentUser.verification.status && !currentUser.isConnectedWithFb" class="row">
+        <!--first time connect-->
+        <div ng-if="!currentUser.hasConnectedWithFbOnce" class="col-sm-12">
+            <h1>Last Step <span>
+                <a class="btn btn-facebook" href="" ng-click="connect()">
+                <i class="fa fa-facebook"></i> Connect with Facebook
+                </a>
+            </span></h1>
+            <h3>Why is this needed?</h3>
+            <p>snaptasq is a friends only service. We will only show tasks posted by friends. This is done by connecting with your Facebook.</p>
+            <p><strong>We don't want to post anything on your Facebook wall. snaptasq has its own wall.</strong></p>
+            <p>For more information please view our privacy policy <a href="/privacy" target="_tab">here</a></p>
+
+        </div>
+        <!-- reconnecting due to invalid access token -->
+        <div ng-if="currentUser.hasConnectedWithFbOnce" class="col-sm-12">
+            <h1>Reconnect with Facebook<span>
+                <a class="btn btn-facebook" href="" ng-click="connect()">
+                <i class="fa fa-facebook"></i> Connect with Facebook
+                </a>
+            </span></h1>
+            <h3>What happened?</h3>
+            <p>snaptasq was unable to find your friends from Facebook. This can happen when you change Facebook settings. To fix this, click connect with facebook</p>
+            <p><strong>We don't want to post anything on your Facebook wall. snaptasq has its own wall.</strong></p>
+            <p>For more information please view our privacy policy <a href="/privacy" target="_tab">here</a></p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+<div class="container">
+    <section class="col-md-12" style="margin-top:50px;">
+        <div class="panel panel-info">
+            <div class="panel-body">
+                <h1 style="display:inline;" class="text-center">Private Community Tasqs</h1>
+                <button class="btn btn-info pull-right" ng-click="showSuggestCommunityModal()"><i class="fa fa-plus"></i>&nbsp;Suggest Community</button>
+                <ul>
+                    <li ng-repeat="item in communities"><a href="#" class="lead">{{item.name}}</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="col-md-12" style="margin-top:50px;">
+        <div class="panel panel-info">
+            <div class="panel-body">
+                <h1 style="display:inline;" class="text-center">Public Community Tasqs</h1>
+                <button class="btn btn-info pull-right" ng-click="showSuggestCommunityModal()"><i class="fa fa-plus"></i>&nbsp;Suggest Community</button>
+                <ul>
+                    <li ng-repeat="item in publiccommunities"><a href="#" class="lead">{{item.name}} Tasqs</a></li>
+                    <li ng-if="!publiccommunites">None</li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+</div>
