@@ -2,43 +2,60 @@
 angular.module('snaptasqApp').controller('CommunitiesCtrl', function($scope, Community, $http, $window) {
     $scope._bgcolorSnapYellow();
     $scope._noFooter();
-    $scope.requestBetaErrors = [];
-
+    $scope.publicCommunities = [];
     $scope.showSuggestCommunityModal = function() {
 
     };
 
 
     $scope.listCommunities = function() {
-        Community.get({
-            entryMethod: "open"
-        }, function(data) {
-            $scope.publicCommunities = data;
+        Community.get({}, function(data) {
+            $scope.publicCommunities = [];
+            $scope.privateCommunities = [];
+            _.each(data, function(item) {
+                if (item.entryMethod == "open")
+                    $scope.publicCommunities.push(item);
+                else
+                    $scope.privateCommunities.push(item);
+            });
         });
-        Community.get({
-            entryMethod: "open"
-        }, function(data) {
-            $scope.publicCommunities = data;
-        });
-        $scope.publicCommunities = data;
     }
     $scope.listCommunities();
-    $scope.communities = [{
-        name: "Santa Clara University"
-    }, {
-        name: "Santa Clara"
-    }, {
-        name: "Walsh"
-    }, ];
-    /*
-    , {
-            name: "Santa Clara"
-        }, {
-            name: "San Jose"
-        }, {
-            name: "Bay Area"
-        }, {
-            name: "pets"
-        },
-        */
+}).controller('CommunityCtrl', function($scope, Community, Auth, $routeParams, Notification, notifications) {
+    $scope.groupId = $routeParams.id;
+    $scope.allowed = undefined;
+
+    /**
+     * First check if the group is public
+     **/
+    Community.isGroupOpen($scope.groupId, function(isOpen) {
+        if (!isOpen) {
+            /**
+             * If the group is not public, then see if i am a member
+             **/
+            Auth.isUserInGroupAsync($scope.groupId, function(isAllowed) {
+                $scope.allowed = isAllowed;
+                $scope.loadGroupDetails($scope.groupId);
+            });
+        } else {
+            $scope.allowed = true;
+            $scope.loadGroupDetails($scope.groupId);
+        }
+    });
+
+
+    $scope.loadGroupDetails = function(groupId) {
+        Community.getById(groupId, function(item) {
+            console.log(item);
+            $scope.group = item;
+        });
+    };
+
+    $scope.requestJoin = function(creds) {
+        Community.requestJoin($scope.groupId, $scope._me._id, creds, function(success) {
+            notifications.showSuccess(success.data);
+        }, function(fail) {
+            Notification.error(fail.data);
+        })
+    }
 });

@@ -3,20 +3,20 @@
 // Development specific configuration
 // ==================================
 module.exports = {
-  // MongoDB connection options
-  mongo: {
-    uri: 'mongodb://localhost/snaptasq-dev'
-  },
+    // MongoDB connection options
+    mongo: {
+        uri: 'mongodb://localhost/snaptasq-dev'
+    },
 
-  // host name
-  host: {
-  	url:"http://localhost:8000/"
-  },
+    // host name
+    host: {
+        url: "http://localhost:8000/"
+    },
 
-  // Server port
-  port:8000,
-  
-  dontRequireEmailVerification:true,
+    // Server port
+    port: 8000,
 
-  seedDB: true
+    dontRequireEmailVerification: true,
+
+    seedDB: true
 };

@@ -37,7 +37,7 @@ module.exports = function (grunt) {
     //src: ['<%= yeoman.client %>/{app,components}/**/*.css']
     jsbeautifier: {
       default: {
-        src: ['<%= yeoman.client %>/{app,components}/**/*.js','<%= yeoman.client %>/{app,components}/**/*.html']
+        src: ['<%= yeoman.client %>/{app,components}/**/*.js','<%= yeoman.client %>/{app,components}/**/*.html','server/**/*.js']
       }
     },
     gitreset: {

@@ -264,6 +264,26 @@ angular.module('snaptasqApp')
              */
             getToken: function() {
                 return $cookieStore.get('token');
+            },
+
+            isUserInGroup: function(groupId, cb) {
+                for (var i = 0; i < currentUser.communityMemberships.length; i++) {
+                    if (currentUser.communityMemberships[i].equals(groupId))
+                        return cb(true);
+                }
+                return cb(false);
+            },
+            isUserInGroupAsync: function(groupId, cb) {
+                var that = this;
+                if (currentUser.hasOwnProperty('$promise')) {
+                    currentUser.$promise.then(function() {
+                        return that.isUserInGroup(groupId, cb);
+                    }).catch(function() {
+                        return cb(false);
+                    });
+                } else {
+                    return that.isUserInGroup(groupId, cb);
+                }
             }
         };
     });

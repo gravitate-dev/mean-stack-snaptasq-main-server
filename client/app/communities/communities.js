@@ -7,5 +7,10 @@ angular.module('snaptasqApp')
                 templateUrl: 'app/communities/communities.html',
                 controller: 'CommunitiesCtrl',
                 authenticate: true,
+            })
+            .when('/community/:id', {
+                templateUrl: 'app/communities/community.html',
+                controller: 'CommunityCtrl',
+                authenticate: true,
             });
     });

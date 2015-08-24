@@ -12,7 +12,7 @@ angular.module('snaptasqApp')
             name: 'email'
         }, {
             id: 2,
-            name: 'area code'
+            name: 'areacode'
         }];
         $scope.communities = [];
         $scope.submitted = false;

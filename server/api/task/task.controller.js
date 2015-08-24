@@ -5,28 +5,34 @@ var User = require('../user/user.model');
 var Emailer = require('../email/email.controller');
 var config = require('../../config/environment');
 // Get list of tasks
-exports.index = function(req, res) {    
-  Task.find({
-    isPrivate: false
-  },'-__v',function (err, tasks) {
-    if(err) { return handleError(res, err); }
-    return res.json(200, tasks);
-  });
+exports.index = function(req, res) {
+    Task.find({
+        isPrivate: false
+    }, '-__v', function(err, tasks) {
+        if (err) {
+            return handleError(res, err);
+        }
+        return res.json(200, tasks);
+    });
 
 };
 
 
 exports.getMyAppliedTasks = function(req, res) {
     var currentUserId = req.session.userId;
-     User.findOne({
+    User.findOne({
         _id: currentUserId
     }, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, user) { // don't ever give out the password or salt
-    if (!user || err) return handleError(res,err);
-    if (!user.taskIds) return handleError(res,err);
+        if (!user || err) return handleError(res, err);
+        if (!user.taskIds) return handleError(res, err);
         Task.find({
-            '_id': { $in: user.taskIds},
-            'ownerId': { $ne: currentUserId}
-        }, function(err, tasks){
+            '_id': {
+                $in: user.taskIds
+            },
+            'ownerId': {
+                $ne: currentUserId
+            }
+        }, function(err, tasks) {
             if (err) {
                 return handleError(res, err);
             }
@@ -35,14 +41,16 @@ exports.getMyAppliedTasks = function(req, res) {
     });
 }
 
-exports.countResponsibleTasks = function(req,res){
+exports.countResponsibleTasks = function(req, res) {
     var currentUserId = req.session.userId;
     Task.count({
         'tasker.id': currentUserId,
-        'status':{ $ne: "completed"}
-    }, function(err, count){
-        if (err) return handleError(res,err);
-        return res.status(200).send(""+count);
+        'status': {
+            $ne: "completed"
+        }
+    }, function(err, count) {
+        if (err) return handleError(res, err);
+        return res.status(200).send("" + count);
     });
 }
 
@@ -50,7 +58,7 @@ exports.getTasksResponsible = function(req, res) {
     var currentUserId = req.session.userId;
     Task.find({
         'tasker.id': currentUserId
-    }, function(err, tasks){
+    }, function(err, tasks) {
         if (err) {
             return handleError(res, err);
         }
@@ -59,16 +67,16 @@ exports.getTasksResponsible = function(req, res) {
 }
 
 exports.getMyTasks = function(req, res) {
-    var currentUserId = req.session.userId;
-    Task.find({
-        'ownerId': currentUserId
-    }, '-__v', function(err, tasks) {
-        if (err) {
-            return handleError(res, err);
-        }
-        return res.json(200, tasks);
-    });
-}
+        var currentUserId = req.session.userId;
+        Task.find({
+            'ownerId': currentUserId
+        }, '-__v', function(err, tasks) {
+            if (err) {
+                return handleError(res, err);
+            }
+            return res.json(200, tasks);
+        });
+    }
     // Get a single task
 exports.show = function(req, res) {
     Task.findById(req.params.id, function(err, task) {
@@ -94,7 +102,7 @@ exports.create = function(req, res) {
 
         newTask.ownerName = user.name;
         newTask.ownerPic = user.pic;
-            
+
         Task.create(newTask, function(err, task) {
             if (err) {
                 return handleError(res, err);
@@ -139,24 +147,24 @@ exports.update = function(req, res) {
     });
 };
 
-exports.isTaskOwner = function(req,res,next){
-    Task.findById(req.params.id, function(err, task) {
-        if (err) {
-            return handleError(res, err);
-        }
-        if (!task) {
-            return res.send(404);
-        }
-        var currentUserId = req.session.userId;
-        if (!task.ownerId.equals(req.session.userId)){
-            return res.status(403).send("You do not own this task");
-        }
-        next();
-    });
-}
-/**
- * Allows a user to apply to help for a task
-**/
+exports.isTaskOwner = function(req, res, next) {
+        Task.findById(req.params.id, function(err, task) {
+            if (err) {
+                return handleError(res, err);
+            }
+            if (!task) {
+                return res.send(404);
+            }
+            var currentUserId = req.session.userId;
+            if (!task.ownerId.equals(req.session.userId)) {
+                return res.status(403).send("You do not own this task");
+            }
+            next();
+        });
+    }
+    /**
+     * Allows a user to apply to help for a task
+     **/
 exports.applyToTask = function(req, res) {
     Task.findById(req.params.id, function(err, task) {
         if (err) {
@@ -167,11 +175,11 @@ exports.applyToTask = function(req, res) {
         }
         var currentUserId = req.session.userId;
         var canApply = true;
-        _.each(task.applicants,function(item){
-            if( item.id.equals(currentUserId))
+        _.each(task.applicants, function(item) {
+            if (item.id.equals(currentUserId))
                 canApply = false;
         });
-        if (!canApply){
+        if (!canApply) {
             return res.status(400).send("You already applied to help");
         } else {
             User.findOne({
@@ -180,22 +188,31 @@ exports.applyToTask = function(req, res) {
                 if (err) return res.status(500).json(err);
                 if (!user) return res.json(401);
                 if (user.fb && user.fb.id)
-                    task.applicants.push({id:user._id,name:user.name,pic:user.pic,fbId:user.fb.id});
+                    task.applicants.push({
+                        id: user._id,
+                        name: user.name,
+                        pic: user.pic,
+                        fbId: user.fb.id
+                    });
                 else
-                    task.applicants.push({id:user._id,name:user.name,pic:user.pic});
-            user.taskIds.push(req.params.id);
-            user.save(function(err) {
-                if (err) {
-                    console.log(err);
-                    return handleError(res, err);
-                }
-                task.save(function(err) {
+                    task.applicants.push({
+                        id: user._id,
+                        name: user.name,
+                        pic: user.pic
+                    });
+                user.taskIds.push(req.params.id);
+                user.save(function(err) {
                     if (err) {
+                        console.log(err);
                         return handleError(res, err);
                     }
-                    return res.json(200, task);
+                    task.save(function(err) {
+                        if (err) {
+                            return handleError(res, err);
+                        }
+                        return res.json(200, task);
+                    });
                 });
-            });
             });
         }
     });
@@ -217,22 +234,25 @@ exports.setTasker = function(req, res) {
     Task.findById(req.params.id, function(err, task) {
         var didApplicantApplyToTask = false;
         var chosenApplicantId = req.param('applicantId');
-        if (chosenApplicantId!=undefined){
-            _.each(task.applicants,function(item){
-                if( item.id.equals(chosenApplicantId))
+        if (chosenApplicantId != undefined) {
+            _.each(task.applicants, function(item) {
+                if (item.id.equals(chosenApplicantId))
                     didApplicantApplyToTask = true;
             });
-            if (!didApplicantApplyToTask){
+            if (!didApplicantApplyToTask) {
                 return res.status(500).send("This person is not applying for your task");
             }
         }
-        if (chosenApplicantId==undefined){
-            task.tasker = {id:chosenApplicantId,confirmed:false};
+        if (chosenApplicantId == undefined) {
+            task.tasker = {
+                id: chosenApplicantId,
+                confirmed: false
+            };
             task.status = "open";
             task.save(function(err) {
-                    if (err) {
-                        return handleError(res, err);
-                    }
+                if (err) {
+                    return handleError(res, err);
+                }
                 return res.status(200).json(task);
             });
         } else {
@@ -243,17 +263,28 @@ exports.setTasker = function(req, res) {
                 if (err) return res.status(500).json(err);
                 if (!user) return res.json(401);
                 if (user.fb && user.fb.id)
-                    task.tasker={id:user._id,name:user.name,pic:user.pic,fbId:user.fb.id,confirmed:false};
+                    task.tasker = {
+                        id: user._id,
+                        name: user.name,
+                        pic: user.pic,
+                        fbId: user.fb.id,
+                        confirmed: false
+                    };
                 else
-                    task.tasker={id:user._id,name:user.name,pic:user.pic,confirmed:false};
+                    task.tasker = {
+                        id: user._id,
+                        name: user.name,
+                        pic: user.pic,
+                        confirmed: false
+                    };
                 task.status = "chosen";
                 task.save(function(err) {
                     if (err) {
                         return handleError(res, err);
                     }
                     //https://snaptasq.com/task/view/55c82438ede999467491c629
-                    var taskUri = config.host.url+"task/view/"+task._id;
-                    Emailer.sendRequestTaskerHelp(null,null,user.email, taskUri, task.name, task.ownerName, task.ownerPic);
+                    var taskUri = config.host.url + "task/view/" + task._id;
+                    Emailer.sendRequestTaskerHelp(null, null, user.email, taskUri, task.name, task.ownerName, task.ownerPic);
                     return res.json(200, task);
                 });
             });
@@ -270,7 +301,7 @@ exports.setTasker = function(req, res) {
  * @param isAccepted: true if they accepted, false if they rejected the task
  * If the user rejects the task, then the task is set to open, the applicant then
  * will be removed from the applicants
-**/
+ **/
 exports.confirmTasker = function(req, res) {
     Task.findById(req.params.id, function(err, task) {
         if (err) {
@@ -280,25 +311,25 @@ exports.confirmTasker = function(req, res) {
             return res.send(404);
         }
 
-        if (task.tasker.id == undefined){
+        if (task.tasker.id == undefined) {
             return res.status(500).send("The owner has not yet picked a tasker");
         }
         // check for logged out
-        if (!task.tasker.id.equals(req.session.userId)){
+        if (!task.tasker.id.equals(req.session.userId)) {
             return res.status(403).send("You are not selected to help on this task.");
         } else {
             task.tasker.confirmed = req.param('isAccepted');
-            if (task.tasker.confirmed){
+            if (task.tasker.confirmed) {
                 task.status = "in progress";
             } else {
-                task = removeApplicantFromTaskById(task,task.tasker.id);
+                task = removeApplicantFromTaskById(task, task.tasker.id);
                 task.status = "open";
                 task.tasker = undefined;
             }
             task.save(function(err) {
-                    if (err) {
-                        return handleError(res, err);
-                    }
+                if (err) {
+                    return handleError(res, err);
+                }
                 return res.json(200, task);
             });
         }
@@ -310,31 +341,32 @@ exports.confirmTasker = function(req, res) {
  * @param task: the task
  * @param applicantId : the Mongoose Schema _id of a user
  * @returns : the task
-**/
-function removeApplicantFromTaskById(task,applicantId){
-    for(var i = task.applicants.length - 1; i >= 0; i--) {
-        if(task.applicants[i].id.equals(applicantId)) {
-           task.applicants.splice(i, 1);
-           break;
+ **/
+function removeApplicantFromTaskById(task, applicantId) {
+    for (var i = task.applicants.length - 1; i >= 0; i--) {
+        if (task.applicants[i].id.equals(applicantId)) {
+            task.applicants.splice(i, 1);
+            break;
         }
     }
     return task;
 }
 
-function isUserTasker(task,userId){
+function isUserTasker(task, userId) {
     if (task.tasker.id == undefined)
         return false;
     return task.tasker.id.equals(userId);
 }
-function removeTasker(task){
+
+function removeTasker(task) {
     task.tasker = undefined;
     task.status = "open";
     return task;
 }
-                
+
 /**
  * Allowsa user to apply to help for a task
-**/
+ **/
 exports.unapplyToTask = function(req, res) {
     Task.findById(req.params.id, function(err, task) {
         if (err) {
@@ -350,10 +382,10 @@ exports.unapplyToTask = function(req, res) {
             if (err) return res.status(500).json(err);
             if (!user) return res.json(401);
 
-            task = removeApplicantFromTaskById(task,user._id);
-            for(var i = user.taskIds.length - 1; i >= 0; i--) {
-                if(user.taskIds[i].equals(req.params.id)) {
-                   user.taskIds.splice(i, 1);
+            task = removeApplicantFromTaskById(task, user._id);
+            for (var i = user.taskIds.length - 1; i >= 0; i--) {
+                if (user.taskIds[i].equals(req.params.id)) {
+                    user.taskIds.splice(i, 1);
                 }
             }
 
@@ -362,7 +394,7 @@ exports.unapplyToTask = function(req, res) {
                     return handleError(res, err);
                 }
 
-                if (isUserTasker(task,user._id)){
+                if (isUserTasker(task, user._id)) {
                     removeTasker(task);
                 }
                 task.save(function(err) {
@@ -372,7 +404,7 @@ exports.unapplyToTask = function(req, res) {
                     return res.json(200, task);
                 });
             });
-            
+
         });
     });
 };
@@ -386,7 +418,7 @@ exports.destroy = function(req, res) {
             return res.send(404);
         }
         var currentUserId = req.session.userId;
-        if (task.ownerId != currentUserId){
+        if (task.ownerId != currentUserId) {
             return res.status(403).send("Only owners can delete their own tasks."); //unauthorized
         }
         task.remove(function(err) {

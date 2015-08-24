@@ -173,7 +173,6 @@ var app = angular.module('snaptasqApp', ['bcherny/formatAsCurrency', 'slick', 'a
                 return;
             }
             if (next.$$route.scrollToTopOnLoad) {
-                console.log("Bruh");
                 $('html, body').animate({
                     scrollTop: 0
                 }, 'slow');
@@ -217,7 +216,6 @@ function GlobalCtrl($scope, BadgeAlerts, localStorageService, $q, $templateCache
         $(window).resize(
             viewport.changed(function() {
                 $scope.viewport = viewport.current();
-                console.log($scope.viewport)
             }));
         $(document).ready(function() {
             $scope.viewport = viewport.current();

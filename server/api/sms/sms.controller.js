@@ -4,12 +4,12 @@ var config = require('../../config/environment')
 //require the Twilio module and create a REST client
 var client = require('twilio')(config.SMS_TWILIO_SSID, config.SMS_TWILIO_AUTH_TOKEN);
 
-function text(to,msg){
+function text(to, msg) {
     client.sendMessage({
 
-    to:to, // Any number Twilio can deliver to
-    from: config.TWILIO_PHONE_NUMBER, // A number you bought from Twilio and can use for outbound communication
-    body: msg // body of the SMS message
+        to: to, // Any number Twilio can deliver to
+        from: config.TWILIO_PHONE_NUMBER, // A number you bought from Twilio and can use for outbound communication
+        body: msg // body of the SMS message
 
     }, function(err, responseData) { //this function is executed when a response is received from Twilio
 
@@ -26,22 +26,22 @@ function text(to,msg){
     });
 }
 
-function call(to){
+function call(to) {
     client.makeCall({
 
-    to:to, // Any number Twilio can call
-    from: config.TWILIO_PHONE_NUMBER, // A number you bought from Twilio and can use for outbound communication
-    url: 'http://www.example.com/twiml.php' // A URL that produces an XML document (TwiML) which contains instructions for the call
+        to: to, // Any number Twilio can call
+        from: config.TWILIO_PHONE_NUMBER, // A number you bought from Twilio and can use for outbound communication
+        url: 'http://www.example.com/twiml.php' // A URL that produces an XML document (TwiML) which contains instructions for the call
 
-}, function(err, responseData) {
+    }, function(err, responseData) {
 
-    //executed when the call has been initiated.
-    console.log(responseData.from); // outputs "+14506667788"
+        //executed when the call has been initiated.
+        console.log(responseData.from); // outputs "+14506667788"
 
-});
+    });
 }
 
 module.exports = {
-    text:text,
-    call:call
+    text: text,
+    call: call
 };

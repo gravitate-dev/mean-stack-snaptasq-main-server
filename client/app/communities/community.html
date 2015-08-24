@@ -1,0 +1,5 @@
+<div class="container">
+    <!-- group {{group}} -->
+    <div ng-if="allowed===false" ng-include src="'app/communities/partials/join.community.html'"></div>
+    <div ng-if="allowed" ng-include src="'app/communities/partials/main.community.html'"></div>
+</div>

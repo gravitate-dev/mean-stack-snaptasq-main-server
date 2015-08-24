@@ -2,10 +2,10 @@
     <section class="col-md-12" style="margin-top:50px;">
         <div class="panel panel-info">
             <div class="panel-body">
-                <h1 style="display:inline;" class="text-center">Private Community Tasqs</h1>
-                <button class="btn btn-info pull-right" ng-click="showSuggestCommunityModal()"><i class="fa fa-plus"></i>&nbsp;Suggest Community</button>
+                <h1 style="display:inline;" class="text-center">Public Community Tasqs</h1>
+                <!-- <button class="btn btn-info pull-right" ng-click="showSuggestCommunityModal()"><i class="fa fa-plus"></i>&nbsp;Suggest Community</button> -->
                 <ul>
-                    <li ng-repeat="item in communities"><a href="#" class="lead">{{item.name}}</a></li>
+                    <li ng-repeat="item in publicCommunities"><a href="/community/{{item._id}}" class="lead">{{item.name}}</a></li>
                 </ul>
             </div>
 
@@ -15,11 +15,11 @@
     <section class="col-md-12" style="margin-top:50px;">
         <div class="panel panel-info">
             <div class="panel-body">
-                <h1 style="display:inline;" class="text-center">Public Community Tasqs</h1>
-                <button class="btn btn-info pull-right" ng-click="showSuggestCommunityModal()"><i class="fa fa-plus"></i>&nbsp;Suggest Community</button>
+                <h1 style="display:inline;" class="text-center">Private Community Tasqs</h1>
+                <!-- <button class="btn btn-info pull-right" ng-click="showSuggestCommunityModal()"><i class="fa fa-plus"></i>&nbsp;Suggest Community</button> -->
                 <ul>
-                    <li ng-repeat="item in publiccommunities"><a href="#" class="lead">{{item.name}} Tasqs</a></li>
-                    <li ng-if="!publiccommunites">None</li>
+                    <li ng-repeat="item in privateCommunities"><a href="/community/{{item._id}}" class="lead">{{item.name}} Tasqs</a></li>
+                    <li ng-if="!privateCommunities">None</li>
                 </ul>
             </div>
 
