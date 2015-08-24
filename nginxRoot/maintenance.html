@@ -1,19 +1,106 @@
 <!doctype html>
+<html>
 <title>Site Maintenance</title>
+<head>
+<meta http-equiv="refresh" content="30">
 <style>
-  body { text-align: center; padding: 150px;}
-  h1 { font-size: 50px; }
-  body { font: 20px Helvetica, sans-serif; color: #000; background-color: #fcd11a; }
-  article { display: block; text-align: left; width: 650px; margin: 0 auto;}
-  a { color: #dc8100; text-decoration: none; }
-  a:hover { color: #000; text-decoration: none; }
-</style>
+body { 
+  text-align: center; 
+  padding-left: 50px;
+  padding-right: 50px;
+}
+h1 { font-size: 50px; }
+body { font: 20px Helvetica, sans-serif; color: #000; background-color: #fcd11a; }
+article { display: block; text-align: left; width: 650px; margin: 0 auto;}
+a { color: #dc8100; text-decoration: none; }
+a:hover { color: #000; text-decoration: none; }
 
+.fade-in {
+    -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
+       -moz-animation: fadein 2s; /* Firefox < 16 */
+        -ms-animation: fadein 2s; /* Internet Explorer */
+         -o-animation: fadein 2s; /* Opera < 12.1 */
+            animation: fadein 2s;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Opera < 12.1 */
+@-o-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Mobile CSS unused so far*/
+@media (max-width: 767px) {} 
+</style>
+</head>
+<body>
 <article>
     <h1>We&rsquo;ll be back soon!</h1>
     <div> 
         <p>Sorry for the inconvenience but we&rsquo;re performing some maintenance at the moment. If you need to you can always <a href="mailto:admin@snaptasq.com">contact us</a>, otherwise we&rsquo;ll be back online shortly!</p>
-        <p>Expected downtime : <strong>5 minutes</strong></p>
+        <p>You can wait on this page for snaptasq. Once maintenance is completed, you will be automatically redirected.</p>
         <p>&mdash; Snaptasq Team</p>
+        </br>
+        <p>Next update in <span id="time"></span> seconds</p>
+        <p>Expected downtime : <strong>5 minutes</strong></p>
+        <p>Server Status : <strong class="fade-in">DOWN</strong></p>
     </div>
 </article>
+<script>
+function startTimer(duration, display) {
+    var start = Date.now(),
+        diff,
+        minutes,
+        seconds;
+    function timer() {
+        // get the number of seconds that have elapsed since 
+        // startTimer() was called
+        diff = duration - (((Date.now() - start) / 1000) | 0);
+
+        // does the same job as parseInt truncates the float
+        seconds = (diff % 60) | 0;
+
+        display.textContent = seconds; 
+
+        if (diff <= 0) {
+            // add one second so that the count down starts at the full duration
+            // example 05:00 not 04:59
+            start = Date.now() + 1000;
+        }
+    };
+    // we don't want to wait a full second before the timer starts
+    timer();
+    setInterval(timer, 1000);
+}
+
+window.onload = function () {
+    var refreshTimer = 30,
+        display = document.querySelector('#time');
+    startTimer(refreshTimer, display);
+};
+</script>
+</body>
+</html>

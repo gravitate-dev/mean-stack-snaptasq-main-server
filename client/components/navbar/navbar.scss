@@ -157,13 +157,6 @@ li.dropdown {
   padding-bottom:0px;
 }
 
-
-
-/* Make navbar hover */
-ul.nav li.dropdown:hover > ul.dropdown-menu {
-    display: block;    
-}
-
 .nav li.active > a {
   background-color: $bgDefault;
   color: $colHighlight !important;
