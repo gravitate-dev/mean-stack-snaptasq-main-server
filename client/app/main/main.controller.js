@@ -24,6 +24,11 @@ angular.module('snaptasqApp').controller('MainCtrl', function($scope, $http, $in
             };
         }
     }, true);
+
+    $scope.getStarted = function() {
+        //TaskMarshaler.removeTask();
+        $location.path("/task/create");
+    }
     $scope.handleSearch = function($item, $model, $label) {
         var task = TaskMarshaler.createDefaultTask($item);
         TaskMarshaler.setTask(task);

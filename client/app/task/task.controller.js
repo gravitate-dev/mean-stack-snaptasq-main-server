@@ -254,7 +254,9 @@ angular.module('snaptasqApp')
         }, 1000)
         */
     })
-    .controller('TaskEditCtrl', function($scope, Modal, notifications, $routeParams, Task, Notification, $rootScope, TaskMarshaler, Auth, $location) {
+    .controller('TaskEditCtrl', function($scope, $window, Modal, notifications, $routeParams, Task, Notification, $rootScope, TaskMarshaler, Auth, $location) {
+        $scope._bgcolorGrey();
+
         /**
          * Task steps can be 
          * 1. taskform 2. community 3. share 4. finish
@@ -262,18 +264,34 @@ angular.module('snaptasqApp')
         $scope.uiStep = "taskform";
         $scope.taskId = undefined; // this will be set in Task.create
         $scope.changeStepTo = function(stepName) {
-                if (stepName == "finish") {
-                    if ($scope.taskId) {
-                        $location.path("/task/view/" + $scope.taskId);
-                    } else {
-                        $location.path("/tasks/mine");
-                    }
+            if (stepName == "finish") {
+                if ($scope.taskId) {
+                    $location.path("/task/view/" + $scope.taskId);
+                } else {
+                    $location.path("/tasks/mine");
                 }
-                $scope.uiStep = stepName;
             }
-            //$scope.task = $scope.task || TaskMarshaler.getTask() || {};
-            // if the $scope.task is undefined this means its coming from the homepage
-            // in that case DO NOT reassign the varaible
+            $scope.uiStep = stepName;
+        }
+
+        $scope.timeEstimate = [{
+            id: 1,
+            name: '30 min'
+        }, {
+            id: 2,
+            name: '1 hour'
+        }, {
+            id: 3,
+            name: '2 hours'
+        }, {
+            id: 4,
+            name: '>2 hours'
+        }];
+
+
+        //$scope.task = $scope.task || TaskMarshaler.getTask() || {};
+        // if the $scope.task is undefined this means its coming from the homepage
+        // in that case DO NOT reassign the varaible
         if (angular.isUndefined($scope.task)) {
             //ONLY load this if the task is undefined from the parent controller, TasksCtrl
             $scope.task = TaskMarshaler.getTask() || {};
@@ -292,10 +310,38 @@ angular.module('snaptasqApp')
         $scope.action = $routeParams.action;
 
         $scope.previousLocation = {};
-        //case they edit a pre-existing location
+
+        //i have to watch the task
+        var unregister = $scope.$watch('task', function(newVal, oldVal) {
+                if (angular.isUndefined(newVal)) return;
+                if (angular.isUndefined(newVal.location)) return;
+                $scope.setEditor(newVal);
+            })
+            //case they edit a pre-existing location
         $scope.setEditor = function(task) {
             $scope.previousLocation = _.clone(task.location.name, true);
         }
+
+
+        /**
+         * When editing a task the newVal will NEVER be undefined
+         * When creating a new task the newVal will be UNDEFINED
+         * If the task was NOT UNDEFINED THEN SUDDENLY IS UNDEFINED
+         * we should REMOVE ALL LOCATION PROPERTIES!
+         * THIS FIXES LOCATION BUG!
+         **/
+        var isUndefinedFirst = false;
+        var locationWatcher = $scope.$watch('task.location.name', function(newVal, oldVal) {
+            if (newVal != oldVal) {
+                if ($scope.task.location.details || $scope.task.location.formattedName) {
+                    $scope.task.location = {
+                        name: newVal
+                    };
+                    $scope.task.locationCopy = undefined;
+                }
+            }
+
+        });
         if ($scope.action == "update") {
             /** 
              * Fix for task location not appearing when loading an old tasq
@@ -312,18 +358,6 @@ angular.module('snaptasqApp')
 
             if (form.$valid) {
                 $scope.errors.location = undefined;
-                if (angular.isUndefined($scope.previousLocation) == false) {
-                    //first check that it wasnt changed
-                    if ($scope.previousLocation != $scope.task.location.name) {
-                        if (angular.isUndefined($scope.task.location.details)) {
-                            //there will be a details object when the location is a valid one,
-                            //after it was changed if its missing its an invalid location
-                            $scope.errors.location = true;
-                        }
-                        //if the location was changed, then we need to
-                        //clear the task location data
-                    }
-                }
                 try {
                     //if the formattedName is in
                     $scope.task.location = TaskMarshaler.formatLocation($scope.task.location);
@@ -331,7 +365,7 @@ angular.module('snaptasqApp')
                     //if location is wrong simply invalidate the location
                     $scope.errors.location = true;
                 }
-                if ($scope.errors.description || $scope.errors.location) {
+                if ($scope.errors.description) {
                     return;
                 }
                 if (!Auth.isLoggedIn()) {
@@ -384,11 +418,7 @@ angular.module('snaptasqApp')
         $scope.cancelEditingTask = function() {
             $scope.task = undefined;
             TaskMarshaler.removeTask();
-            if (Auth.isLoggedIn()) {
-                $location.path("/tasks/mine");
-            } else {
-                $location.path("/");
-            }
+            $window.history.back();
         }
     }).controller('TaskApplicantList', function($scope, Task, Notification, $rootScope) {
         $scope.setTasker = function(task, applicantId) {

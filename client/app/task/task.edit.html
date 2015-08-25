@@ -1,60 +1,71 @@
 <div class="container top-buffer" ng-controller="TaskEditCtrl">
     <div class="row">
         <div class="col-sm-12">
-            <p class="lead">My Task
-                <button ng-click="cancelEditingTask(task);" type="button" class="btn btn-danger pull-right" style="height:46px;">Cancel</button>
+            <p class="lead"><strong style="padding-right:15px;">tell us what tasq you need done</strong>
+                <button ng-if="task._id" ng-click="deleteTask(task);" type="button" class="btn btn-danger pull-right" style="height:46px;">Delete Task</button>
+                <button ng-click="cancelEditingTask(task);" type="button" class="btn btn-warning" style="height:46px;">Cancel</button>
             </p>
         </div>
-        <div class="col-sm-12" ng-if="action=='create' || action=='update'">
+    </div>
+    <div class="row">
+        <div style="background-color:white;padding-top:25px;padding-left:15px;padding-bottom:30px;padding-right:15px;" class="col-sm-12">
             <form class="form" name="form" ng-submit="createTask(form)" novalidate>
-                <div class="form-group" ng-class="{ 'has-success': form.name.$valid && submitted,
-        'has-error': form.name.$invalid && submitted }">
-                    <label>Title</label>
+                <div class="col-sm-6">
+                    <div class="form-group" ng-class="{ 'has-success': form.name.$valid && submitted,
+                    'has-error': form.name.$invalid && submitted }">
+                        <label>title</label>
 
-                    <input type="text" scroll-on-click-mobile="-15px" placeholder="Ex: $15 to anyone who could help me move a couch tonight or tomorrow morning before 10 am! Please I'm small" maxlength="128" name="name" class="form-control" ng-model="task.name" required/>
-                    <p class="help-block" ng-show="form.name.$error.required && submitted">
-                        A title is required
-                    </p>
-                </div>
-
-                <div class="form-group" ng-class="{ 'has-success': form.location.$valid && !errors.location && submitted,
-      'has-error': (form.location.$invalid || errors.location) && submitted }">
-                    <label>Location</label>
-
-                    <input type="text" scroll-on-click-mobile="-15px" class="form-control" name="location" ng-autocomplete ng-model="task.location.name" options="options" details="task.location.details" required/>
-                    <p class="help-block" ng-show="form.location.$error.required && submitted">
-                        A location is required
-                    </p>
-                    <p class="help-block" ng-show="errors.location && submitted">
-                        Please re-enter the location
-                    </p>
-                </div>
-                <div class="form-group" ng-class="{ 'has-success': form.name.$valid && submitted,
-    'has-error': form.name.$invalid && submitted }">
-                    <label popover-placement="right" popover="It is reccomended you learn how to set price points accurately, clicking the link won't clear your task information" popover-trigger="mouseenter">Reward Price (can be free, <a href="/pricePoints" target="_tab">learn how to set price points</a>)</label>
-                    <div><strong>Current Price Category: {{task.payout | pricePointCategory}}</strong></div>
-                    <label style="margin-right:5px;"></label>
-                    <div class="clearfix">
-                        <input scroll-on-click-mobile="-15px" size="7" format-as-currency="" type="text" style="display:inline;" ng-model="task.payout" popover-placement="right" popover="By offering as little as 5$ it greatly increases the chances of success" required/>
-
+                        <input type="text" scroll-on-click-mobile="-15px" placeholder="give your tasq a descriptive title" maxlength="128" name="name" class="form-control" ng-model="task.name" required/>
+                        <p class="help-block" ng-show="form.name.$error.required && submitted">
+                            A title is required
+                        </p>
+                    </div>
+                    <div class="form-group" ng-class="{ 'has-success': form.location.$valid && !errors.location && submitted,
+                'has-error': (form.location.$invalid || errors.location) && submitted }">
+                        <label>estimated time (hours)</label>
+                        <input type="number" scroll-on-click-mobile="-15px" class="form-control" name="estimatedTime" ng-model="task.estimatedTime" placeholder="enter how many hours it should take" />
+                        <p class="help-block" ng-show="errors.location && submitted">
+                            Please re-enter the location
+                        </p>
+                    </div>
+                    <div class="form-group" ng-class="{ 'has-success': form.name.$valid && submitted,
+            'has-error': form.name.$invalid && submitted }">
+                        <label popover-placement="right" popover="It is reccomended you learn how to set price points accurately, clicking the link won't clear your task information" popover-trigger="mouseenter">reward price</label>
+                        <input scroll-on-click-mobile="-15px" class="form-control" format-as-currency="" type="text" style="display:inline;" ng-model="task.payout" popover-placement="right" popover="By offering as little as 5$ it greatly increases the chances of success" required/>
+                        <div class="price-bar-container" style="margin-top:5px;">
+                            <div class="price-bar-item" ng-class="{'price-bar-filled':task.payout>0}"></div>
+                            <div class="price-bar-item" ng-class="{'price-bar-filled':task.payout>10}"></div>
+                            <div class="price-bar-item" ng-class="{'price-bar-filled':task.payout>20}"></div>
+                        </div>
+                        <div class="pull-right"><strong>price category:&nbsp;<a href="/pricePoints" target="_tab">{{task.payout | pricePointCategory}}&nbsp;<i class="fa fa-question-circle"></i></a></strong></div>
                     </div>
                 </div>
-                <div class="form-group" ng-class="{ 'has-success': form.description.$valid && submitted,
-      'has-error': (form.description.$invalid || errors.description) && submitted }">
-                    <label>Additional Details (Optional)</label>
+                <!-- ./col-sm-6 -->
+                <div class="col-md-6">
+                    <div class="form-group" ng-class="{ 'has-success': form.description.$valid && submitted,
+        'has-error': (form.description.$invalid || errors.description) && submitted }">
+                        <label>additional details (optional)</label>
 
-                    <textarea scroll-on-click-mobile="-15px" placeholder="Ex: Couch is small enough to fit in an SUV." name="description" cols="40" maxlength="1000" rows="5" ng-model="task.description" class="form-control"></textarea>
-                    <p class="help-block" ng-show="errors.description && submitted">
-                        A description is optional. Limited to 1000 characters.
-                    </p>
-                </div>
-                </br>
-                <div class="row bot-buffer">
-                    <div class="col-md-12">
-                        <button class="btn btn-info btn-lg" type="submit">
-                            Next
-                        </button>
-                        <button ng-if="task._id" ng-click="deleteTask(task);" type="button" class="btn btn-danger pull-right" style="height:46px;">Delete Task</button>
+                        <textarea scroll-on-click-mobile="-15px" placeholder="Ex: Couch is small enough to fit in an SUV." name="description" cols="40" maxlength="1000" rows="5" ng-model="task.description" class="form-control"></textarea>
+                        <p class="help-block" ng-show="errors.description && submitted">
+                            provide any extra details or requirements
+                        </p>
+                    </div>
+                    <div class="form-group" ng-class="{ 'has-success': form.location.$valid && !errors.location && submitted,
+    'has-error': (form.location.$invalid || errors.location) && submitted }">
+                        <label>location (optional)</label>
+
+                        <input type="text" scroll-on-click-mobile="-15px" class="form-control" name="location" placeholder="enter a location" ng-autocomplete ng-model="task.location.name" options="options" details="task.location.details" />
+                        <p class="help-block" ng-show="errors.location && submitted">
+                            Please re-enter the location
+                        </p>
+                    </div>
+                    <div class="row bot-buffer">
+                        <div class="col-md-12">
+                            <button class="btn btn-primary btn-lg pull-right" type="submit">
+                                CREATE TASQ!
+                            </button>
+                        </div>
                     </div>
                 </div>
             </form>

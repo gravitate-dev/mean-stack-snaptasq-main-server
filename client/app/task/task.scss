@@ -162,3 +162,23 @@ transition: width  0.2s ease-in-out;
 .kindling:hover{cursor:pointer}
 .kindling:hover h3{text-shadow:0 0 10px #fff,0 0 10px #fff}
 .kindling:hover h2{color:white}
+
+/** STYLING FOR THE REWARD PRICE BAR **/
+.price-bar-container {
+    width: 100%;
+}
+
+.price-bar-item {
+    width: 31%;
+    border: 1px solid grey;
+    background-color: lightgray;
+    border-radius: 3px;
+    margin-right: 2px;
+    float: left;
+    display: block;
+    height: 10px;
+}
+
+.price-bar-filled {
+    background-color: #196cb2 !important;
+}

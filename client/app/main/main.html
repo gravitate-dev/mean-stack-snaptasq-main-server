@@ -6,10 +6,11 @@ min-height:750px;">
         <section class="main-top-image-controls">
             <h1>Friends Help FriendS</h1>
             <h3>get help from the people you already know</h3>
-            <div style="margin-top:15px; pointer-events: all;">
+            <!-- <div style="margin-top:15px; pointer-events: all;">
                 <input id="mainsearch" scroll-on-click="-15px" autofocus="autofocus" type="text" ng-model="searchTask" typeahead="task.name for task in commonTasks | filter:$viewValue | limitTo:8 | typeAheadNoResultsOnEmpty:$viewValue" class="input-lg" placeholder="What do you need done?"
                 typeahead-template-url="components/typeahead/customTemplate.html" typeahead-on-select="handleSearch($item, $model, $label)" />
-            </div>
+            </div> -->
+            <button ng-click="getStarted()" class="btn btn-primary btn-lg top-buffer">Get Started</button>
         </section>
     </div>
 </div>

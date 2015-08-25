@@ -203,6 +203,9 @@ function GlobalCtrl($scope, BadgeAlerts, localStorageService, $q, $templateCache
     $scope._bgcolorWhite = function() {
         $scope._bgcolor = "white";
     }
+    $scope._bgcolorGrey = function() {
+        $scope._bgcolor = "#f6f6f6";
+    }
     $scope._noFooter = function() {
         $scope._showFooter = false;
     }
