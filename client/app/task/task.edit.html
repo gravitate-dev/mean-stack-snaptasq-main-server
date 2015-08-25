@@ -53,8 +53,11 @@
                     </div>
                     <div class="row bot-buffer">
                         <div class="col-md-12">
-                            <button class="btn btn-primary btn-lg pull-right" type="submit">
+                            <button ng-if="action=='create'" class="btn btn-primary btn-lg pull-right" type="submit">
                                 CREATE TASQ!
+                            </button>
+                            <button ng-if="action=='update'" class="btn btn-success btn-lg pull-right" type="submit">
+                                UPDATE TASQ!
                             </button>
                         </div>
                     </div>
