@@ -2,8 +2,8 @@
     <div class="row">
         <div class="col-sm-12">
             <p class="lead"><strong style="padding-right:15px;">tell us what tasq you need done</strong>
-                <button ng-if="task._id" ng-click="deleteTask(task);" type="button" class="btn btn-danger pull-right" style="height:46px;">Delete Task</button>
-                <button ng-click="cancelEditingTask(task);" type="button" class="btn btn-warning" style="height:46px;">Cancel</button>
+                <button ng-if="task._id" ng-click="deleteTask(task);" type="button" class="btn btn-danger pull-right" style="height:46px;">delete tasq</button>
+                <button ng-click="cancelEditingTask(task);" type="button" class="btn btn-warning" style="height:46px;">cancel</button>
             </p>
         </div>
     </div>
@@ -17,7 +17,7 @@
 
                         <input type="text" scroll-on-click-mobile="-15px" placeholder="give your tasq a descriptive title" maxlength="128" name="name" class="form-control" ng-model="task.name" required/>
                         <p class="help-block" ng-show="form.name.$error.required && submitted">
-                            A title is required
+                            a title is required
                         </p>
                     </div>
                     <div class="form-group" ng-class="{ 'has-success': form.location.$valid && !errors.location && submitted,
@@ -25,7 +25,7 @@
                         <label>estimated time (hours)</label>
                         <input type="number" scroll-on-click-mobile="-15px" class="form-control" name="estimatedTime" ng-model="task.estimatedTime" placeholder="enter how many hours it should take" />
                         <p class="help-block" ng-show="errors.location && submitted">
-                            Please re-enter the location
+                            please re-enter the location
                         </p>
                     </div>
                     <div class="form-group" ng-class="{ 'has-success': form.name.$valid && submitted,
@@ -57,7 +57,7 @@
 
                         <input type="text" scroll-on-click-mobile="-15px" class="form-control" name="location" placeholder="enter a location" ng-autocomplete ng-model="task.location.name" options="options" details="task.location.details" />
                         <p class="help-block" ng-show="errors.location && submitted">
-                            Please re-enter the location
+                            please re-enter the location
                         </p>
                     </div>
                     <div class="row bot-buffer">
