@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
     <p ng-if="modal.text" ng-bind="modal.text"></p>
-    <div ng-if="modal.html" ng-bind-html-unsafe="modal.html"></div>
+    <div ng-if="modal.html" ng-bind-html="modal.html"></div>
     <div ng-if="modal.htmlInclude" ng-include src="modal.htmlInclude"></div>
 </div>
 <div class="modal-footer">

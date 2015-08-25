@@ -2,15 +2,14 @@
     <div class="row">
         <div class="col-sm-12">
             <p class="lead"><strong style="padding-right:15px;">tell us what tasq you need done</strong>
-                <button ng-if="task._id" ng-click="deleteTask(task);" type="button" class="btn btn-danger pull-right" style="height:46px;">delete tasq</button>
                 <button ng-click="cancelEditingTask(task);" type="button" class="btn btn-warning" style="height:46px;">cancel</button>
             </p>
         </div>
     </div>
-    <div class="row">
-        <div style="background-color:white;padding-top:25px;padding-left:15px;padding-bottom:30px;padding-right:15px;" class="col-sm-12">
-            <form class="form" name="form" ng-submit="createTask(form)" novalidate>
-                <div class="col-sm-6">
+    <div style="background-color:white;padding-top:25px;padding-left:15px;padding-bottom:30px;padding-right:15px;" class="col-sm-12">
+        <form class="form" name="form" ng-submit="createTask(form)" novalidate>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="form-group" ng-class="{ 'has-success': form.name.$valid && submitted,
                     'has-error': form.name.$invalid && submitted }">
                         <label>title</label>
@@ -20,16 +19,8 @@
                             a title is required
                         </p>
                     </div>
-                    <div class="form-group" ng-class="{ 'has-success': form.location.$valid && !errors.location && submitted,
-                'has-error': (form.location.$invalid || errors.location) && submitted }">
-                        <label>estimated time (hours)</label>
-                        <input type="number" scroll-on-click-mobile="-15px" class="form-control" name="estimatedTime" ng-model="task.estimatedTime" placeholder="enter how many hours it should take" />
-                        <p class="help-block" ng-show="errors.location && submitted">
-                            please re-enter the location
-                        </p>
-                    </div>
                     <div class="form-group" ng-class="{ 'has-success': form.name.$valid && submitted,
-            'has-error': form.name.$invalid && submitted }">
+                'has-error': form.name.$invalid && submitted }">
                         <label popover-placement="right" popover="It is reccomended you learn how to set price points accurately, clicking the link won't clear your task information" popover-trigger="mouseenter">reward price</label>
                         <input scroll-on-click-mobile="-15px" class="form-control" format-as-currency="" type="text" style="display:inline;" ng-model="task.payout" popover-placement="right" popover="By offering as little as 5$ it greatly increases the chances of success" required/>
                         <div class="price-bar-container" style="margin-top:5px;">
@@ -41,9 +32,9 @@
                     </div>
                 </div>
                 <!-- ./col-sm-6 -->
-                <div class="col-md-6">
+                <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="form-group" ng-class="{ 'has-success': form.description.$valid && submitted,
-        'has-error': (form.description.$invalid || errors.description) && submitted }">
+            'has-error': (form.description.$invalid || errors.description) && submitted }">
                         <label>additional details (optional)</label>
 
                         <textarea scroll-on-click-mobile="-15px" placeholder="Ex: Couch is small enough to fit in an SUV." name="description" cols="40" maxlength="1000" rows="5" ng-model="task.description" class="form-control"></textarea>
@@ -52,7 +43,7 @@
                         </p>
                     </div>
                     <div class="form-group" ng-class="{ 'has-success': form.location.$valid && !errors.location && submitted,
-    'has-error': (form.location.$invalid || errors.location) && submitted }">
+        'has-error': (form.location.$invalid || errors.location) && submitted }">
                         <label>location (optional)</label>
 
                         <input type="text" scroll-on-click-mobile="-15px" class="form-control" name="location" placeholder="enter a location" ng-autocomplete ng-model="task.location.name" options="options" details="task.location.details" />
@@ -68,7 +59,7 @@
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </div>

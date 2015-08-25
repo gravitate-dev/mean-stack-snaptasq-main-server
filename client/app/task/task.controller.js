@@ -138,6 +138,21 @@ angular.module('snaptasqApp')
                 });
             }
         }
+
+        $scope.deleteTask = function(t) {
+            Modal.confirm.delete(function(data) {
+                Task.delete(t._id, function(data) {
+                    Notification.success({
+                        message: "tasq delete",
+                        delay: 4000
+                    });
+                    $location.path('/tasks/mine');
+                }, function(err) {
+                    notifications.showError(err);
+                });
+            })("this tasq");
+
+        };
         $scope.applyToTask = function(task) {
                 if (!Auth.isLoggedIn()) {
                     $scope.connect();
@@ -404,17 +419,6 @@ angular.module('snaptasqApp')
             Modal.view.pricePoints(function(data) {})();
         }
 
-        $scope.deleteTask = function(t) {
-            Task.delete(t._id, function(data) {
-                Notification.success({
-                    message: "Task removed",
-                    delay: 4000
-                });
-                $location.path('/tasks/mine');
-            }, function(err) {
-                notifications.showError(err);
-            });
-        };
         $scope.cancelEditingTask = function() {
             $scope.task = undefined;
             TaskMarshaler.removeTask();

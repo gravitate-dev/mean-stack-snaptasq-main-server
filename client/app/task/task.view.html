@@ -29,90 +29,92 @@
                     <!-- task owner buttons -->
                     <span ng-if="task.ownerId==_me._id">
         <a href="/task/update/{{task._id}}"><button class="btn btn-warning" style="height:46px;">Edit Task</button></a>
-    </div>
-</div>
-<div class="row top-buffer">
-    <div class="col-md-12">
-        <div>
-            <div style="float:left;margin-right:10px;">
-            <img src="{{task.ownerPic}}" style="height:50px;width:50px;"/>
-            </div>
-            <div>
-            <strong>{{task.ownerName}}</strong>&nbsp;<span>{{task.created | date:'MMM d, y h:mm a'}}</span>&nbsp;<span class="badge badge-info">{{task.status | capslock}}</span>
+        <button ng-click="deleteTask(task)" class="btn btn-danger" style="height:46px;">Delete Task</button>
+        </span>
                 </div>
-                <div style="font-size:1.5em;"><a href="/task/view/{{task._id}}">{{task.name}}</a></div>
             </div>
-            <div class="pull-right">
+            <div class="row top-buffer">
+                <div class="col-md-12">
+                    <div>
+                        <div style="float:left;margin-right:10px;">
+                            <img src="{{task.ownerPic}}" style="height:50px;width:50px;" />
+                        </div>
+                        <div>
+                            <strong>{{task.ownerName}}</strong>&nbsp;<span>{{task.created | date:'MMM d, y h:mm a'}}</span>&nbsp;<span class="badge badge-info">{{task.status | capslock}}</span>
+                        </div>
+                        <div style="font-size:1.5em;"><a href="/task/view/{{task._id}}">{{task.name}}</a></div>
+                    </div>
+                    <div class="pull-right">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    {{task.description}}
+                </div>
+            </div>
+            <div class="row" ng-if="task.ownerId==_me._id && task.applicants.length==0">
+                <div class="col-md-12 lead">No one has applied yet. Try sharing your task via the share buttons.</div>
+            </div>
+            <div class="row top-buffer">
+                <div class="col-md-12">
+                    <div onrender="rendered()" class="fb-comments" data-href="{{_hostName}}/task/view/{{task._id}}#{{task._id}}" data-numposts="3" data-colorscheme="light"></div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            {{task.description}}
-        </div>
-    </div>
-    <div class="row" ng-if="task.ownerId==_me._id && task.applicants.length==0">
-        <div class="col-md-12 lead">No one has applied yet. Try sharing your task via the share buttons.</div>
-    </div>
-    <div class="row top-buffer">
-        <div class="col-md-12">
-            <div onrender="rendered()" class="fb-comments" data-href="{{_hostName}}/task/view/{{task._id}}#{{task._id}}" data-numposts="3" data-colorscheme="light"></div>
-        </div>
-    </div>
-</div>
-<!--./col-md-7-->
-<div class="col-md-5 col-sm-12">
-    <div class="row">
-        <div class="col-md-12">
-            <!--share stuff -->
-            <!-- Facebook Share Button -->
-            <a class="btnz share facebook" ng-click="_share('fb',task.name,task.description)" href="#"><i class="fa fa-facebook"></i> Share</a>
+        <!--./col-md-7-->
+        <div class="col-md-5 col-sm-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <!--share stuff -->
+                    <!-- Facebook Share Button -->
+                    <a class="btnz share facebook" ng-click="_share('fb',task.name,task.description)" href="#"><i class="fa fa-facebook"></i> Share</a>
 
-            <!-- Googple Plus Share Button -->
-            <!-- <a class="btnz share gplus" href="#"><i class="fa fa-google-plus"></i> Share</a> -->
-            <a href="#" ng-click="_share('google',task.name,task.description)"><img src="https://www.gstatic.com/images/icons/gplus-64.png" style="height:46px;" alt="Share on Google+" /></a>
-            <!-- Twitter Share Button -->
-            <a class="btnz share twitter" href="https://twitter.com/intent/tweet?text={{task.name}}&hashtags=snaptasq"><i class="fa fa-twitter"></i> Tweet</a>
-            <!-- Stumbleupon Share Button -->
-            <!-- <a class="btnz share stumbleupon" href="#"><i class="fa fa-stumbleupon"></i> Stumble</a> -->
+                    <!-- Googple Plus Share Button -->
+                    <!-- <a class="btnz share gplus" href="#"><i class="fa fa-google-plus"></i> Share</a> -->
+                    <a href="#" ng-click="_share('google',task.name,task.description)"><img src="https://www.gstatic.com/images/icons/gplus-64.png" style="height:46px;" alt="Share on Google+" /></a>
+                    <!-- Twitter Share Button -->
+                    <a class="btnz share twitter" href="https://twitter.com/intent/tweet?text={{task.name}}&hashtags=snaptasq"><i class="fa fa-twitter"></i> Tweet</a>
+                    <!-- Stumbleupon Share Button -->
+                    <!-- <a class="btnz share stumbleupon" href="#"><i class="fa fa-stumbleupon"></i> Stumble</a> -->
 
-            <!-- Pinterest Share Button -->
-            <a href="#" class="btnz share pinterest" ng-click="_share('pintrest',task.name,task.description)"><i class="fa fa-pinterest"></i> Pin it</a>
+                    <!-- Pinterest Share Button -->
+                    <a href="#" class="btnz share pinterest" ng-click="_share('pintrest',task.name,task.description)"><i class="fa fa-pinterest"></i> Pin it</a>
 
-            <!-- LinkedIn Share Button -->
-            <!-- <a class="btnz share linkedin" href="#"><i class="fa fa-linkedin"></i> LinkedIn</a> -->
+                    <!-- LinkedIn Share Button -->
+                    <!-- <a class="btnz share linkedin" href="#"><i class="fa fa-linkedin"></i> LinkedIn</a> -->
 
-            <!-- Buffer Share Button -->
-            <a href="https://bufferapp.com/add" class="buffer-add-button" data-count="horizontal">Buffer</a>
-            <script type="text/javascript" src="https://static.bufferapp.com/js/button.js"></script>
-            <!-- 
+                    <!-- Buffer Share Button -->
+                    <a href="https://bufferapp.com/add" class="buffer-add-button" data-count="horizontal">Buffer</a>
+                    <script type="text/javascript" src="https://static.bufferapp.com/js/button.js"></script>
+                    <!-- 
         <a class="btnz share buffer" href="#"><i class="fa fa-share-square-o"></i> Buffer</a> -->
-        </div>
-    </div>
-    <div class="row" id="googleMaps">
-        <div ng-if="!_isMobile" class="col-md-12">
-            <div ui-gmap-google-map fullscreen center='task.locationCopy.geo.center' zoom='15'>
-                <div ui-gmap-marker coords="task.location.geo.center" options="marker.options" idkey="0"></div>
+                </div>
             </div>
-        </div>
-        <div ng-if="_isMobile" class="col-sm-6 col-md-6">
-            <div ui-gmap-google-map center='task.locationCopy.geo.center' zoom='15'>
-                <div ui-gmap-marker coords="task.location.geo.center" options="marker.options" idkey="0"></div>
+            <div class="row" id="googleMaps">
+                <div ng-if="!_isMobile" class="col-md-12">
+                    <div ui-gmap-google-map fullscreen center='task.locationCopy.geo.center' zoom='15'>
+                        <div ui-gmap-marker coords="task.location.geo.center" options="marker.options" idkey="0"></div>
+                    </div>
+                </div>
+                <div ng-if="_isMobile" class="col-sm-6 col-md-6">
+                    <div ui-gmap-google-map center='task.locationCopy.geo.center' zoom='15'>
+                        <div ui-gmap-marker coords="task.location.geo.center" options="marker.options" idkey="0"></div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <!-- <div class="row">
+            <!-- <div class="row">
         <div class="col-md-12">
         <div ng-if="task.location.formattedName" class="lead">In {{task.location.formattedName}}</div>
         </div>
     </div>
     -->
-    <!--        <div class="container-outer">
+            <!--        <div class="container-outer">
            <div class="container-inner">
               <img src="http://lorempixel.com/400/400/" ng-repeat="x in [1,2,3,4,5,6,7,8]" style="height:128px;width:128px;float:left;white-space: nowrap;display:inline;" fullscreen/>
           </div>
       </div>
 -->
-</div>
-</div>
+        </div>
+    </div>
 </div>
