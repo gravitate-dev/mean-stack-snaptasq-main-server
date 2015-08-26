@@ -73,6 +73,17 @@ var app = angular.module('snaptasqApp', ['bcherny/formatAsCurrency', 'slick', 'a
             appId: '764169247036130'
         });
     })
+    .factory('Page', function() {
+        var title = 'snaptasq';
+        return {
+            title: function() {
+                return title;
+            },
+            setTitle: function(newTitle) {
+                title = newTitle
+            }
+        };
+    })
     .factory('authInterceptor', function($rootScope, $q, $cookieStore, $location) {
         return {
             // Add authorization token to headers
@@ -181,14 +192,13 @@ var app = angular.module('snaptasqApp', ['bcherny/formatAsCurrency', 'slick', 'a
         })
     });
 
-function GlobalCtrl($scope, BadgeAlerts, localStorageService, $q, $templateCache, PageSeo, smoothScroll, $interval, notifications, $http, $anchorScroll, Auth, User, $location, $rootScope) {
+function GlobalCtrl($scope, BadgeAlerts, localStorageService, $q, $templateCache, smoothScroll, $interval, notifications, $http, $anchorScroll, Auth, User, $location, $rootScope) {
+    $rootScope.title = "snaptasq";
     $scope.scrollTop = function() {
         $('html, body').animate({
             scrollTop: 0
         }, 'slow');
     }
-    $scope.Page = PageSeo;
-    //PageSeo.setTitle("GlobalCtrl");
     $scope.$on('$routeChangeStart', function(next, current) {
         /*
          * To reset the styles each time the page changes
@@ -344,27 +354,7 @@ app.controller('GlobalCtrl', GlobalCtrl)
                 }
             };
         }
-    ]).factory('PageSeo', function() {
-        var obj = {
-            title: 'SnapTasq',
-            description: 'SnapTasq is a new trendy way to group source your errands, tasks, chores to the friends you know and trust to get the job done.'
-        }
-        return {
-            title: function() {
-                return obj.title;
-            },
-            setTitle: function(newTitle) {
-                console.log("Setting title to " + newTitle);
-                obj.title = newTitle
-            },
-            description: function() {
-                return obj.description;
-            },
-            setDescription: function(newDescription) {
-                obj.description = newDescription
-            },
-        };
-    }).factory('BadgeAlerts', function() {
+    ]).factory('BadgeAlerts', function() {
         var objSet = new Set();
         var MISSING_BETA_CODE = "beta_code_missing";
         objSet.MISSING_BETA_CODE = "beta_code_missing";

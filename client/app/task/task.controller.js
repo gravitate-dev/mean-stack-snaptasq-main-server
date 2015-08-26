@@ -1,12 +1,13 @@
 'use strict';
 angular.module('snaptasqApp')
-    .controller('TasksCtrl', function($scope, _me, notifications, PageSeo, Notification, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
+    .controller('TasksCtrl', function($scope, _me, Page, notifications, Notification, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
         $scope._me = _me;
         //console.log(_me);
         $scope.action = $routeParams.action;
         $scope.id = $routeParams.id;
         $scope.errors = {};
 
+        Page.setTitle("Create Tasq");
         $scope.loadTaskData = function() {
             if ($scope.id == undefined)
                 return;
@@ -271,7 +272,7 @@ angular.module('snaptasqApp')
     })
     .controller('TaskEditCtrl', function($scope, $window, Modal, notifications, $routeParams, Task, Notification, $rootScope, TaskMarshaler, Auth, $location) {
         $scope._bgcolorGrey();
-
+        $rootScope.title = "Create Tasq";
         /**
          * Task steps can be 
          * 1. taskform 2. community 3. share 4. finish
