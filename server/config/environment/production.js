@@ -23,6 +23,6 @@ module.exports = {
     dontRequireEmailVerification: false,
 
     host: {
-        url: "http://snaptasq.com/"
+        url: "https://snaptasq.com/"
     }
 };

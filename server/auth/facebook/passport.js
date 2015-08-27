@@ -118,6 +118,7 @@ function linkFacebookAccountToExistingUser(user, req, accessToken, refreshToken,
 
 }
 exports.setup = function(User, config) {
+    console.log("Facebook callbackURL : ", config.facebook.callbackURL);
     passport.use(new FacebookStrategy({
         clientID: config.facebook.clientID,
         clientSecret: config.facebook.clientSecret,
