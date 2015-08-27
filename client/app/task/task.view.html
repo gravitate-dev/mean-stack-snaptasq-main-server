@@ -74,12 +74,12 @@
                     <!-- <a class="btnz share gplus" href="#"><i class="fa fa-google-plus"></i> Share</a> -->
                     <a href="#" ng-click="_share('google',task.name,task.description)"><img src="https://www.gstatic.com/images/icons/gplus-64.png" style="height:46px;" alt="Share on Google+" /></a>
                     <!-- Twitter Share Button -->
-                    <a class="btnz share twitter" href="https://twitter.com/intent/tweet?text={{task.name}}&hashtags=snaptasq"><i class="fa fa-twitter"></i> Tweet</a>
+                    <a class="btnz share twitter" href="https://twitter.com/intent/tweet?text={{'Help '+task.ownerName+' with '+task.name+' link: '+currentUrl}}&hashtags=snaptasq"><i class="fa fa-twitter"></i> Tweet</a>
                     <!-- Stumbleupon Share Button -->
                     <!-- <a class="btnz share stumbleupon" href="#"><i class="fa fa-stumbleupon"></i> Stumble</a> -->
 
                     <!-- Pinterest Share Button -->
-                    <a href="#" class="btnz share pinterest" ng-click="_share('pintrest','Help '+task.ownerName+' with ' + task.name,task.description)"><i class="fa fa-pinterest"></i> Pin it</a>
+                    <a href="#" class="btnz share pinterest" ng-click="_share('pintrest','Help '+task.ownerName+' with '+task.name+' link: '+currentUrl,task.description)"><i class="fa fa-pinterest"></i> Pin it</a>
 
                     <!-- LinkedIn Share Button -->
                     <!-- <a class="btnz share linkedin" href="#"><i class="fa fa-linkedin"></i> LinkedIn</a> -->
@@ -88,10 +88,12 @@
                     <a href="https://bufferapp.com/add" class="buffer-add-button" data-count="horizontal">Buffer</a>
                     <script type="text/javascript" src="https://static.bufferapp.com/js/button.js"></script>
                     <!-- 
+        }
+        }
         <a class="btnz share buffer" href="#"><i class="fa fa-share-square-o"></i> Buffer</a> -->
                 </div>
             </div>
-            <div class="row" id="googleMaps">
+            <div ng-if="task.location" class="row" id="googleMaps">
                 <div ng-if="!_isMobile" class="col-md-12">
                     <div ui-gmap-google-map fullscreen center='task.locationCopy.geo.center' zoom='15'>
                         <div ui-gmap-marker coords="task.location.geo.center" options="marker.options" idkey="0"></div>

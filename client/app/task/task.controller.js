@@ -1,6 +1,7 @@
 'use strict';
 angular.module('snaptasqApp')
     .controller('TasksCtrl', function($scope, _me, Page, notifications, Notification, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
+        $scope.currentUrl = $location.absUrl();
         $scope._me = _me;
         //console.log(_me);
         $scope.action = $routeParams.action;
