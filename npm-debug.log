@@ -1,0 +1,139 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node',
+1 verbose cli   '/usr/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   'pm2-logrotate',
+1 verbose cli   '--prefix',
+1 verbose cli   '/home/ubuntu/.pm2' ]
+2 info using npm@2.10.0
+3 info using node@v0.10.38
+4 verbose node symlink /usr/bin/node
+5 verbose install initial load of /home/ubuntu/.pm2/package.json
+6 verbose readDependencies loading dependencies from /home/ubuntu/.pm2/package.json
+7 silly cache add args [ 'pm2-logrotate', null ]
+8 verbose cache add spec pm2-logrotate
+9 silly cache add parsed spec { raw: 'pm2-logrotate',
+9 silly cache add   scope: null,
+9 silly cache add   name: 'pm2-logrotate',
+9 silly cache add   rawSpec: '',
+9 silly cache add   spec: '*',
+9 silly cache add   type: 'range' }
+10 silly addNamed pm2-logrotate@*
+11 verbose addNamed "*" is a valid semver range for pm2-logrotate
+12 silly addNameRange { name: 'pm2-logrotate', range: '*', hasData: false }
+13 silly mapToRegistry name pm2-logrotate
+14 silly mapToRegistry using default registry
+15 silly mapToRegistry registry https://registry.npmjs.org/
+16 silly mapToRegistry uri https://registry.npmjs.org/pm2-logrotate
+17 verbose addNameRange registry:https://registry.npmjs.org/pm2-logrotate not in flight; fetching
+18 verbose request uri https://registry.npmjs.org/pm2-logrotate
+19 verbose request no auth needed
+20 info attempt registry request try #1 at 05:32:07
+21 verbose request id 250bb3c2ef3c70a3
+22 http request GET https://registry.npmjs.org/pm2-logrotate
+23 http 200 https://registry.npmjs.org/pm2-logrotate
+24 silly get cb [ 200,
+24 silly get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+24 silly get     etag: '"A7XQVJ8POE1IKSMR0TR736ASK"',
+24 silly get     'content-type': 'application/json',
+24 silly get     'cache-control': 'max-age=60',
+24 silly get     'content-length': '12775',
+24 silly get     'accept-ranges': 'bytes',
+24 silly get     date: 'Thu, 27 Aug 2015 05:31:46 GMT',
+24 silly get     via: '1.1 varnish',
+24 silly get     age: '0',
+24 silly get     connection: 'keep-alive',
+24 silly get     'x-served-by': 'cache-sjc3122-SJC',
+24 silly get     'x-cache': 'MISS',
+24 silly get     'x-cache-hits': '0',
+24 silly get     'x-timer': 'S1440653505.927501,VS0,VE91',
+24 silly get     vary: 'Accept' } ]
+25 verbose get saving pm2-logrotate to /home/ubuntu/.npm/registry.npmjs.org/pm2-logrotate/.cache.json
+26 silly addNameRange number 2 { name: 'pm2-logrotate', range: '*', hasData: true }
+27 silly addNameRange versions [ 'pm2-logrotate',
+27 silly addNameRange   [ '1.0.0',
+27 silly addNameRange     '1.0.1',
+27 silly addNameRange     '1.0.2',
+27 silly addNameRange     '1.0.3',
+27 silly addNameRange     '1.0.4',
+27 silly addNameRange     '1.0.5',
+27 silly addNameRange     '1.0.6',
+27 silly addNameRange     '1.0.7',
+27 silly addNameRange     '1.0.8',
+27 silly addNameRange     '1.1.0' ] ]
+28 silly addNamed pm2-logrotate@1.1.0
+29 verbose addNamed "1.1.0" is a plain semver version for pm2-logrotate
+30 silly mapToRegistry name pm2-logrotate
+31 silly mapToRegistry using default registry
+32 silly mapToRegistry registry https://registry.npmjs.org/
+33 silly mapToRegistry uri https://registry.npmjs.org/pm2-logrotate
+34 verbose addRemoteTarball https://registry.npmjs.org/pm2-logrotate/-/pm2-logrotate-1.1.0.tgz not in flight; adding
+35 verbose addRemoteTarball [ 'https://registry.npmjs.org/pm2-logrotate/-/pm2-logrotate-1.1.0.tgz',
+35 verbose addRemoteTarball   'ecd94712c97a25b1dbb337254ea6d33737aa8dbc' ]
+36 info retry fetch attempt 1 at 05:32:08
+37 info attempt registry request try #1 at 05:32:08
+38 http fetch GET https://registry.npmjs.org/pm2-logrotate/-/pm2-logrotate-1.1.0.tgz
+39 http fetch 200 https://registry.npmjs.org/pm2-logrotate/-/pm2-logrotate-1.1.0.tgz
+40 silly fetchAndShaCheck shasum ecd94712c97a25b1dbb337254ea6d33737aa8dbc
+41 verbose addTmpTarball /tmp/npm-5212-a295517d/registry.npmjs.org/pm2-logrotate/-/pm2-logrotate-1.1.0.tgz not in flight; adding
+42 verbose addTmpTarball already have metadata; skipping unpack for pm2-logrotate@1.1.0
+43 silly cache afterAdd pm2-logrotate@1.1.0
+44 verbose afterAdd /home/ubuntu/.npm/pm2-logrotate/1.1.0/package/package.json not in flight; writing
+45 verbose afterAdd /home/ubuntu/.npm/pm2-logrotate/1.1.0/package/package.json written
+46 silly install resolved [ { name: 'pm2-logrotate',
+46 silly install resolved     version: '1.1.0',
+46 silly install resolved     description: 'PM2 module to automatically rotate logs of processes managed by PM2.',
+46 silly install resolved     main: 'app.js',
+46 silly install resolved     dependencies: { moment: '2.10.x', pm2: '0.14.x', pmx: '0.3.x', rolex: '0.0.x' },
+46 silly install resolved     scripts: { test: 'echo "Error: no test specified" && exit 1' },
+46 silly install resolved     author: { name: 'Joni SHKURTI' },
+46 silly install resolved     repository:
+46 silly install resolved      { type: 'git',
+46 silly install resolved        url: 'git+https://github.com/pm2-hive/pm2-logrotate.git' },
+46 silly install resolved     bugs: { url: 'https://github.com/pm2-hive/pm2-logrotate/issues' },
+46 silly install resolved     homepage: 'https://github.com/pm2-hive/pm2-logrotate',
+46 silly install resolved     license: 'MIT',
+46 silly install resolved     apps: [ [Object] ],
+46 silly install resolved     config:
+46 silly install resolved      { interval_unit: 'DD',
+46 silly install resolved        interval: 1,
+46 silly install resolved        max_size: 5242880,
+46 silly install resolved        retain: 'none' },
+46 silly install resolved     gitHead: 'ef041d97137581ebdda1d2a499b9ec4dfd977f58',
+46 silly install resolved     _id: 'pm2-logrotate@1.1.0',
+46 silly install resolved     _shasum: 'ecd94712c97a25b1dbb337254ea6d33737aa8dbc',
+46 silly install resolved     _from: 'pm2-logrotate@*',
+46 silly install resolved     _npmVersion: '2.10.1',
+46 silly install resolved     _nodeVersion: '0.12.4',
+46 silly install resolved     _npmUser: { name: 'tknew', email: 'strzelewicz.alexandre@gmail.com' },
+46 silly install resolved     maintainers: [ [Object], [Object] ],
+46 silly install resolved     dist:
+46 silly install resolved      { shasum: 'ecd94712c97a25b1dbb337254ea6d33737aa8dbc',
+46 silly install resolved        tarball: 'http://registry.npmjs.org/pm2-logrotate/-/pm2-logrotate-1.1.0.tgz' },
+46 silly install resolved     directories: {},
+46 silly install resolved     _resolved: 'https://registry.npmjs.org/pm2-logrotate/-/pm2-logrotate-1.1.0.tgz' } ]
+47 info install pm2-logrotate@1.1.0 into /home/ubuntu/.pm2
+48 info installOne pm2-logrotate@1.1.0
+49 verbose installOne of pm2-logrotate to /home/ubuntu/.pm2 not in flight; installing
+50 warn locking Error: EACCES, open '/home/ubuntu/.npm/_locks/pm2-logrotate-8fe4357795104e0a.lock'
+50 warn locking  /home/ubuntu/.npm/_locks/pm2-logrotate-8fe4357795104e0a.lock failed { [Error: EACCES, open '/home/ubuntu/.npm/_locks/pm2-logrotate-8fe4357795104e0a.lock']
+50 warn locking   errno: 3,
+50 warn locking   code: 'EACCES',
+50 warn locking   path: '/home/ubuntu/.npm/_locks/pm2-logrotate-8fe4357795104e0a.lock' }
+51 verbose stack Error: Attempt to unlock /home/ubuntu/.pm2/node_modules/pm2-logrotate, which hasn't been locked
+51 verbose stack     at unlock (/usr/lib/node_modules/npm/lib/utils/locker.js:66:11)
+51 verbose stack     at cb (/usr/lib/node_modules/npm/lib/install.js:1017:5)
+51 verbose stack     at /usr/lib/node_modules/npm/lib/install.js:1021:20
+51 verbose stack     at /usr/lib/node_modules/npm/lib/utils/locker.js:40:9
+51 verbose stack     at cb (/usr/lib/node_modules/npm/node_modules/lockfile/lockfile.js:149:38)
+51 verbose stack     at /usr/lib/node_modules/npm/node_modules/lockfile/lockfile.js:177:38
+51 verbose stack     at Object.oncomplete (fs.js:108:15)
+52 verbose cwd /home/ubuntu/snaptasq
+53 error Linux 3.13.0-48-generic
+54 error argv "node" "/usr/bin/npm" "install" "pm2-logrotate" "--prefix" "/home/ubuntu/.pm2"
+55 error node v0.10.38
+56 error npm  v2.10.0
+57 error Attempt to unlock /home/ubuntu/.pm2/node_modules/pm2-logrotate, which hasn't been locked
+58 error If you need help, you may report this error at:
+58 error     <https://github.com/npm/npm/issues>
+59 verbose exit [ 1, true ]
