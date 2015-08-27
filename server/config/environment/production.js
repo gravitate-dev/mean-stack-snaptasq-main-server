@@ -24,5 +24,11 @@ module.exports = {
 
     host: {
         url: "https://snaptasq.com/"
-    }
+    },
+
+    facebook: {
+        clientID: process.env.FACEBOOK_ID || '764169247036130',
+        clientSecret: process.env.FACEBOOK_SECRET || '6cd7e08d22761e523f7017f60feb28a1',
+        callbackURL: 'https://snaptasq.com/auth/facebook/callback'
+    },
 };
