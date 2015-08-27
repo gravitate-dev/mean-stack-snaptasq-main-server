@@ -274,6 +274,7 @@ angular.module('snaptasqApp')
     .controller('TaskEditCtrl', function($scope, $window, Modal, notifications, $routeParams, Task, Notification, $rootScope, TaskMarshaler, Auth, $location) {
         $scope._bgcolorGrey();
         $rootScope.title = "Create Tasq";
+        $scope.postTo = "PRIVATELY";
         /**
          * Task steps can be 
          * 1. taskform 2. community 3. share 4. finish

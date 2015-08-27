@@ -53,9 +53,20 @@
                     </div>
                     <div class="row bot-buffer">
                         <div class="col-md-12">
-                            <button ng-if="action=='create'" class="btn btn-primary btn-lg pull-right" type="submit">
-                                CREATE TASQ!
-                            </button>
+                            <!-- Split button -->
+                            <div class="btn-group pull-right" dropdown ng-if="action=='create'">
+                                <button id="split-button" type="submit" class="btn btn-primary btn-lg">POST {{postTo}}</button>
+                                <button type="button" class="btn btn-primary btn-lg" dropdown-toggle>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
+                                    <li role="menuitem" ng-click="postTo='PRIVATELY'"><a href="#">POST PRIVATELY</a></li>
+                                    <li role="menuitem" ng-click="postTo='TO COMMUNITY'"><a href="#">POST TO COMMUNITY (0)</a></li>
+                                    <li class="divider"></li>
+                                    <li role="menuitem" ng-click="postTo='TO COMMUNITY'">
+                                        <input type="checkbox" style="display:inline;" /><a href="#" style="display:inline;">Santa Clara University</a></li>
+                                </ul>
+                            </div>
                             <button ng-if="action=='update'" class="btn btn-success btn-lg pull-right" type="submit">
                                 UPDATE TASQ!
                             </button>
