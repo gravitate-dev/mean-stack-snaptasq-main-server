@@ -1,6 +1,8 @@
 'use strict';
 angular.module('snaptasqApp').controller('ForgotCtrl', function($scope, vcRecaptchaService, User, Auth, notifications) {
     $scope.errors = {};
+    $scope._bgcolorSnapYellow();
+    $scope._noFooter();
 
     $scope.resetCaptcha = function() {
         vcRecaptchaService.reload();

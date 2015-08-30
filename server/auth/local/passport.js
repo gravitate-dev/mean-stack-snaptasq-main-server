@@ -15,12 +15,12 @@ exports.setup = function(User, config) {
 
                 if (!user) {
                     return done(null, false, {
-                        message: 'This email is not registered.'
+                        message: 'Sorry, your email/password do not match. You can try forgot your password.'
                     });
                 }
                 if (!user.authenticate(password)) {
                     return done(null, false, {
-                        message: 'This password is not correct.'
+                        message: 'Sorry, your email/password do not match. You can try forgot your password.' //'This password is not correct.'
                     });
                 }
                 return done(null, user);

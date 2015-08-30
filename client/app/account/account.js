@@ -30,6 +30,10 @@ angular.module('snaptasqApp')
                 controller: 'SettingsCtrl',
                 authenticate: true
             })
+            .when('/forgot', {
+                templateUrl: 'app/account/forgot/forgot.html',
+                controller: 'ForgotCtrl',
+            })
             .when('/resetPassword/:code1/:code2', {
                 templateUrl: 'app/account/resetPassword/resetPassword.html',
                 controller: 'ResetPasswordCtrl'
