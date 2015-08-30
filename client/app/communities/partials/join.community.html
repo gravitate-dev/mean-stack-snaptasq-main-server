@@ -1,7 +1,9 @@
-<div class="row">
+<div class="row" ng-repeat="item in group.challenges">
     <div class="col-md-12 text-center">
-        <p>{{group.entryQuestion}}</p>
-        <input type="text" ng-model="creds" />
-        <button class="btn" ng-click="requestJoin(creds)">Join</button>
+        <p>{{item.prompt}}</p>
+        <form>
+            <input type="text" ng-model="creds" />
+            <button class="btn" ng-click="requestJoin(item,creds)">Join</button>
+        </form>
     </div>
 </div>

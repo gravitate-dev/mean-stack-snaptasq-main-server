@@ -5,6 +5,35 @@ var Email = require('./email.model');
 var config = require('../../config/environment');
 var sendgrid = require('sendgrid')(config.sendGridApiKey);
 
+exports.sendCommunityJoinCode = function(req, res, emailaddress, communityName, joinCode, cb) {
+    var email = new sendgrid.Email();
+    email.addTo(emailaddress);
+    var helpText = "Join Community " + communityName;
+    email.subject = helpText;
+    email.from = 'admin@snaptasq.com';
+    email.html = helpText;
+    // add filter settings one at a time 
+    email.addFilter('templates', 'enable', 1);
+    email.addFilter('templates', 'template_id', '57cfefac-5046-40ba-b08b-a43e8471e7ed');
+    email.addSubstitution('-communityName-', communityName);
+    email.addSubstitution('-joinCode-', joinCode);
+
+    sendgrid.send(email, function(err, json) {
+        if (err) {
+            if (res != null)
+                res.status(500).json(err);
+        } else {
+            if (res != null) {
+                if (cb != null) {
+                    cb(true);
+                } else {
+                    return res.status(200).send("sent email");
+                }
+            }
+        }
+    });
+}
+
 exports.sendRequestTaskerHelp = function(req, res, emailaddress, tasklink, tasktitle, taskownername, taskownerimage) {
         var email = new sendgrid.Email();
         email.addTo(emailaddress);

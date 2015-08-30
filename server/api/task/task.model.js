@@ -49,6 +49,10 @@ var TaskSchema = new Schema({
         type: Number,
         default: 0
     },
+    communitiesIn: [{
+        id: Schema.Types.ObjectId,
+        name: String,
+    }],
     applicants: [{
         id: Schema.Types.ObjectId,
         name: String,

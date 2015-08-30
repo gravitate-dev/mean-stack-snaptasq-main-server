@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('snaptasqApp')
-    .controller('NavbarCtrl', function($scope, $location, Auth, Notify, $interval, $timeout) {
+    .controller('NavbarCtrl', function($scope, $location, Auth, Notify, TaskMarshaler, $interval, $timeout) {
         $scope.responsibleCount = 0;
         $scope.menuTask = [{
             'title': 'My Tasqs',
@@ -130,6 +130,7 @@ angular.module('snaptasqApp')
 
         $scope.logout = function() {
             Auth.logout();
+            TaskMarshaler.removeTask();
             $scope.reloadMenu();
             $location.path('/signin');
         };

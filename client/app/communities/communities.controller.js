@@ -2,7 +2,7 @@
 angular.module('snaptasqApp').controller('CommunitiesCtrl', function($scope, Community, $http, $window) {
     $scope._bgcolorSnapYellow();
     $scope._noFooter();
-    $scope.publicCommunities = [];
+    $scope.communities = [];
     $scope.showSuggestCommunityModal = function() {
 
     };
@@ -10,13 +10,9 @@ angular.module('snaptasqApp').controller('CommunitiesCtrl', function($scope, Com
 
     $scope.listCommunities = function() {
         Community.get({}, function(data) {
-            $scope.publicCommunities = [];
-            $scope.privateCommunities = [];
+            $scope.communities = [];
             _.each(data, function(item) {
-                if (item.entryMethod == "open")
-                    $scope.publicCommunities.push(item);
-                else
-                    $scope.privateCommunities.push(item);
+                $scope.communities.push(item);
             });
         });
     }
@@ -24,7 +20,8 @@ angular.module('snaptasqApp').controller('CommunitiesCtrl', function($scope, Com
 }).controller('CommunityCtrl', function($scope, Community, Auth, $routeParams, Notification, notifications) {
     $scope.groupId = $routeParams.id;
     $scope.allowed = undefined;
-
+    $scope.tasks = [];
+    $scope.filter = {};
     /**
      * First check if the group is public
      **/
@@ -46,13 +43,16 @@ angular.module('snaptasqApp').controller('CommunitiesCtrl', function($scope, Com
 
     $scope.loadGroupDetails = function(groupId) {
         Community.getById(groupId, function(item) {
-            console.log(item);
             $scope.group = item;
+        });
+        Community.getTasksForGroupId(groupId, function(item) {
+            $scope.tasks = item;
         });
     };
 
-    $scope.requestJoin = function(creds) {
-        Community.requestJoin($scope.groupId, $scope._me._id, creds, function(success) {
+    $scope.requestJoin = function(challenge, creds) {
+        console.log(challenge);
+        Community.requestJoin($scope.groupId, $scope._me._id, challenge.id, creds, function(success) {
             notifications.showSuccess(success.data);
         }, function(fail) {
             Notification.error(fail.data);

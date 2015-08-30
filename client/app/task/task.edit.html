@@ -6,6 +6,7 @@
             </p>
         </div>
     </div>
+    {{task}}
     <div style="background-color:white;padding-top:25px;padding-left:15px;padding-bottom:30px;padding-right:15px;" class="col-sm-12">
         <form class="form" name="form" ng-submit="createTask(form)" novalidate>
             <div class="row">
@@ -55,16 +56,23 @@
                         <div class="col-md-12">
                             <!-- Split button -->
                             <div class="btn-group pull-right" dropdown ng-if="action=='create'">
-                                <button id="split-button" type="submit" class="btn btn-primary btn-lg">POST {{postTo}}</button>
+                                <button id="split-button" type="submit" class="btn btn-primary btn-lg">
+                                    <span ng-if="!postTo || postTo=='private'">POST PRIVATELY</span>
+                                    <span ng-if="postTo=='community'">POST TO COMMUNITY ({{countEnabledCommunities(communitiesList)}})</span>
+                                </button>
                                 <button type="button" class="btn btn-primary btn-lg" dropdown-toggle>
                                     <span class="caret"></span>
                                 </button>
-                                <ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
-                                    <li role="menuitem" ng-click="postTo='PRIVATELY'"><a href="#">POST PRIVATELY</a></li>
-                                    <li role="menuitem" ng-click="postTo='TO COMMUNITY'"><a href="#">POST TO COMMUNITY (0)</a></li>
+                                <ul class="dropdown-menu" ng-click="$event.stopPropagation()" role="menu" aria-labelledby="split-button">
+                                    <li role="menuitem" ng-click="postTo='private';uncheckAllCommunities(communitiesList);"><a href="">POST PRIVATELY</a></li>
+                                    <li role="menuitem" ng-click="postTo='community'"><a href="">POST TO COMMUNITY ({{countEnabledCommunities(communitiesList)}})</a></li>
                                     <li class="divider"></li>
-                                    <li role="menuitem" ng-click="postTo='TO COMMUNITY'">
-                                        <input type="checkbox" style="display:inline;" /><a href="#" style="display:inline;">Santa Clara University</a></li>
+                                    <ul style="max-height:100px;overflow-y:auto;list-style:none;margin:0px;padding:0px;padding-left:5px;padding-right:5px;">
+                                        <li role="menuitem" ng-repeat="item in communitiesList" ng-click="postTo='community'">
+                                            <a href="" style="display:inline;" ng-click="item.active=!item.active">
+                                                <input type="checkbox" ng-model="item.active" style="display:inline;padding-left:10px;" />{{item.name}}</a>
+                                        </li>
+                                    </ul>
                                 </ul>
                             </div>
                             <button ng-if="action=='update'" class="btn btn-success btn-lg pull-right" type="submit">

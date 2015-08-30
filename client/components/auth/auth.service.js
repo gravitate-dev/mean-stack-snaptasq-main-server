@@ -268,7 +268,7 @@ angular.module('snaptasqApp')
 
             isUserInGroup: function(groupId, cb) {
                 for (var i = 0; i < currentUser.communityMemberships.length; i++) {
-                    if (currentUser.communityMemberships[i].equals(groupId))
+                    if (currentUser.communityMemberships[i] == groupId)
                         return cb(true);
                 }
                 return cb(false);

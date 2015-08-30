@@ -35,4 +35,11 @@ angular.module('snaptasqApp').directive('taskViewCompact', function() {
 
         }
     };
+}).directive('taskViewCompactListEmpty', function() {
+    return {
+        restrict: 'ACE',
+        // Replace the div with our template
+        replace: false,
+        template: '<div class="lead">no tasqs here yet</div>',
+    };
 });

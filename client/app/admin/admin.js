@@ -3,20 +3,26 @@
 angular.module('snaptasqApp')
     .config(function($routeProvider) {
         $routeProvider
-            .when('/admin/users', {
+            .when('/admin', {
                 templateUrl: 'app/admin/admin.html',
                 controller: 'AdminCtrl',
                 authenticate: true,
                 adminRequired: true,
             })
+            .when('/admin/users', {
+                templateUrl: 'app/admin/users/admin.users.html',
+                controller: 'AdminUsersCtrl',
+                authenticate: true,
+                adminRequired: true,
+            })
             .when('/admin/community', {
-                templateUrl: 'app/admin/community/community.html',
+                templateUrl: 'app/admin/community/admin.community.html',
                 controller: 'AdminCommunityCtrl',
                 authenticate: true,
                 adminRequired: true,
             })
             .when('/admin/beta', {
-                templateUrl: 'app/admin/beta/beta.html',
+                templateUrl: 'app/admin/beta/admin.beta.html',
                 controller: 'AdminBetaCtrl',
                 authenticate: true,
                 adminRequired: true,

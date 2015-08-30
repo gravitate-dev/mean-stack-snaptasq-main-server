@@ -9,28 +9,57 @@ var Community = require('../api/community/community.model');
 var User = require('../api/user/user.model');
 var Task = require('../api/task/task.model');
 var Beta = require('../api/beta/beta.model');
-
-/*
-var CommunitySchema = new Schema({
-  name:{ type: String },
-  entryMethod:{ type: String, default:"email" }, // email, open, areacode
-  entryParam:{type: String, default: ""}, //this can be suffix or area code
-  created: { type: Date, default: Date.now },
-  updated: { type: Date, default: Date.now }
-});
-*/
+var uuid = require('uuid');
 
 Community.find({}).remove(function() {
     Community.create({
-        name: "Public Group 1",
-        entryMethod: "open",
-        entryParam: "", // ignored if group is public
-    }, {
-        name: "Gmail Users Only",
-        entryQuestion: "Requires a Gmail email",
-        entryMethod: "email",
-        entryParam: "@gmail.com"
-    });
+            name: "Public Group 1",
+            status: "public",
+            challenges: [{
+                    id: uuid.v4(),
+                    type: "open",
+                    answers: [""],
+                    prompt: "This community is open to anyone"
+                }] // ignored if group is public
+        }, {
+            name: "Private group requires click join",
+            status: "private",
+            challenges: [{
+                    id: uuid.v4(),
+                    type: "open",
+                    answers: [""],
+                    prompt: "This community is open to anyone"
+                }] // ignored if group is public
+        }, {
+            name: "Private group 510 area code",
+            status: "private",
+            challenges: [{
+                    id: uuid.v4(),
+                    type: "areacode",
+                    answers: ["510"],
+                    prompt: "This community is open to anyone"
+                }] // ignored if group is public
+        }, {
+            name: "Private group secret password aladdin",
+            status: "private",
+            challenges: [{
+                    id: uuid.v4(),
+                    type: "code",
+                    answers: ["aladdin"],
+                    prompt: "This community is open to anyone"
+                }] // ignored if group is public
+        }, {
+            name: "Gmail Users Only",
+            status: "private",
+            challenges: [{
+                    id: uuid.v4(),
+                    type: "email",
+                    answers: ["@gmail.com"],
+                    prompt: "Requires a Gmail email"
+                }] // ignored if group is public
+        }
+
+    );
 });
 Beta.find({}).remove(function() {
     Beta.create({

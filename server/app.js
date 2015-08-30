@@ -15,6 +15,8 @@ var express = require('express'),
     seo = require('mean-seo');
 
 
+
+
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options);
 

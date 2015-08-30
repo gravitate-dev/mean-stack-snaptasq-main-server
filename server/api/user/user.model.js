@@ -66,6 +66,7 @@ var UserSchema = new Schema({
     },
     taskIds: [Schema.Types.ObjectId],
     communityMemberships: [Schema.Types.ObjectId],
+    communityMembershipsBans: [Schema.Types.ObjectId],
     friends: [friendSchema],
     hashedPassword: String,
     provider: String,

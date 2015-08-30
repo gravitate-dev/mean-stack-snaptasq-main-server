@@ -88,6 +88,12 @@ module.exports = function (grunt) {
         debug: true
       }
     },
+    qa: {
+      options: {
+        script: 'dist/server/app.js',
+        debug: false
+      }
+    },
     prod: {
       options: {
         script: 'dist/server/app.js'
@@ -394,6 +400,7 @@ module.exports = function (grunt) {
      * This is used to replace the development string in the dist folder after its built
      **/
      'string-replace': {
+      prod: {
       dist: {
         files: {
           '<%= yeoman.dist %>/server/app.js': '<%= yeoman.dist %>/server/app.js',
@@ -416,6 +423,31 @@ module.exports = function (grunt) {
           ]
         }
       }
+     },
+    qa: {
+      dist: {
+        files: {
+          '<%= yeoman.dist %>/server/app.js': '<%= yeoman.dist %>/server/app.js',
+          '<%= yeoman.dist %>/server/config/express.js': '<%= yeoman.dist %>/server/config/express.js',
+        },
+        options: {
+          replacements: [
+          {
+            pattern: /process.env.NODE_ENV =.*/ig,
+            replacement: function (match, p1) {
+              return 'process.env.NODE_ENV = "qa";'
+            }
+          },
+          {
+            pattern: /var env = .*/ig,
+            replacement: function (match, p1) {
+              return 'var env = "qa";'
+            }
+          }
+          ]
+        }
+      }
+     },
     },
     // Copies remaining files to places other tasks can use
     copy: {
@@ -547,6 +579,9 @@ module.exports = function (grunt) {
       prod: {
         NODE_ENV: 'production'
       },
+      qa: {
+        NODE_ENV: 'qa'
+      },
       all: localConfig
     },
 
@@ -665,6 +700,23 @@ module.exports = function (grunt) {
         ]);
     }
 
+    if (target === 'qa') {
+      return grunt.task.run([
+        'clean:server',
+        'env:all',
+        'env:qa',
+        'injector:sass', 
+        'concurrent:server',
+        'injector',
+        'wiredep',
+        'autoprefixer',
+        'express:qa',
+        'wait',
+        'open',
+        'watch'
+        ]);
+    }
+
     grunt.task.run([
       'clean:server',
       'env:all',
@@ -727,7 +779,29 @@ module.exports = function (grunt) {
       ]);
   });
 
-  grunt.registerTask('debugbuild',[
+  grunt.registerTask('qabuild',[
+   'clean:dist',
+   'env:all',
+   'env:qa',
+   'injector:sass',
+   'concurrent:dist',
+   'injector',
+   'wiredep',
+   'useminPrepare',
+   'autoprefixer',
+   'ngtemplates',
+   'concat',
+   'ngAnnotate',
+   'copy:dist',
+   'cdnify',
+    'cssmin',
+    'uglify',
+    'rev',
+    'usemin',
+    'string-replace:qa'
+   ]);
+
+ grunt.registerTask('debugbuild',[
    'clean:dist',
    'env:all',
    'env:prod',
@@ -746,7 +820,7 @@ module.exports = function (grunt) {
    'rev',
    'usemin',
    'copy:debugbuild',
-   'string-replace'
+   'string-replace:prod'
    ]);
   grunt.registerTask('build', [
     'clean:dist',
@@ -767,7 +841,7 @@ module.exports = function (grunt) {
     'uglify',
     'rev',
     'usemin',
-    'string-replace'
+    'string-replace:prod'
     ]);
 
   grunt.registerTask('replace', [

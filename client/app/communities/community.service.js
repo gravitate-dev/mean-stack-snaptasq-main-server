@@ -32,6 +32,13 @@ angular.module('snaptasqApp')
                     controller: ""
                 }
             },
+            getTasks: {
+                method: 'GET',
+                isArray: true,
+                params: {
+                    controller: "tasks"
+                }
+            },
         });
         return {
             delete: function(id, cb) {
@@ -66,6 +73,17 @@ angular.module('snaptasqApp')
                 });
                 return deferred.promise;
             },
+            getTasksForGroupId: function(id, cb) {
+                var cb = cb || angular.noop;
+                var deferred = $q.defer();
+                Comm.getTasks({
+                    id: id
+                }, {}, function(data) {
+                    deferred.resolve(data);
+                    return cb(data);
+                });
+                return deferred.promise;
+            },
             get: function(filter, cb) {
                 var cb = cb || angular.noop;
                 var deferred = $q.defer();
@@ -85,7 +103,7 @@ angular.module('snaptasqApp')
                         deferred.resolve(false);
                         return cb(false);
                     }
-                    var data = (response.entryMethod == "open");
+                    var data = (response.status == "public");
                     deferred.resolve(data);
                     return cb(data);
                 });
@@ -96,16 +114,18 @@ angular.module('snaptasqApp')
              * Will trigger success if the joining was accepted
              * Will trigger failure if the joining was rejected
              **/
-            requestJoin: function(id, applicantId, creds, success, failure) {
+            requestJoin: function(id, applicantId, challengeId, creds, success, failure) {
                 var failure = failure || angular.noop;
                 var success = success || angular.noop;
                 var deferred = $q.defer();
+
                 $http({
                     method: "POST",
                     url: '/api/communities/' + id + '/requestJoin',
                     data: {
                         applicantId: applicantId,
-                        creds: creds
+                        creds: creds,
+                        challengeId: challengeId
                     }
                 }).then(function(response) {
                     deferred.resolve(response);

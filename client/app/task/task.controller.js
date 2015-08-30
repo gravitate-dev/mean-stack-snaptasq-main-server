@@ -274,7 +274,7 @@ angular.module('snaptasqApp')
     .controller('TaskEditCtrl', function($scope, $window, Modal, notifications, $routeParams, Task, Notification, $rootScope, TaskMarshaler, Auth, $location) {
         $scope._bgcolorGrey();
         $rootScope.title = "Create Tasq";
-        $scope.postTo = "PRIVATELY";
+        $scope.postTo = "private";
         /**
          * Task steps can be 
          * 1. taskform 2. community 3. share 4. finish
@@ -292,19 +292,50 @@ angular.module('snaptasqApp')
             $scope.uiStep = stepName;
         }
 
-        $scope.timeEstimate = [{
-            id: 1,
-            name: '30 min'
+        $scope.communitiesList = [{
+            name: "Public Community 1",
+            id: "55dfed9ed4c8c7fc27d3a2a9"
         }, {
-            id: 2,
-            name: '1 hour'
+            name: "Santa Clara University",
+            id: "55dfde99741930e414618f3x"
         }, {
-            id: 3,
-            name: '2 hours'
+            name: "Santa Clara",
+            id: "55dfde99741930e414618f3c"
         }, {
-            id: 4,
-            name: '>2 hours'
-        }];
+            name: "San Jose",
+            id: "55dfde99741930e414618f3e"
+        }, ];
+
+        $scope.countEnabledCommunities = function(communities) {
+            var count = 0;
+            _.each(communities, function(item) {
+                if (item.active)
+                    count++;
+            });
+            return count;
+        }
+
+        $scope.uncheckAllCommunities = function(communities) {
+            _.each(communities, function(item) {
+                item.active = false;
+            });
+        }
+
+        $scope.getCheckedCommunities = function(communities) {
+            var checked = [];
+            _.each($scope.communitiesList, function(item) {
+                if (item.active)
+                    checked.push({
+                        id: item.id,
+                        name: item.name
+                    });
+            });
+            return checked;
+        }
+
+        $scope.showMoreCommunities = function() {
+            Modal.view.pricePoints(function(data) {})();
+        }
 
 
         //$scope.task = $scope.task || TaskMarshaler.getTask() || {};
@@ -386,6 +417,11 @@ angular.module('snaptasqApp')
                 if ($scope.errors.description) {
                     return;
                 }
+
+
+                // now i need to set what groups the tasq is in
+
+                $scope.task.communitiesIn = $scope.getCheckedCommunities($scope.communitiesList);
                 if (!Auth.isLoggedIn()) {
                     TaskMarshaler.setTask($scope.task);
                     notifications.showSuccess("Task Saved. Please signup or login to publish your task.");
