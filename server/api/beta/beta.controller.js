@@ -2,6 +2,12 @@
 var _ = require('lodash');
 var Beta = require('./beta.model');
 var User = require('../user/user.model');
+
+var RateLimiter = require('limiter').RateLimiter;
+// Allow 150 requests per hour (the Twitter search limit). Also understands 
+// 'second', 'minute', 'day', or a number of milliseconds 
+var limiter = new RateLimiter(5, 'minute', true);
+
 // Get list of tasks
 exports.index = function(req, res) {
     Beta.find({}, '-__v', function(err, betas) {
@@ -14,22 +20,24 @@ exports.index = function(req, res) {
 };
 
 exports.isValidCode = function(req, res, next) {
-    var betaCode = req.body.id;
-    console.log("Checking beta code " + betaCode);
-    Beta.findOne({
-        "name": betaCode
-    }, function(err, beta) {
-        if (err) return handleError(res, err);
-        if (!beta) return res.status(500).json({
-            message: "This beta code has is no longer valid. Check your spelling."
-        });
-        if (beta.status != "active") return res.status(500).json({
-            message: "This beta code has is no longer valid. It is set to inactive"
-        });
-        if (beta.maxUses <= beta.uses) return res.status(500).json({
-            message: "This beta code is no longer valid. It has been used up by " + beta.maxUses + " people already."
-        });
-        return next(); //res.status(200).send("OK");
+    limiter.removeTokens(1, function(err, remainingRequests) {
+        if (remainingRequests < 0) {
+            res.writeHead(429, {
+                'Content-Type': 'text/plain;charset=UTF-8'
+            });
+            return res.end('Too Many Requests - your IP is being rate limited. Please try again in one minute');
+        } else {
+            var betaCode = req.body.id;
+            Beta.findOne({
+                "name": betaCode
+            }, function(err, beta) {
+                if (err) return handleError(res, err);
+                if (!beta) return res.send(500, "This beta code has is no longer valid. Check your spelling.");
+                if (beta.status != "active") return res.send(500, "This beta code has is no longer valid. It is set to inactive");
+                if (beta.maxUses <= beta.uses) return res.send(500, "This beta code is no longer valid. It has been used up by " + beta.maxUses + " people already.");
+                return next(); //res.status(200).send("OK");
+            });
+        }
     });
 }
 exports.deactivate = function(req, res, next) {

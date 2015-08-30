@@ -7,7 +7,7 @@
                 </div>
                 <div style="" class="form-group">
                     <div class="col-md-12">
-                        <button id="btn-fbsignup" type="button" class="btn btn-primary" style="width:100%;" ng-click="loginOauth('facebook');"><i class="fa fa-facebook"></i>   Continue with Facebook</button>
+                        <button id="btn-fbsignup" type="button" class="btn btn-primary" style="width:100%;" ng-click="loginOauth('facebook');"><i class="fa fa-facebook"></i>&nbsp;&nbsp;&nbsp;Continue with Facebook</button>
                     </div>
                 </div>
                 <div id="or" class="col-md-12">
@@ -41,11 +41,15 @@
                 </div>
 
                 <div class="form-group">
-                    <input type="hidden" ng-model="signupform.captchaResponse" ng-model="signupform.captchaResponse" name="captchaResponse">
+                    <input type="hidden" ng-model="signupform.captchaResponse" ng-model="signupform.captchaResponse" name="captchaResponse" required>
                     <label for="captcha" class="col-md-3 control-label">Captcha</label>
                     <div class="col-md-9">
                         <div vc-recaptcha key="'6LfjmgcTAAAAAFerg8_alh6LFcb4QQvrF8Gg4qz1'" on-success="signupform.captchaResponse=response"></div>
+                        <div class="has-error" ng-show="!!signupForm.$error.recaptcha && submitted">
+                            <p class="help-block">Please verify you are not a robot.</p>
+                        </div>
                     </div>
+
                 </div>
                 <div class="form-group">
                     <!-- Button -->

@@ -99,6 +99,7 @@ angular.module('snaptasqApp')
         }, 5000);
         */
         Notify.get(function(notifications) {
+            console.log(notifications);
             $scope.notifications = notifications;
         });
 

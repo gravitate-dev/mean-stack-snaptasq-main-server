@@ -6,7 +6,6 @@
                     <button class="btn btn-info">Create New</button>
                 </a>
             </div>
-
         </div>
     </div>
     <div ng-if="tasks.length==0" class="ngcloak row top-buffer">
@@ -18,7 +17,7 @@
 
     <div class="top-buffer">
         <div ng-show="display.mode=='list'">
-            <div class="well top-buffer" ng-repeat="task in tasks | searchTaskFilter:filter">
+            <div class="well top-buffer" style="background-color:white;" ng-repeat="task in tasks | searchTaskFilter:filter">
                 <div class="task-view-compact-list" task="task"></div>
             </div>
         </div>

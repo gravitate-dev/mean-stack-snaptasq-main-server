@@ -88,7 +88,7 @@ var NOTIFICODES = {
     }
 };
 
-function notify(toId, code, params, link, cb) {
+function notify(toId, code, params, link) {
     if (NOTIFICODES[code] == undefined)
         throw new Error("Invalid error code " + code);
     var n = NOTIFICODES[code];
@@ -101,11 +101,7 @@ function notify(toId, code, params, link, cb) {
         link: link
     };
     var newNotify = new Notify(notifyObj);
-    newNotify.save(function(err, notify) {
-        if (cb != undefined) {
-            cb(notify);
-        }
-    });
+    newNotify.save(function(err, notify) {});
 }
 
 /**

@@ -75,8 +75,7 @@ function setTokenCookie(req, res) {
     req.session.userId = req.user._id;
     req.session.save();
     res.cookie('token', JSON.stringify(token));
-    console.log("HELLO");
-    console.log(req.user);
+    //console.log(req.user);
     if (req.user.requiresBeta)
         res.redirect('/beta');
     else

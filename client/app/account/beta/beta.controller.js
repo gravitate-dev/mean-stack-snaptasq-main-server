@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('snaptasqApp')
-    .controller('BetaCtrl', function($scope, BadgeAlerts, $window, $interval, $location, $timeout, Beta, User, notifications, Notification) {
-
+    .controller('BetaCtrl', function($scope, BadgeAlerts, $window, $interval, $location, $timeout, Beta, User, notifications, Notification, moment) {
+        $scope.buttonDisable = false;
         $scope._bgcolorSnapYellow();
         $scope._noFooter();
         $scope.errors = {};
@@ -26,9 +26,16 @@ angular.module('snaptasqApp')
                 $timeout(function() {
                     $window.location.reload();
                 }, 1000);
-
             }, function(error) {
-                Notification.error(error.data.message);
+                if (error.status == 429) {
+                    //rate limit
+                    $scope.buttonDisable = true;
+                    $timeout(function() {
+                        $scope.buttonDisable = false;
+                    }, 10000);
+
+                }
+                Notification.error(error.data);
             });
         }
     });

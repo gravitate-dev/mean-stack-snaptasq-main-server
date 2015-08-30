@@ -1,6 +1,9 @@
 'use strict';
 angular.module('snaptasqApp')
     .controller('TasksCtrl', function($scope, _me, Page, notifications, Notification, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
+        $scope._bgcolorGrey();
+        //$scope._bgcolorSnapYellow();
+        $scope._noFooter();
         $scope.currentUrl = $location.absUrl();
         $scope._me = _me;
         //console.log(_me);
@@ -272,6 +275,8 @@ angular.module('snaptasqApp')
         */
     })
     .controller('TaskEditCtrl', function($scope, $window, Modal, notifications, $routeParams, Task, Notification, $rootScope, TaskMarshaler, Auth, $location) {
+        //$scope._bgcolorSnapYellow();
+        $scope._noFooter();
         $scope._bgcolorGrey();
         $rootScope.title = "Create Tasq";
         $scope.postTo = "private";

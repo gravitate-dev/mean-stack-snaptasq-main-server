@@ -51,7 +51,7 @@ exports.create = function(req, res, next) {
         //(toId,code,params,link,cb)
         Notify.put(user._id, "ACCOUNT_CREATE_NEW", {
             name: user.name
-        }, undefined, function() {});
+        }, undefined);
         User.findById(user._id, function(err, user) {
             if (err || user == null) {
                 return res.status(500).json({
@@ -95,7 +95,7 @@ exports.applyBetaCode = function(req, res, next) {
                 if (err) return validationError(res, err);
                 Notify.put(user._id, "BETA_CODE_REGISTER_SUCCESS", {
                     name: user.name
-                }, undefined, function() {});
+                }, undefined);
                 return next();
             });
         });

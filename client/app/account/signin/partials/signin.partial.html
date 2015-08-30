@@ -1,8 +1,5 @@
 <div id="loginbox" class="mainbox">
     <div class="panel panel-info">
-        <!-- <div class="panel-heading">
-            <div class="panel-title">Sign In</div>
-          </div>      -->
         <div class="panel-body">
             <!-- <div style="" id="login-alert" class="alert alert-danger col-sm-12"></div> -->
             <form id="loginform" class="form-horizontal" name="form" role="form" ng-submit="login(form)" novalidate>
@@ -14,14 +11,6 @@
                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                     <input id="login-password" type="password" class="form-control" name="password" placeholder="password" ng-model="user.password" required>
                 </div>
-                <!-- <div class="input-group">
-                <div class="checkbox">
-                  <label>
-                    <input id="login-remember" type="checkbox" name="remember" value="1"> Remember me
-                  </label>
-                </div>
-              </div> -->
-
                 <div class="col-md-12 form-group has-error">
                     <p class="help-block" ng-show="form.email.$error.required && form.password.$error.required && submitted">
                         Please enter your email and password.
@@ -42,9 +31,7 @@
                     <div class="col-md-12 control">
                         <div style="border-top: 1px solid#888; padding-top:15px; font-size:85%">
                             Don't have an account!
-                            <a href="/signin?action=register" ng-click="tabSignup=0;tabCreateAccount=1">
-                    Sign Up Here
-                  </a>
+                            <a href="/signin?action=register" ng-click="tabSignup=0;tabCreateAccount=1">Sign Up Here</a>
                         </div>
                     </div>
                 </div>
