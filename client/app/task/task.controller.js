@@ -431,9 +431,9 @@ angular.module('snaptasqApp')
                         function(data) {
                             var msg = undefined;
                             if ($scope.action == "update") {
-                                msg = "Task updated.";
+                                msg = "Tasq updated.";
                             } else {
-                                msg = "Task created.";
+                                msg = "Tasq created.";
                             }
                             $scope.taskId = data._id;
                             Notification.success({

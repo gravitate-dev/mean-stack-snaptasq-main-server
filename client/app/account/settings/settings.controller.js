@@ -1,5 +1,5 @@
 'use strict';
-angular.module('snaptasqApp').controller('SettingsCtrl', function($scope, Task, $window, $location, $timeout, Modal, User, Auth, notifications) {
+angular.module('snaptasqApp').controller('SettingsCtrl', function($scope, Task, $window, $location, $timeout, Modal, User, Auth, notifications, Notification) {
     $scope.errors = {};
 
     $scope.currentUser = new User(Auth.getCurrentUser());
@@ -35,8 +35,9 @@ angular.module('snaptasqApp').controller('SettingsCtrl', function($scope, Task, 
         $scope.submitted = true;
         if (form.$valid) {
             Auth.changePassword($scope.user.oldPassword, $scope.user.newPassword).then(function() {
-                notifications.showSuccess({
-                    message: 'Password successfully changed.'
+                Notification.success({
+                    message: 'Password successfully changed.',
+                    replaceMessage: true
                 });
                 $scope.submitted = false;
                 $scope.user.oldPassword = "";
