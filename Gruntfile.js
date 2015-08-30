@@ -401,7 +401,6 @@ module.exports = function (grunt) {
      **/
      'string-replace': {
       prod: {
-      dist: {
         files: {
           '<%= yeoman.dist %>/server/app.js': '<%= yeoman.dist %>/server/app.js',
           '<%= yeoman.dist %>/server/config/express.js': '<%= yeoman.dist %>/server/config/express.js',
@@ -422,10 +421,8 @@ module.exports = function (grunt) {
           }
           ]
         }
-      }
      },
     qa: {
-      dist: {
         files: {
           '<%= yeoman.dist %>/server/app.js': '<%= yeoman.dist %>/server/app.js',
           '<%= yeoman.dist %>/server/config/express.js': '<%= yeoman.dist %>/server/config/express.js',
@@ -445,7 +442,6 @@ module.exports = function (grunt) {
             }
           }
           ]
-        }
       }
      },
     },
