@@ -22,25 +22,28 @@ angular.module('snaptasqApp').controller('CommunitiesCtrl', function($scope, Com
     $scope.allowed = undefined;
     $scope.tasks = [];
     $scope.filter = {};
-    /**
-     * First check if the group is public
-     **/
-    Community.isGroupOpen($scope.groupId, function(isOpen) {
-        if (!isOpen) {
-            /**
-             * If the group is not public, then see if i am a member
-             **/
-            Auth.isUserInGroupAsync($scope.groupId, function(isAllowed) {
-                $scope.allowed = isAllowed;
+
+    $scope.init = function() {
+        /**
+         * First check if the group is public
+         **/
+        Community.isGroupOpen($scope.groupId, function(isOpen) {
+            if (!isOpen) {
+                /**
+                 * If the group is not public, then see if i am a member
+                 **/
+                Auth.isUserInGroupAsync($scope.groupId, function(isAllowed) {
+                    $scope.allowed = isAllowed;
+                    $scope.loadGroupDetails($scope.groupId);
+                });
+            } else {
+                $scope.allowed = true;
                 $scope.loadGroupDetails($scope.groupId);
-            });
-        } else {
-            $scope.allowed = true;
-            $scope.loadGroupDetails($scope.groupId);
-        }
-    });
+            }
+        });
+    }
 
-
+    $scope.init();
     $scope.loadGroupDetails = function(groupId) {
         Community.getById(groupId, function(item) {
             $scope.group = item;
@@ -53,7 +56,13 @@ angular.module('snaptasqApp').controller('CommunitiesCtrl', function($scope, Com
     $scope.requestJoin = function(challenge, creds) {
         console.log(challenge);
         Community.requestJoin($scope.groupId, $scope._me._id, challenge.id, creds, function(success) {
-            notifications.showSuccess(success.data);
+            if (challenge.type == "email") {
+                notifications.showSuccess("Please check your email for an emailed join link");
+            } else if (challenge.type == "areacode") {
+                notifications.showSuccess("Please check your phone for a texted join link");
+            } else {
+                notifications.showSuccess("Welcome to the group");
+            }
         }, function(fail) {
             Notification.error(fail.data);
         })

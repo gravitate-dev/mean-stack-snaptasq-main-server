@@ -17,6 +17,7 @@ var CryptoJS = require("crypto-js");
 var sms = require('../sms/sms.controller');
 var Email = require('../email/email.controller');
 var config = require('../../config/environment');
+var URLSafeBase64 = require('urlsafe-base64');
 
 
 function escapeRegExp(string) {
@@ -224,20 +225,23 @@ function _handleJoinAreaCode(req, res, challenge, comm, user, creds) {
 }
 
 function _handleJoinCode(req, res, challenge, comm, user, creds) {
-    _.each(challenge.answers, function(answer) {
-        if (creds == answer) {
+    for (var i = 0; i < challenge.answers.length; i++) {
+        if (creds == challenge.answers[i]) {
             return _addUserToComm(req, res, comm, user);
         }
-    });
+    }
     return res.send(403, "Sorry wrong code.");
 }
 
 function _generateJoinLink(comm, user) {
+    // TODO: make this encrypted
     // Encrypt
-    var eUserId = CryptoJS.AES.encrypt(user._id.toString(), comm._id.toString()).toString();
-    console.log("User id: " + user._id.toString());
-    eUserId = eUserId.replace(/\+/g, 'PLUS').replace(/\-/g, 'MINUS').replace(/\//g, 'SLASH').replace(/=/g, 'EQUALS');
-    return config.host.url + "api/communities/" + comm._id.toString() + "/join/" + eUserId;
+    var encryptedUserId = CryptoJS.AES.encrypt(user._id.toString(), comm._id.toString()).toString();
+    var urlSafeEncoded_encryptedUserId = URLSafeBase64.encode(encryptedUserId);
+    //console.log("User id: " + user._id.toString());
+    //eUserId = eUserId.replace(/\+/g, 'PLUS').replace(/\-/g, 'MINUS').replace(/\//g, 'SLASH').replace(/=/g, 'EQUALS');
+    //var eUserId = user._id.toString();
+    return config.host.url + "api/communities/" + comm._id.toString() + "/join/" + urlSafeEncoded_encryptedUserId;
 }
 
 function _isBannedFromGroup(comm, user) {
@@ -251,6 +255,9 @@ function _isBannedFromGroup(comm, user) {
 }
 
 function _isUserAlreadyInGroup(comm, user) {
+    if (user.communityMemberships == undefined) {
+        return false;
+    }
     for (var i = 0; i < user.communityMemberships.length; i++) {
         if (user.communityMemberships[i].equals(comm._id))
             return true;
@@ -266,10 +273,10 @@ function _addUserToComm(req, res, comm, user) {
     user.communityMemberships.push(comm._id);
     user.save(function(err, user) {
         if (err) return handleError(res, err);
-        comm.totalUsers++;
+        comm.users.push(user._id);
         comm.save(function(err, comm) {
             if (err) return handleError(res, err);
-            return res.send(200, "Welcome to the group.");
+            return res.redirect('/community/' + comm._id.toString());
         });
     });
 
@@ -289,15 +296,31 @@ exports.getTasks = function(req, res) {
 
 exports.join = function(req, res) {
     var groupId = req.param('id');
-    var eUserId = req.param('encUserId');
+    var urlSafeEncoded_encryptedUserId = req.param('encUserId');
+    /*
+    var userId = eUserId;
     eUserId = replaceAll(eUserId, 'PLUS', '+');
     eUserId = replaceAll(eUserId, 'MINUS', '-');
     eUserId = replaceAll(eUserId, 'SLASH', '/');
     eUserId = replaceAll(eUserId, 'EQUALS', '=');
-    //55e2027371be3e9c2d88b56e
     // Decrypt
     var bytes = CryptoJS.AES.decrypt(eUserId, groupId);
     var userId = bytes.toString(CryptoJS.enc.Utf8);
+    */
+    var encryptedUserBytes = URLSafeBase64.decode(urlSafeEncoded_encryptedUserId);
+    var encryptedUserId = encryptedUserBytes.toString('base64')
+        //var encryptedUserId = encryptedUserBytes.toString('utf8');
+        //var encryptedUserId2 = encryptedUserBytes.toString(CryptoJS.enc.Base64);
+    var bytes = CryptoJS.AES.decrypt(encryptedUserId, groupId);
+    var userId = bytes.toString(CryptoJS.enc.Utf8);
+    /*
+    var encUserId = CryptoJS.AES.encrypt(user._id.toString(), comm._id.toString()).toString();
+    var urlSafeEncodedEncUserId = URLSafeBase64.encode(encUserId);
+    var words = CryptoJS.enc.Base64.parse(eUserId);
+    var decoded = words.toString(CryptoJS.enc.Base64);
+    var bytes = CryptoJS.AES.decrypt(decoded, groupId);
+    var userId = bytes.toString(CryptoJS.enc.Utf8);
+    */
     console.log(userId);
     if (userId == null || userId == undefined || userId == "")
         return res.status(403, "Expired or invalid community join link");
@@ -313,7 +336,7 @@ exports.join = function(req, res) {
             if (!comm) {
                 return res.send(404, "Community does not exist");
             }
-            return _addUserToComm(comm, user);
+            return _addUserToComm(req, res, comm, user);
         });
     });
 

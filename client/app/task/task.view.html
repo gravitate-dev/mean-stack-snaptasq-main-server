@@ -28,6 +28,7 @@
         </span>
                     <!-- task owner buttons -->
                     <span ng-if="task.ownerId==_me._id">
+        <button ng-click="" class="btn btn-primary" style="height:46px;">Communities</button>
         <a href="/task/update/{{task._id}}"><button class="btn btn-warning" style="height:46px;">Edit Task</button></a>
         <button ng-click="deleteTask(task)" class="btn btn-danger" style="height:46px;">Delete Task</button>
         </span>

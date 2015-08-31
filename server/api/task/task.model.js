@@ -50,7 +50,10 @@ var TaskSchema = new Schema({
         default: 0
     },
     communitiesIn: [{
-        id: Schema.Types.ObjectId,
+        id: {
+            type: Schema.Types.ObjectId,
+            index: true
+        },
         name: String,
     }],
     applicants: [{
@@ -78,7 +81,6 @@ var TaskSchema = new Schema({
         vicinity: String
     }
 });
-
 // Validation
 // Validate length of title less than or equal to 64 letters
 TaskSchema

@@ -412,12 +412,17 @@ angular.module('snaptasqApp')
 
             if (form.$valid) {
                 $scope.errors.location = undefined;
-                try {
-                    //if the formattedName is in
-                    $scope.task.location = TaskMarshaler.formatLocation($scope.task.location);
-                } catch (e) {
-                    //if location is wrong simply invalidate the location
-                    $scope.errors.location = true;
+                /** If they dont put a location there is no error **/
+                if (!angular.isUndefined($scope.task.location) && !angular.isUndefined($scope.task.location.name) && !angular.isUndefined($scope.task.location.geo)) {
+                    try {
+                        //if the formattedName is in
+                        $scope.task.location = TaskMarshaler.formatLocation($scope.task.location);
+                    } catch (e) {
+                        //if location is wrong simply invalidate the location
+                        $scope.errors.location = true;
+                    }
+                } else {
+                    $scope.task.location = undefined;
                 }
                 if ($scope.errors.description) {
                     return;

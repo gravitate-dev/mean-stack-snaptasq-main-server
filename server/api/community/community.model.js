@@ -7,10 +7,14 @@ var CommunitySchema = new Schema({
     name: {
         type: String
     },
-    totalUsers: {
-        type: Number,
-        default: 0
-    },
+    users: [Schema.Types.ObjectId],
+    tasks: [{
+        id: {
+            type: Schema.Types.ObjectId,
+            index: true
+        },
+        name: String,
+    }],
     status: String, // public, private, closed, hidden, deleted
     challenges: [ChallengeSchema],
     created: {

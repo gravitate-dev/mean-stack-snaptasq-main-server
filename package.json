@@ -53,6 +53,7 @@
     "through2": "^0.6.5",
     "time-grunt": "^1.2.1",
     "twilio": "^2.2.1",
+    "urlsafe-base64": "^1.0.0",
     "uuid": "^2.0.1",
     "wait.for": "^0.6.6"
   },
