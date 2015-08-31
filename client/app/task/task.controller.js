@@ -16,13 +16,13 @@ angular.module('snaptasqApp')
             if ($scope.id == undefined)
                 return;
             Task.getById($scope.id, function(data) {
+                console.log(data);
                 $scope.task = data;
                 $scope.task.locationCopy = _.clone(data.location, true);
 
                 // change seo before we call ready
                 //PageSeo.setTitle("Help out "+$scope.task.ownerName+ " with " + $scope.task.name);
                 //PageSeo.setDescription($scope.task.description);
-                $scope.htmlReady();
 
             }, function(err) {
                 notifications.showError({

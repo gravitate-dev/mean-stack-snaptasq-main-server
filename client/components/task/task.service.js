@@ -100,14 +100,18 @@ angular.module('snaptasqApp')
                 });
                 return deferred.promise;
             },
-            getById: function(id, cb) {
+            getById: function(id, cb, cbfail) {
                 var cb = cb || angular.noop;
+                var cbfail = cbfail || angular.noop;
                 var deferred = $q.defer();
                 Tsk.getById({
                     id: id
                 }, {}, function(data) {
                     deferred.resolve(data);
                     return cb(data);
+                }, function(data) {
+                    deferred.reject(data);
+                    return cbfail(data);
                 });
                 return deferred.promise;
             },
