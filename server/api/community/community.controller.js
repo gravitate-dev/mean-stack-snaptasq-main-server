@@ -39,6 +39,19 @@ exports.index = function(req, res) {
     });
 };
 
+exports.doesCommunityExistByIdentifier = function(id, source, cb) {
+    Community.findOne({
+        identifier: id,
+        source: source
+    }, function(err, comm) {
+        if (err) {
+            return handleError(res, err);
+        }
+        if (!comm) return cb(null);
+        return cb(comm);
+    });
+}
+
 exports.getMine = function(req, res) {
     Community.find({}, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, comms) {
         if (err) {
@@ -255,11 +268,11 @@ function _isBannedFromGroup(comm, user) {
 }
 
 function _isUserAlreadyInGroup(comm, user) {
-    if (user.communityMemberships == undefined) {
+    if (user.groups == undefined) {
         return false;
     }
-    for (var i = 0; i < user.communityMemberships.length; i++) {
-        if (user.communityMemberships[i].equals(comm._id))
+    for (var i = 0; i < user.groups.length; i++) {
+        if (user.groups[i].id.equals(comm._id))
             return true;
     }
     return false;
@@ -270,13 +283,27 @@ function _addUserToComm(req, res, comm, user) {
     if (_isUserAlreadyInGroup(comm, user)) {
         return res.send(200, "You are already in this group");
     }
-    user.communityMemberships.push(comm._id);
+
+    var group = {
+        id: comm._id,
+        name: comm.name,
+        pic: comm.pic,
+        source: comm.source
+    };
+    user.groups.push(group);
     user.save(function(err, user) {
         if (err) return handleError(res, err);
-        comm.users.push(user._id);
+
+        var usr = {
+            id: user._id,
+            name: user.name,
+            pic: user.pic
+        };
+
+        comm.users.push(usr);
         comm.save(function(err, comm) {
             if (err) return handleError(res, err);
-            return res.redirect('/community/' + comm._id.toString());
+            return res.json(200, comm);
         });
     });
 
@@ -294,6 +321,28 @@ exports.getTasks = function(req, res) {
     });
 }
 
+
+/** Used only from inside code. never by rest URLS directly **/
+/** Consumes the req, res**/
+exports._joinInternal = function(req, res, groupId, userId) {
+    if (userId == null || userId == undefined || userId == "")
+        return res.status(403, "Expired or invalid community join link");
+    User.findById(userId, function(err, user) {
+        if (err) {
+            return handleError(res, err)
+        }
+        if (!user) return res.send(404, "User could not be found by id: " + userId);
+        Community.findById(groupId, function(err, comm) {
+            if (err) {
+                return handleError(res, err);
+            }
+            if (!comm) {
+                return res.send(404, "Community does not exist");
+            }
+            return _addUserToComm(req, res, comm, user);
+        });
+    });
+}
 exports.join = function(req, res) {
     var groupId = req.param('id');
     var urlSafeEncoded_encryptedUserId = req.param('encUserId');
@@ -321,7 +370,6 @@ exports.join = function(req, res) {
     var bytes = CryptoJS.AES.decrypt(decoded, groupId);
     var userId = bytes.toString(CryptoJS.enc.Utf8);
     */
-    console.log(userId);
     if (userId == null || userId == undefined || userId == "")
         return res.status(403, "Expired or invalid community join link");
     User.findById(userId, function(err, user) {

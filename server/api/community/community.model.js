@@ -14,7 +14,7 @@ var CommunitySchema = new Schema({
         name: String,
         pic: {
             type: String,
-            default: config.host.url + "assets/logos/no_avatar.gif"
+            default: config.host.url + "assets/logos/no_avatar_group.png"
         }
     }],
     tasks: [{
@@ -26,6 +26,8 @@ var CommunitySchema = new Schema({
     }],
     url: String,
     identifier: String,
+    pic: String,
+    description: String,
     source: {
         type: String,
         default: "snaptasq"

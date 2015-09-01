@@ -72,7 +72,18 @@ exports.create = function(req, res, next) {
     });
 };
 
-
+exports.getFbAccessToken = function(req, res, next) {
+    if (req.session == undefined || req.session.userId == undefined) return res.send(403, "Please login again");
+    User.findOne({
+        _id: req.session.userId
+    }, function(err, user) {
+        if (err) validationError(res, err);
+        if (!user) return res.send(403, "Please login again");
+        if (!user.fb) return res.send(500, "You are not connected with facebook");
+        req.token = user.fb.accessToken;
+        next();
+    });
+}
 exports.applyBetaCode = function(req, res, next) {
         if (!req.session.userId) {
             return res.send(401); //they need to relogin

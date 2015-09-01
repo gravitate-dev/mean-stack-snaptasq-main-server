@@ -2,8 +2,37 @@
 'use strict';
 
 angular.module('snaptasqApp')
-    .factory('Community', function Community($resource, $http, $q) {
+    .factory('FbCommunity', function FbCommunity($resource, $http, $q) {
+        var Comm = $resource('/api/fbcommunities/:id/:controller', {
+            id: "@_id"
+        }, {
 
+        });
+
+        return {
+            joinByUrl: function(url, success, failure) {
+                var failure = failure || angular.noop;
+                var success = success || angular.noop;
+                var deferred = $q.defer();
+
+                $http({
+                    method: "POST",
+                    url: '/api/fbcommunities/joinByUrl',
+                    data: {
+                        url: url
+                    }
+                }).then(function(response) {
+                    deferred.resolve(response);
+                    return success(response);
+                }, function(fail) {
+                    deferred.reject(fail);
+                    return failure(fail);
+                });
+                return deferred.promise;
+            },
+        }
+    })
+    .factory('Community', function Community($resource, $http, $q) {
         var Comm = $resource('/api/communities/:id/:controller', {
             id: '@_id'
         }, {

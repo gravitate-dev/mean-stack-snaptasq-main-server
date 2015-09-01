@@ -72,7 +72,7 @@ var app = angular.module('snaptasqApp', ['bcherny/formatAsCurrency', 'slick', 'a
             // This is my FB app id for plunker demo app
             appId: '764169247036130'
         });
-        moment.lang('en', {
+        moment.locale('en', {
             relativeTime: {
                 future: "in %s",
                 past: "%s ago",

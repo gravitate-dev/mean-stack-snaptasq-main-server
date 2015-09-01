@@ -1,25 +1,60 @@
 'use strict';
 angular.module('snaptasqApp')
-    .controller('CommunityJoinCtrl', function($scope, Community) {
+    .controller('CommunityJoinCtrl', function($scope, Community, Notification, FbCommunity, $timeout, $location) {
+        $scope.submitted = false;
+        $scope.error = undefined;
 
-    }).controller('CommunitiesCtrl', function($scope, Community, $http, $window) {
+        $scope.isurl_fb = function(url) {
+            if (angular.isUndefined(url))
+                return false;
+            if (url.indexOf("facebook") != -1) {
+                return true;
+            }
+            return false;
+        };
+        $scope.validateUrl = function(url) {
+            /** Facebook **/
+            if ($scope.isurl_fb(url) && !$scope._me.isConnectedWithFb) {
+                throw "To join a facebook community, you need to connect your account with facebook first";
+            }
+            return true;
+        }
+        $scope.processJoinUrl = function(form) {
+            $scope.submitted = true;
+            if (form.$valid) {
+
+                //console.log(form.url.$viewValue);
+                try {
+                    var url = form.url.$viewValue;
+                    $scope.validateUrl(form.url.$viewValue);
+                    if ($scope.isurl_fb(url)) {
+                        FbCommunity.joinByUrl(url, function(success) {
+                            if (angular.isString(success.data))
+                                Notification.success(success.data);
+                            else {
+                                var comm = success.data;
+                                Notification.success("Welcome to " + comm.name + "'s snaptasq community!");
+                                $timeout(function() {
+                                    $location.path('/community/' + comm._id);
+                                }, 2000);
+                            }
+                        }, function(failure) {
+                            Notification.error(failure.data);
+                        })
+                    }
+                    //Community.joinWithUrl(form.$)    
+                } catch (e) {
+                    $scope.error = e;
+                    Notification.error(e);
+                }
+            }
+        }
+    }).controller('CommunitiesCtrl', function($scope, _me, Community, $http, $window) {
         $scope._bgcolorSnapYellow();
         $scope._noFooter();
-        $scope.communities = [];
-        $scope.showSuggestCommunityModal = function() {
-
-        };
-
-
-        $scope.listCommunities = function() {
-            Community.get({}, function(data) {
-                $scope.communities = [];
-                _.each(data, function(item) {
-                    $scope.communities.push(item);
-                });
-            });
-        }
-        $scope.listCommunities();
+        $scope._me = _me.$promise.then(function(me) {
+            $scope.communities = me.groups;
+        });
     }).controller('CommunityCtrl', function($scope, Community, Auth, $routeParams, Notification, notifications) {
         $scope.groupId = $routeParams.id;
         $scope.allowed = undefined;

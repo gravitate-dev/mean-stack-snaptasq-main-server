@@ -12,9 +12,11 @@
         <div class="panel panel-info">
             <div class="panel-body">
                 <h1 style="display:inline;" class="text-center">My Communities</h1>
-                <!-- <button class="btn btn-info pull-right" ng-click="showSuggestCommunityModal()"><i class="fa fa-plus"></i>&nbsp;Suggest Community</button> -->
                 <ul>
-                    <li ng-repeat="item in communities | filter:{status:'public'}"><a href="/community/{{item._id}}" class="lead">{{item.name}}</a></li>
+                    <li ng-repeat="item in communities">
+                        <a href="/community/{{item._id}}" class="lead">{{item.name}}</a>
+                        <img src="{{item.pic}}" />
+                    </li>
                 </ul>
             </div>
         </div>

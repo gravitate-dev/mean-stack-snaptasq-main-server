@@ -1,15 +1,22 @@
 <div class="container">
     <h1>Join community</h1>
-    <form class="form">
-        <div class="form-group" ng-class="{ 'has-success': form.name.$valid && submitted,
-    'has-error': form.name.$invalid && submitted }">
-            <label>Url</label>
+    <form class="form" name="form" ng-submit="processJoinUrl(form)" novalidate>
+        <div class="form-group" ng-class="{ 'has-success': form.url.$valid && submitted,
+    'has-error': form.url.$invalid && submitted }">
+            <label>Url <span ng-if="isurl_fb(url)">
+                <i class="fa fa-facebook"></i>
+            </span></label>
+            <input type="text" scroll-on-click-mobile="-15px" placeholder="enter a url" name="url" class="form-control" ng-model="url" required/>
 
-            <input type="text" scroll-on-click-mobile="-15px" placeholder="enter a url" maxlength="128" name="name" class="form-control" ng-model="task.name" required/>
-            <p class="help-block" ng-show="form.name.$error.required && submitted">
+            <p class="help-block" ng-show="form.url.$error.required && submitted">
                 a url is required
             </p>
-            <p class="lead">Example: https://www.facebook.com/groups/findyournextopportunity/</p>
+            <p class="has-error" ng-show="error && submitted">
+                {{error}}
+            </p>
+            <input type="submit" class="form-control btn-info" value="continue">
         </div>
-    </form>
+        <p class="lead">Example: https://www.facebook.com/groups/findyournextopportunity/</p>
+</div>
+</form>
 </div>
