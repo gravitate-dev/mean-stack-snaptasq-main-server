@@ -1,90 +1,6 @@
 'use strict';
 angular.module('snaptasqApp')
-    .controller('TasksCtrl', function($scope, _me, Page, notifications, Notification, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
-        $scope._bgcolorGrey();
-        //$scope._bgcolorSnapYellow();
-        $scope._noFooter();
-        $scope.currentUrl = $location.absUrl();
-        $scope._me = _me;
-        //console.log(_me);
-        $scope.action = $routeParams.action;
-        $scope.id = $routeParams.id;
-        $scope.errors = {};
-
-        Page.setTitle("Create Tasq");
-        $scope.loadTaskData = function() {
-            if ($scope.id == undefined)
-                return;
-            Task.getById($scope.id, function(data) {
-                console.log(data);
-                $scope.task = data;
-                $scope.task.locationCopy = _.clone(data.location, true);
-
-                // change seo before we call ready
-                //PageSeo.setTitle("Help out "+$scope.task.ownerName+ " with " + $scope.task.name);
-                //PageSeo.setDescription($scope.task.description);
-
-            }, function(err) {
-                notifications.showError({
-                    message: "This Task no longer exists. Because it was deleted by the owner."
-                });
-                $location.path('/tasks');
-            });
-        }
-        $scope.$on('reloadTask', function() {
-            if ($scope.id) {
-                $scope.loadTaskData();
-            }
-        });
-
-        $scope.task = {};
-        var isNewTask = ($location.path().indexOf("create") != -1);
-        if (isNewTask) {
-            $scope.task = TaskMarshaler.getTask() || {};
-        } else {
-            //if we do have a non-default task but its not yet made we should
-            //redirect them to the create
-            if (TaskMarshaler.hasTask()) {
-                $location.path('/task/create');
-            }
-            $scope.loadTaskData();
-        }
-        $scope.filter = {};
-        //$scope.tasks = [];
-
-        Task.countResponsibleTasks(function(count) {
-            $rootScope.$broadcast('count.responsible', count);
-        });
-        $scope.typeTasks = $routeParams.type;
-        if ($routeParams.type == "mine") {
-            Task.getMyTasks(function(data) {
-                $scope.tasks = data;
-                _.each($scope.tasks, function(task) {
-                    task.locationCopy = _.clone(task.location, true);
-                });
-            });
-        } else if ($routeParams.type == "applied") {
-            Task.getMyAppliedTasks(function(data) {
-                $scope.tasks = data;
-                _.each($scope.tasks, function(task) {
-                    task.locationCopy = _.clone(task.location, true);
-                });
-            });
-        } else if ($routeParams.type == "chosen") {
-            Task.getTasksResponsible(function(data) {
-                $scope.tasks = data;
-                _.each($scope.tasks, function(task) {
-                    task.locationCopy = _.clone(task.location, true);
-                });
-            });
-        } else {
-            Task.get({}, function(data) {
-                $scope.tasks = data;
-                _.each($scope.tasks, function(task) {
-                    task.locationCopy = _.clone(task.location, true);
-                });
-            });
-        }
+    .controller('TaskGlobalCtrl', function($scope, Page, notifications, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
 
         $scope.connect = function() {
             $window.location.href = '/auth/facebook';
@@ -151,7 +67,7 @@ angular.module('snaptasqApp')
                         message: "tasq delete",
                         delay: 4000
                     });
-                    $location.path('/tasks/mine');
+                    $location.path('/tasqs');
                 }, function(err) {
                     notifications.showError(err);
                 });
@@ -211,87 +127,162 @@ angular.module('snaptasqApp')
         $scope.display = {
             mode: "list"
         };
-        //for (var i = 0; i < 50; i++) {
-        //    $scope.xList.push(TaskMock.generate());
-        //}
-        /*
-        $scope.myIsotope = angular.element('#isotopeContainer').scope();
-        $scope.removeItem = function(index) {
-            var s = angular.element('#isotopeContainer').scope();
-            s.tasks.splice(index, 1);
-            s.refreshIso();
-            $scope.refreshIsotope();
-        };
-        $scope.selectedTask = undefined;
-        $scope.refreshIsotope = function() {
-            $timeout(function() {
-                $scope.myIsotope.refreshIso();
-            }, 1);
-        }
-        $scope.highlightItem = function($event, item) {
-            if (!angular.isUndefined(item.selected) && item.selected==true){
+    })
+    .controller('TaskCtrl', function($scope, _me, Page, notifications, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
+        $scope._bgcolorGrey();
+        $scope._noFooter();
+        $scope.currentUrl = $location.absUrl();
+        $scope._me = _me;
+        $scope.action = $routeParams.action;
+        $scope.id = $routeParams.id;
+        $scope.errors = {};
+        $scope.task = {};
+        $scope.loadTaskData = function() {
+            if ($scope.id == undefined)
                 return;
-            }
-            if (!angular.isUndefined($scope.selectedTask)) {
-                $scope.selectedTask.selected = false;
-            }
-            $scope.selectedTask = item;
-            $scope.selectedTask.selected = true;
-            $scope.refreshIsotope();
-        };
-        $scope.deselectCurrentItem = function() {
-            if (angular.isUndefined($scope.selectedTask)) return;
-            $scope.selectedTask.selected = false;
-            $scope.refreshIsotope();
-            $scope.refreshIsotope();
+            Task.getById($scope.id, function(data) {
+                console.log(data);
+                $scope.task = data;
+                $scope.task.locationCopy = _.clone(data.location, true);
+
+                // change seo before we call ready
+                //PageSeo.setTitle("Help out "+$scope.task.ownerName+ " with " + $scope.task.name);
+                //PageSeo.setDescription($scope.task.description);
+
+            }, function(err) {
+                notifications.showError({
+                    message: "This Task no longer exists. Because it was deleted by the owner."
+                });
+                $location.path('/tasqs');
+            });
         }
-        $scope.onCloseCommentBox = function(commentBox) {
-            commentBox.selected = false;
-            if (!angular.isUndefined($scope.selectedTask)) {
-                $scope.selectedTask.selected = false;
+        $scope.$on('reloadTask', function() {
+            if ($scope.id) {
+                $scope.loadTaskData();
             }
-            $scope.refreshIsotope();
-        }
-        $scope.addToList = function() {
-            var s = angular.element('#isotopeContainer').scope();
-            s.count = s.count || 0;
-            var newItem = {
-                name: 'add',
-                number: s.count--,
-                date: Date.now(),
-                class: 'purple'
-            };
-            s.tasks.push(newItem);
-        }
-        $interval(function() {
-            //console.log("BEFORE");
-            var s = angular.element('#isotopeContainer').scope();
-            //console.log("AFTER");
-            if (!angular.isUndefined(s) && !angular.isUndefined(s.refreshIso)){
-                s.refreshIso();
-                return;
-            }
-        }, 1000)
-        */
+        });
+        $scope.loadTaskData();
+
+    })
+    .controller('TasksCtrl', function($scope, _me, Page, notifications, Notification, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
+        $scope._bgcolorGrey();
+        //$scope._bgcolorSnapYellow();
+        $scope._noFooter();
+        $scope.currentUrl = $location.absUrl();
+        $scope._me = _me;
+        //console.log(_me);
+        $scope.errors = {};
+        $scope.filter = {};
+        $scope.myTasks = [];
+        $scope.otherTasks = [];
+
+        $scope.viewingLists = 'all';
+
+        Task.countResponsibleTasks(function(count) {
+            $rootScope.$broadcast('count.responsible', count);
+        });
+
+        Task.getMyTasks(function(data) {
+            $scope.myTasks = [];
+            _.each(data, function(task) {
+                task.locationCopy = _.clone(task.location, true);
+                $scope.myTasks.push(task);
+            });
+        });
+        Task.getMyAppliedTasks(function(data) {
+            $scope.otherTasks = [];
+            _.each(data, function(task) {
+                task.locationCopy = _.clone(task.location, true);
+                $scope.otherTasks.push(task);
+            });
+        });
     })
     .controller('TaskEditCtrl', function($scope, $window, Modal, notifications, $routeParams, Task, Notification, $rootScope, TaskMarshaler, Auth, $location) {
-        //$scope._bgcolorSnapYellow();
         $scope._noFooter();
         $scope._bgcolorGrey();
         $rootScope.title = "Create Tasq";
         $scope.postTo = "private";
-        /**
-         * Task steps can be 
-         * 1. taskform 2. community 3. share 4. finish
-         **/
         $scope.uiStep = "taskform";
-        $scope.taskId = undefined; // this will be set in Task.create
+        $scope.errors = {};
+        $scope.previousLocation = {};
+        $scope.action = $routeParams.action;
+        $scope.id = $routeParams.id;
+        //$scope.task = $scope.task || TaskMarshaler.getTask() || {};
+        // if the $scope.task is undefined this means its coming from the homepage
+        // in that case DO NOT reassign the varaible
+        $scope.loadTaskData = function() {
+            Task.getById($scope.id, function(data) {
+                console.log(data);
+                $scope.task = data;
+                $scope.task.locationCopy = _.clone(data.location, true);
+            }, function(err) {
+                notifications.showError({
+                    message: "This Task no longer exists. Because it was deleted by the owner."
+                });
+                $location.path('/tasqs');
+            });
+        }
+
+        if (!angular.isUndefined($scope.id)) {
+            $scope.loadTaskData();
+        } else {
+            $scope.task = TaskMarshaler.getTask() || {};
+        }
+
+        //protect against beta lock
+        $scope.$watch('_me', function(user) {
+            if (angular.isUndefined(user)) {
+                return;
+            }
+            if (user.requiresBeta && window._beta) {
+                $location.path('/beta');
+            }
+        });
+
+        /**
+         * When editing a task the newVal will NEVER be undefined
+         * When creating a new task the newVal will be UNDEFINED
+         * If the task was NOT UNDEFINED THEN SUDDENLY IS UNDEFINED
+         * we should REMOVE ALL LOCATION PROPERTIES!
+         * THIS FIXES LOCATION BUG!
+         **/
+
+        var isUndefinedFirst = false;
+        var locationWatcher = $scope.$watch('task.location.name', function(newVal, oldVal) {
+            if (newVal != oldVal) {
+                if (angular.isUndefined($scope.task.location) || angular.isUndefined($scope.task.location.details) || $scope.task.location.details || $scope.task.location.formattedName) {
+                    $scope.task.location = {
+                        name: newVal
+                    };
+                    $scope.task.locationCopy = undefined;
+                }
+            }
+
+        });
+
+        if ($scope.action == "update") {
+            /** 
+             * Fix for task location not appearing when loading an old tasq
+             **/
+            var unregister = $scope.$watch('task', function(newVal, oldVal) {
+                if (angular.isUndefined(newVal)) return;
+                if (angular.isUndefined(newVal.location)) return;
+                $scope.setEditor(newVal);
+                unregister();
+            })
+        }
+
+        //i have to watch the task
+        //case they edit a pre-existing location
+        $scope.setEditor = function(task) {
+            $scope.previousLocation = _.clone(task.location.name, true);
+        }
         $scope.changeStepTo = function(stepName) {
             if (stepName == "finish") {
                 if ($scope.taskId) {
-                    $location.path("/task/view/" + $scope.taskId);
+                    $location.path("/tasq/view/" + $scope.taskId);
                 } else {
-                    $location.path("/tasks/mine");
+                    $location.path("/tasqs");
                 }
             }
             $scope.uiStep = stepName;
@@ -343,87 +334,24 @@ angular.module('snaptasqApp')
         }
 
 
-        //$scope.task = $scope.task || TaskMarshaler.getTask() || {};
-        // if the $scope.task is undefined this means its coming from the homepage
-        // in that case DO NOT reassign the varaible
-        if (angular.isUndefined($scope.task)) {
-            //ONLY load this if the task is undefined from the parent controller, TasksCtrl
-            $scope.task = TaskMarshaler.getTask() || {};
-        }
-        $scope.$watch('_me', function(user) {
-            if (angular.isUndefined(user)) {
-                return;
-            }
-            if (user.requiresBeta && window._beta) {
-                $location.path('/beta');
-            }
-        });
-        // its okay if users are not logged in to go here
-        // its not okay if users are logged in and have not unlocked the beta
-        $scope.errors = {};
-        $scope.action = $routeParams.action;
-
-        $scope.previousLocation = {};
-
-        //i have to watch the task
-        var unregister = $scope.$watch('task', function(newVal, oldVal) {
-                if (angular.isUndefined(newVal)) return;
-                if (angular.isUndefined(newVal.location)) return;
-                $scope.setEditor(newVal);
-            })
-            //case they edit a pre-existing location
-        $scope.setEditor = function(task) {
-            $scope.previousLocation = _.clone(task.location.name, true);
-        }
-
-
-        /**
-         * When editing a task the newVal will NEVER be undefined
-         * When creating a new task the newVal will be UNDEFINED
-         * If the task was NOT UNDEFINED THEN SUDDENLY IS UNDEFINED
-         * we should REMOVE ALL LOCATION PROPERTIES!
-         * THIS FIXES LOCATION BUG!
-         **/
-        var isUndefinedFirst = false;
-        var locationWatcher = $scope.$watch('task.location.name', function(newVal, oldVal) {
-            if (newVal != oldVal) {
-                if ($scope.task.location.details || $scope.task.location.formattedName) {
-                    $scope.task.location = {
-                        name: newVal
-                    };
-                    $scope.task.locationCopy = undefined;
-                }
-            }
-
-        });
-        if ($scope.action == "update") {
-            /** 
-             * Fix for task location not appearing when loading an old tasq
-             **/
-            var unregister = $scope.$watch('task', function(newVal, oldVal) {
-                if (angular.isUndefined(newVal)) return;
-                if (angular.isUndefined(newVal.location)) return;
-                $scope.setEditor(newVal);
-                unregister();
-            })
-        }
         $scope.createTask = function(form) {
             $scope.submitted = true;
 
             if (form.$valid) {
                 $scope.errors.location = undefined;
                 /** If they dont put a location there is no error **/
-                if (!angular.isUndefined($scope.task.location) && !angular.isUndefined($scope.task.location.name) && !angular.isUndefined($scope.task.location.geo)) {
-                    try {
-                        //if the formattedName is in
-                        $scope.task.location = TaskMarshaler.formatLocation($scope.task.location);
-                    } catch (e) {
-                        //if location is wrong simply invalidate the location
-                        $scope.errors.location = true;
-                    }
-                } else {
-                    $scope.task.location = undefined;
+                //if (!angular.isUndefined($scope.task.location) && !angular.isUndefined($scope.task.location.name) && !angular.isUndefined($scope.task.location.geo)) {
+                try {
+                    //if the formattedName is in
+                    $scope.task.location = TaskMarshaler.formatLocation($scope.task.location);
+                } catch (e) {
+                    //if location is wrong simply invalidate the location
+                    $scope.errors.location = true;
+                    $scope.task.location = {};
                 }
+                /*} else {
+                    $scope.task.location = undefined;
+                }*/
                 if ($scope.errors.description) {
                     return;
                 }
@@ -473,6 +401,7 @@ angular.module('snaptasqApp')
             TaskMarshaler.removeTask();
             $window.history.back();
         }
+
     }).controller('TaskApplicantList', function($scope, Task, Notification, $rootScope) {
         $scope.setTasker = function(task, applicantId) {
             Task.setTasker(task._id, applicantId, function(data) {

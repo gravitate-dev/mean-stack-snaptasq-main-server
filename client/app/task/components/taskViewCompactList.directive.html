@@ -6,30 +6,16 @@
         </p>
     </div>
 </div>
-<div class="row">
-    <div class="col-md-9 col-sm-9 col-xs-12">
+<div class="row" ng-click="_goToPath('/tasq/view/'+task._id)">
+    <div class="col-md-12 col-sm-12 col-xs-12">
         <div style="float:left;margin-right:10px;">
             <img src="{{task.ownerPic}}" style="height:50px;width:50px;" />
         </div>
         <div>
-            <strong>{{task.ownerName}}</strong>&nbsp;<span>{{task.created | date:'MMM d, y h:mm a'}}</span>&nbsp;<span class="badge badge-info">{{task.status | capslock}}</span>
-            <span style="position:relative;z-index:2;" ng-if="task.payout" class="fa-stack fa-sm">
-				<i class="fa fa-circle-thin fa-stack-2x"></i>
-				<i class="fa fa-dollar fa-stack-1x"></i>
-			</span>
+            <strong>{{task.ownerName}}</strong>&nbsp;&middot;&nbsp;<span am-time-ago="task.created"></span>&nbsp;&middot;&nbsp;<span ng-if="task.payout">${{task.payout}}</span><span ng-if="!task.payout">free</span>
         </div>
-        <div class="single-line-dots" style="font-size:1.5em;"><a href="/task/view/{{task._id}}">{{task.name}}</a></div>
-    </div>
-    <div class="col-md-3 col-sm-3 col-xs-12">
-        <div style="display:inline;padding-right:5px;" id="applicantIcon">
-            <a href="" ng-click="showApplicants(task)"><span style="font-size:2em;">&nbsp;{{task.applicants.length}}</span><i class="fa fa-user fa-2x"></i></a>
-        </div>
-        <div style="display:inline;color:green" id="moneyIcon" ng-if="task.payout">
-            <i class="fa fa-dollar fa-2x"></i><span style="font-size:2em;">{{task.payout}}</span>
-        </div>
-        <div id="currentTasker" ng-if="task.tasker.id && task.tasker.confirmed">
-            <img ng-if="task.tasker.pic" src="{{task.tasker.pic}}" style="height:50px;width:50px;margin-right:5px;" /><a ng-if="task.tasker.fbId" href="http://www.facebook.com/{{task.tasker.fbId}}">{{task.tasker.name}}</a><span ng-if="!task.tasker.fbId">{{task.tasker.name}} is helping out</span>
-        </div>
+        <div>{{task.name}}</div>
+        <div><a href="/tasq/view/{{task._id}}">{{task.status}}</a></div>
     </div>
 </div>
 <!-- if i am the tasker i will see this -->

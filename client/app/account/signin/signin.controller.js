@@ -122,7 +122,7 @@ angular.module('snaptasqApp')
                 $location.path('/beta');
             } else {
                 if (TaskMarshaler.hasTask()) {
-                    $location.path("/task/create");
+                    $location.path("/tasq/create");
                 } else {
                     $location.path('/');
                 }

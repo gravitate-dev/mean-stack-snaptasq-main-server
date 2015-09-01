@@ -27,12 +27,12 @@ angular.module('snaptasqApp').controller('MainCtrl', function($scope, $http, $in
 
     $scope.getStarted = function() {
         //TaskMarshaler.removeTask();
-        $location.path("/task/create");
+        $location.path("/tasq/create");
     }
     $scope.handleSearch = function($item, $model, $label) {
         var task = TaskMarshaler.createDefaultTask($item);
         TaskMarshaler.setTask(task);
-        $location.path("/task/create");
+        $location.path("/tasq/create");
     }
 
     $scope.launchTaskCreateWithName = function(taskName) {
@@ -41,7 +41,7 @@ angular.module('snaptasqApp').controller('MainCtrl', function($scope, $http, $in
         };
         var task = TaskMarshaler.createDefaultTask(temp);
         TaskMarshaler.setTask(task);
-        $location.path("/task/create");
+        $location.path("/tasq/create");
     }
     $scope.searchTask = "";
     // removed  image: "assets/bubbleHeads/need_kids_pick_up/model.png"}

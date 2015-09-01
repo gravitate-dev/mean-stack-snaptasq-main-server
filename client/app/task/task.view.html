@@ -1,4 +1,4 @@
-<div class="container top-buffer">
+<div class="container top-buffer" ng-controller="TaskGlobalCtrl">
     <div class="row">
         <div class="col-md-7 col-sm-12">
 
@@ -29,7 +29,7 @@
                     <!-- task owner buttons -->
                     <span ng-if="task.ownerId==_me._id">
         <button ng-click="" class="btn btn-primary" style="height:46px;">Communities</button>
-        <a href="/task/update/{{task._id}}"><button class="btn btn-warning" style="height:46px;">Edit Task</button></a>
+        <a href="/tasq/update/{{task._id}}"><button class="btn btn-warning" style="height:46px;">Edit Task</button></a>
         <button ng-click="deleteTask(task)" class="btn btn-danger" style="height:46px;">Delete Task</button>
         </span>
                 </div>
@@ -43,7 +43,7 @@
                         <div>
                             <strong>{{task.ownerName}}</strong>&nbsp;<span>{{task.created | date:'MMM d, y h:mm a'}}</span>&nbsp;<span class="badge badge-info">{{task.status | capslock}}</span>
                         </div>
-                        <div style="font-size:1.5em;"><a href="/task/view/{{task._id}}">{{task.name}}</a></div>
+                        <div style="font-size:1.5em;"><a href="/tasq/view/{{task._id}}">{{task.name}}</a></div>
                     </div>
                     <div class="pull-right">
                     </div>
@@ -59,7 +59,7 @@
             </div>
             <div class="row top-buffer">
                 <div class="col-md-12">
-                    <div onrender="rendered()" class="fb-comments" data-href="{{_hostName}}/task/view/{{task._id}}#{{task._id}}" data-numposts="3" data-colorscheme="light"></div>
+                    <div onrender="rendered()" class="fb-comments" data-href="{{_hostName}}/tasq/view/{{task._id}}#{{task._id}}" data-numposts="3" data-colorscheme="light"></div>
                 </div>
             </div>
         </div>

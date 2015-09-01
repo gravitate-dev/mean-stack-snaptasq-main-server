@@ -11,17 +11,6 @@
         </div>
         <div collapse="isNotCollapsed" class="navbar-collapse collapse" id="navbar-main">
             <ul class="nav navbar-nav">
-                <li class="dropdown hide-when-collapsed-navbar" ng-if="!isUserBetaLocked && isLoggedIn()">
-                    <a href="/tasks/mine" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">Tasq<b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li ng-repeat="item in menuTask" ng-class="{active: isActive(item.link)}">
-                            <a ng-href="{{item.link}}" ng-if="isLoggedIn() && (!item.reqBeta || !isUserBetaLocked)">{{item.title}}&nbsp;<span class="badge" ng-if="item.count()>0">{{item.count()}}</span></a>
-                        </li>
-                    </ul>
-                </li>
-                <li ng-repeat="item in menuTask" class="show-only-when-collapsed-navbar" ng-class="{active: isActive(item.link)}">
-                    <a ng-href="{{item.link}}" ng-if="isLoggedIn() && (!item.reqBeta || !isUserBetaLocked)">{{item.title}}&nbsp;<span class="badge" ng-if="item.count()>0">{{item.count()}}</span></a>
-                </li>
                 <li class="dropdown hide-when-collapsed-navbar" ng-if="isLoggedIn() && isAdmin()">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">Admin<b class="caret"></b></a>
                     <ul class="dropdown-menu">

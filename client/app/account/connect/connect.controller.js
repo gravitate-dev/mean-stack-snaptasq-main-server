@@ -13,7 +13,7 @@ angular.module('snaptasqApp')
         var temp = new User(Auth.getCurrentUser());
         temp.$promise.then(function(data) {
             if (data.isConnectedWithFb && data.verification.status) {
-                $location.path('/tasks');
+                $location.path('/tasqs');
             }
             $scope.currentUser = data;
         });
@@ -23,7 +23,7 @@ angular.module('snaptasqApp')
             var temp = new User(Auth.getCurrentUser());
             temp.$promise.then(function(data) {
                 if (data.isConnectedWithFb && data.verification.status) {
-                    $location.path('/tasks');
+                    $location.path('/tasqs');
                 }
                 $scope.currentUser = data;
             });

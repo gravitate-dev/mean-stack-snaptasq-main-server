@@ -32,15 +32,6 @@ var UserSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    //when this secureThrottle is in the future we block requests
-    throttle: {
-        forgotPass: {
-            type: Date
-        }, //forgot pass is one time per hour
-        verifyEmail: {
-            type: Date
-        } //verify email is throttle one time per hour
-    },
     fb: {
         id: String,
         accessToken: String,
@@ -64,9 +55,14 @@ var UserSchema = new Schema({
         type: String,
         default: 'user'
     },
-    taskIds: [Schema.Types.ObjectId],
-    communityMemberships: [Schema.Types.ObjectId],
-    communityMembershipsBans: [Schema.Types.ObjectId],
+    myTasks: [Schema.Types.ObjectId],
+    otherTasks: [Schema.Types.ObjectId],
+    groups: [{
+        id: Schema.Types.ObjectId,
+        name: String,
+        pic: String,
+        source: String
+    }],
     friends: [friendSchema],
     hashedPassword: String,
     provider: String,

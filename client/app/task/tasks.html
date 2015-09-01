@@ -1,24 +1,33 @@
-<div class="container top-buffer">
+<div class="container top-buffer" ng-controller="TaskGlobalCtrl">
     <div id="actionButtons">
         <div class="row bot-buffer">
-            <div class="col-md-2">
-                <a href="/task/create">
-                    <button class="btn btn-info">Create New</button>
-                </a>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <p style="float:left; padding-right:20px;">Show</p>
+                <div class="btn-group">
+                    <label class="btn btn-primary" ng-model="viewingLists" btn-radio="'all'">All</label>
+                    <label class="btn btn-primary" ng-model="viewingLists" btn-radio="'applied'">Applied</label>
+                    <label class="btn btn-primary" ng-model="viewingLists" btn-radio="'mine'">Mine</label>
+                </div>
             </div>
         </div>
     </div>
-    <div ng-if="tasks.length==0" class="ngcloak row top-buffer">
-        <div class="col-md-12">
-            <span ng-if="typeTasks=='mine'">You have no tasks yet.</span>
-            <span ng-if="typeTasks=='applied'">You have not applied to any tasks yet.</span>
-        </div>
-    </div>
-
     <div class="top-buffer">
-        <div ng-show="display.mode=='list'">
-            <div class="well top-buffer" style="background-color:white;" ng-repeat="task in tasks | searchTaskFilter:filter">
-                <div class="task-view-compact-list" task="task"></div>
+        <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12" ng-show="viewingLists=='all' || viewingLists=='applied'">
+                <div class="tasq-list-header">applied tasqs</div>
+                <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;apply to more tasqs</div>
+                <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in otherTasks | searchTaskFilter:filter">
+                    <div class="task-view-compact-list" task="task"></div>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12" ng-show="viewingLists=='all' || viewingLists=='mine'">
+                <div class="tasq-list-header">my tasqs</div>
+                <a href="/tasq/create">
+                    <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;create new tasq</div>
+                </a>
+                <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in myTasks | searchTaskFilter:filter">
+                    <div class="task-view-compact-list" task="task"></div>
+                </div>
             </div>
         </div>
     </div>

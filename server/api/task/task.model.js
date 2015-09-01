@@ -29,10 +29,6 @@ var TaskSchema = new Schema({
             default: false
         }
     },
-    isPrivate: {
-        type: Boolean,
-        default: true
-    },
     created: {
         type: Date,
         default: Date.now

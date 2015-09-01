@@ -7612,6 +7612,14 @@ div.sendgrid-subscription-widget input[type="submit"] {
   background-color: #5cb85c;
   border-color: #4cae4c; }
 
+.tasq-list-header {
+  background-color: #fcd11a;
+  color: white;
+  padding-left: 20px;
+  font-size: 1.5em;
+  padding-bottom: 5px;
+  padding-top: 5px; }
+
 .single-line-dots {
   white-space: nowrap;
   text-overflow: ellipsis;

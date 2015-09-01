@@ -3,35 +3,29 @@
 angular.module('snaptasqApp')
     .config(function($routeProvider) {
         $routeProvider
-            .when('/tasks', {
+            .when('/tasqs', {
                 templateUrl: 'app/task/tasks.html',
                 controller: 'TasksCtrl',
                 authenticate: true,
                 unlockedBetaRequired: true,
             })
-            .when('/tasks/:type', {
-                templateUrl: 'app/task/tasks.html',
-                controller: 'TasksCtrl',
-                authenticate: true,
-                unlockedBetaRequired: true
-            })
             // CREATE TASK
-            .when('/task/:action', {
+            .when('/tasq/:action', {
                 templateUrl: 'app/task/task.edit.html',
                 controller: 'TaskEditCtrl',
                 authenticate: false,
                 scrollToTopOnLoad: true,
             })
             // VIEW TASK
-            .when('/task/view/:id', {
+            .when('/tasq/view/:id', {
                 templateUrl: 'app/task/task.view.html',
-                controller: 'TasksCtrl',
+                controller: 'TaskCtrl',
                 authenticate: false
             })
             // UPDATE TASK
-            .when('/task/:action/:id', {
+            .when('/tasq/:action/:id', {
                 templateUrl: 'app/task/task.edit.html',
-                controller: 'TasksCtrl',
+                controller: 'TaskEditCtrl',
                 authenticate: true,
                 unlockedBetaRequired: true
             });

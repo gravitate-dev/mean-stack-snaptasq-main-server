@@ -72,6 +72,23 @@ var app = angular.module('snaptasqApp', ['bcherny/formatAsCurrency', 'slick', 'a
             // This is my FB app id for plunker demo app
             appId: '764169247036130'
         });
+        moment.lang('en', {
+            relativeTime: {
+                future: "in %s",
+                past: "%s ago",
+                s: "seconds",
+                m: "1m",
+                mm: "%dm",
+                h: "1h",
+                hh: "%h",
+                d: "1d",
+                dd: "%dd",
+                M: "1m",
+                MM: "%dm",
+                y: "1y",
+                yy: "%dy"
+            }
+        });
     })
     .factory('Page', function() {
         var title = 'snaptasq';
@@ -198,6 +215,9 @@ function GlobalCtrl($scope, BadgeAlerts, localStorageService, $q, $templateCache
         $('html, body').animate({
             scrollTop: 0
         }, 'slow');
+    }
+    $scope._goToPath = function(url) {
+        $location.path(url);
     }
     $scope.$on('$routeChangeStart', function(next, current) {
         /*

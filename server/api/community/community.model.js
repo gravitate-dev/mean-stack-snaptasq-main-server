@@ -3,11 +3,20 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var uuid = require('uuid');
+var config = require('../../config/environment');
 var CommunitySchema = new Schema({
-    name: {
-        type: String
-    },
-    users: [Schema.Types.ObjectId],
+    name: String,
+    users: [{
+        id: {
+            type: Schema.Types.ObjectId,
+            index: true
+        },
+        name: String,
+        pic: {
+            type: String,
+            default: config.host.url + "assets/logos/no_avatar.gif"
+        }
+    }],
     tasks: [{
         id: {
             type: Schema.Types.ObjectId,
@@ -15,6 +24,12 @@ var CommunitySchema = new Schema({
         },
         name: String,
     }],
+    url: String,
+    identifier: String,
+    source: {
+        type: String,
+        default: "snaptasq"
+    }, // facebook,reddit,tumblr,twitter
     status: String, // public, private, closed, hidden, deleted
     challenges: [ChallengeSchema],
     created: {
@@ -37,7 +52,7 @@ var ChallengeSchema = new Schema({
     type: {
         type: String,
         default: "open"
-    }, // open,email,areacode,code
+    }, // open,email,areacode,code, fburl, fburl requires a url to be inputted
     answers: [{
         type: String,
         default: ""

@@ -1,0 +1,15 @@
+<div class="container">
+    <h1>Join community</h1>
+    <form class="form">
+        <div class="form-group" ng-class="{ 'has-success': form.name.$valid && submitted,
+    'has-error': form.name.$invalid && submitted }">
+            <label>Url</label>
+
+            <input type="text" scroll-on-click-mobile="-15px" placeholder="enter a url" maxlength="128" name="name" class="form-control" ng-model="task.name" required/>
+            <p class="help-block" ng-show="form.name.$error.required && submitted">
+                a url is required
+            </p>
+            <p class="lead">Example: https://www.facebook.com/groups/findyournextopportunity/</p>
+        </div>
+    </form>
+</div>

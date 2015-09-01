@@ -3,25 +3,6 @@
 angular.module('snaptasqApp')
     .controller('NavbarCtrl', function($scope, $location, Auth, Notify, TaskMarshaler, $interval, $timeout) {
         $scope.responsibleCount = 0;
-        $scope.menuTask = [{
-            'title': 'My Tasqs',
-            'link': '/tasks/mine',
-            reqLogin: true,
-            reqBeta: true
-        }, {
-            'title': 'Applied Tasqs',
-            'link': '/tasks/applied',
-            reqLogin: true,
-            reqBeta: true
-        }, {
-            'title': 'Chosen Tasqs',
-            'link': '/tasks/chosen',
-            count: function() {
-                return $scope.responsibleCount;
-            },
-            reqLogin: true,
-            reqBeta: true
-        }, ];
         $scope.menuAdmin = [];
         $scope.menu = [];
 
@@ -30,6 +11,11 @@ angular.module('snaptasqApp')
                 if (isLoggedIn) {
                     $scope.menu = [];
                     if (Auth.isBetaUnlocked()) {
+                        $scope.menu.push({
+                            'title': 'Tasqs',
+                            'link': '/tasqs',
+                            reqLogin: true
+                        });
                         $scope.menu.push({
                             'title': 'Communities',
                             'link': '/communities',

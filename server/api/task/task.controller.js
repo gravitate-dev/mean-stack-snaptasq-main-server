@@ -6,9 +6,7 @@ var Emailer = require('../email/email.controller');
 var config = require('../../config/environment');
 // Get list of tasks
 exports.index = function(req, res) {
-    Task.find({
-        isPrivate: false
-    }, '-__v', function(err, tasks) {
+    Task.find({}, '-__v', function(err, tasks) {
         if (err) {
             return handleError(res, err);
         }
@@ -24,13 +22,10 @@ exports.getMyAppliedTasks = function(req, res) {
         _id: currentUserId
     }, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, user) { // don't ever give out the password or salt
         if (!user || err) return handleError(res, err);
-        if (!user.taskIds) return handleError(res, err);
+        if (!user.otherTasks) return handleError(res, err);
         Task.find({
             '_id': {
-                $in: user.taskIds
-            },
-            'ownerId': {
-                $ne: currentUserId
+                $in: user.otherTasks
             }
         }, function(err, tasks) {
             if (err) {
@@ -107,7 +102,7 @@ exports.create = function(req, res) {
             if (err) {
                 return handleError(res, err);
             }
-            user.taskIds.push(task._id);
+            user.myTasks.push(task._id);
             user.save(function(err) {
                 if (err) {
                     console.log(err);
@@ -127,6 +122,7 @@ exports.update = function(req, res) {
         if (!task) {
             return res.send(404);
         }
+        task.location = undefined;
         var updated = _.merge(task, req.body);
         var currentUserId = req.session.userId;
         updated.ownerId = currentUserId;
@@ -200,7 +196,7 @@ exports.applyToTask = function(req, res) {
                         name: user.name,
                         pic: user.pic
                     });
-                user.taskIds.push(req.params.id);
+                user.otherTasks.push(req.params.id);
                 user.save(function(err) {
                     if (err) {
                         console.log(err);
@@ -383,9 +379,9 @@ exports.unapplyToTask = function(req, res) {
             if (!user) return res.json(401);
 
             task = removeApplicantFromTaskById(task, user._id);
-            for (var i = user.taskIds.length - 1; i >= 0; i--) {
-                if (user.taskIds[i].equals(req.params.id)) {
-                    user.taskIds.splice(i, 1);
+            for (var i = user.otherTasks.length - 1; i >= 0; i--) {
+                if (user.otherTasks[i].equals(req.params.id)) {
+                    user.otherTasks.splice(i, 1);
                 }
             }
 

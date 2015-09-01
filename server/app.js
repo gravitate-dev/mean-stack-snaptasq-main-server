@@ -1,7 +1,7 @@
 /**
  * Main application file
  */
-
+/// need to add user_managed_groups for fb permissions
 'use strict';
 
 // Set default node environment to development

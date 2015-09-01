@@ -9,7 +9,7 @@ angular.module('snaptasqApp')
         $scope.betaCode = "";
         $scope.$watch('_me', function(newval) {
             if ($scope._me && !$scope._me.requiresBeta) {
-                $location.path('/tasks/mine');
+                $location.path('/tasqs');
             }
         });
 

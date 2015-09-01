@@ -19,7 +19,7 @@ var validationError = function(res, err) {
  * restriction: 'admin'
  */
 exports.index = function(req, res) {
-    User.find({}, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, users) {
+    User.find({}, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, users) {
         if (err) return res.send(500, err);
         res.json(200, users);
     });
@@ -114,7 +114,7 @@ exports.askFriend = function(req, res, next) {
     var myId = req.user._id;
     User.findOne({
         _id: myId
-    }, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, user) { // don't ever give out the password or salt
+    }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) { // don't ever give out the password or salt
         if (err) return next(err);
         if (!user) return res.json(401);
         //test the accessToken if it expired then have them relog
@@ -401,7 +401,7 @@ exports.me = function(req, res, next) {
     var userId = req.user._id;
     User.findOne({
         _id: userId
-    }, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, user) { // don't ever give out the password or salt
+    }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) { // don't ever give out the password or salt
         if (err) return next(err);
         if (!user) return res.json(401);
         //test the accessToken if it expired then have them relog
