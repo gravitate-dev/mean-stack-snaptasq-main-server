@@ -10,36 +10,50 @@ function isLoggedIn(req) {
 }
 
 function createNewUserWithFacebook(user, req, accessToken, refreshToken, profile, done) {
-    user = new User({
-        name: profile.displayName,
-        email: profile.emails[0].value,
-        role: 'user',
-        username: profile.username,
-        provider: 'facebook',
-        isConnectedWithFb: true,
-        hasConnectedWithFbOnce: true,
-        requiresBeta: config.betaTrails
-    });
-    user.verification.code = uuid.v4();
-    user.forgotPassCode = uuid.v4();
-    user.verification.status = true;
-    user.isConnectedWithFb = true;
-    user.hasConnectedWithFbOnce = true;
-    user.fb.email = profile.emails[0].value;
-    user.fb.username = profile.displayName || profile.username;
-    user.fb.json = profile._json;
-    user.fb.id = profile.id;
-    user.fb.accessToken = accessToken;
-    user.fb.refreshToken = refreshToken;
-    user.fb.profileUrl = profile.profileUrl;
-    user.fb.gender = profile.gender;
+    profile.emails[0].value,
+        var usr = {
+            name: profile.displayName,
+            role: 'user',
+            username: profile.username,
+            provider: 'facebook',
+            isConnectedWithFb: true,
+            hasConnectedWithFbOnce: true,
+            requiresBeta: config.betaTrails,
+            verification: {
+                code: uuid.v4(),
+                status: true
+            },
+            forgotPassCode: uuid.v4()
+
+        };
+    try {
+        var email = profile.emails[0].value;
+        usr.email = email;
+        user.fb.email = email;
+    } catch (e) {}
+    user = new User(usr);
+    try {
+        user.fb.username = profile.displayName || profile.username;
+        user.fb.json = profile._json;
+        user.fb.id = profile.id;
+        user.fb.accessToken = accessToken;
+        user.fb.refreshToken = refreshToken;
+        user.fb.profileUrl = profile.profileUrl;
+        user.fb.gender = profile.gender;
+    } catch (e) {
+        console.log(e);
+    }
     if (profile.photos && profile.photos.length != 0) {
         /**
          * If the fb picture is given to me its nice
          * I will take it then be done
          **/
-        user.fb.pic = profile.photos[0].value;
-        user.pic = user.fb.pic;
+        try {
+            user.fb.pic = profile.photos[0].value;
+            user.pic = user.fb.pic;
+        } catch (e) {
+            console.log(e);
+        }
         user.save(function(err) {
             if (err) done(err);
             return done(err, user);
@@ -62,7 +76,6 @@ function createNewUserWithFacebook(user, req, accessToken, refreshToken, profile
                 user.pic = user.fb.pic;
             }
             user.save(function(err) {
-
                 if (err) {
                     done(err);
                 }
