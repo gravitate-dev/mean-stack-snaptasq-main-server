@@ -10,22 +10,20 @@ function isLoggedIn(req) {
 }
 
 function createNewUserWithFacebook(user, req, accessToken, refreshToken, profile, done) {
-    profile.emails[0].value,
-        var usr = {
-            name: profile.displayName,
-            role: 'user',
-            username: profile.username,
-            provider: 'facebook',
-            isConnectedWithFb: true,
-            hasConnectedWithFbOnce: true,
-            requiresBeta: config.betaTrails,
-            verification: {
-                code: uuid.v4(),
-                status: true
-            },
-            forgotPassCode: uuid.v4()
-
-        };
+    var usr = {
+        name: profile.displayName,
+        role: 'user',
+        username: profile.username,
+        provider: 'facebook',
+        isConnectedWithFb: true,
+        hasConnectedWithFbOnce: true,
+        requiresBeta: config.betaTrails,
+        verification: {
+            code: uuid.v4(),
+            status: true
+        },
+        forgotPassCode: uuid.v4()
+    };
     try {
         var email = profile.emails[0].value;
         usr.email = email;
