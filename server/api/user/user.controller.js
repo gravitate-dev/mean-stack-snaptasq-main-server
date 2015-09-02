@@ -192,7 +192,6 @@ exports.destroy = function(req, res) {
  * related to me.
  */
 exports.deleteMyAccount = function(req, res) {
-    return res.send(404, "Testing this out");
     if (!req.session.userId) {
         return res.send(500, "Missing session userId");
     }
