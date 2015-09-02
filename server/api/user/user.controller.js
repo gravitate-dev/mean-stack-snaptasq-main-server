@@ -193,10 +193,10 @@ exports.destroy = function(req, res) {
  */
 exports.deleteMyAccount = function(req, res) {
     if (!req.session.userId) {
-        return res.send(500);
+        return res.send(500, "Missing session userId");
     }
     if (req.param('id') != req.session.userId) {
-        return res.send(500);
+        return res.send(500, "The id that was sent did not match the userId");
     }
 
     User.findByIdAndRemove(req.session.userId, function(err, user) {
