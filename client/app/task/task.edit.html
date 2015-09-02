@@ -55,9 +55,9 @@
                         <div class="col-md-12">
                             <!-- Split button -->
                             <div class="btn-group pull-right" dropdown ng-if="action=='create'">
-                                <button id="split-button" type="submit" class="btn btn-primary btn-lg">
-                                    <span ng-if="!postTo || postTo=='private'">POST PRIVATELY</span>
-                                    <span ng-if="postTo=='community'">POST TO COMMUNITY ({{countEnabledCommunities(communitiesList)}})</span>
+                                <button id="split-button" type="submit" class="btn btn-primary btn-lg" />
+                                <span ng-if="!postTo || postTo=='private'">POST PRIVATELY</span>
+                                <span ng-if="postTo=='community'">POST TO COMMUNITY ({{countEnabledCommunities(communitiesList)}})</span>
                                 </button>
                                 <button type="button" class="btn btn-primary btn-lg" dropdown-toggle>
                                     <span class="caret"></span>
