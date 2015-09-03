@@ -1,4 +1,13 @@
 <div class="container">
+    <div class="col-md-12 text-center">
+        <p>TESTFB</p>
+        <form class="form" name="form">
+            <div class="form-group">
+                <input style="width:100%;" type="text" ng-model="fbquery" />
+                <button class="btn btn-primary" style="width:100%;" ng-click="testFb(fbquery)">test query</button>
+            </div>
+        </form>
+    </div>
     <h1>Join community</h1>
     <form class="form" name="form" ng-submit="processJoinUrl(form)" novalidate>
         <div class="form-group" ng-class="{ 'has-success': form.url.$valid && submitted,

@@ -1,9 +1,11 @@
 'use strict';
 angular.module('snaptasqApp')
-    .controller('CommunityJoinCtrl', function($scope, Community, Notification, FbCommunity, $timeout, $location) {
+    .controller('CommunityJoinCtrl', function($scope, Auth, Community, Notification, FbCommunity, $timeout, $location) {
         $scope.submitted = false;
         $scope.error = undefined;
-
+        $scope.testFb = function(query) {
+            Auth.test(query);
+        }
         $scope.isurl_fb = function(url) {
             if (angular.isUndefined(url))
                 return false;

@@ -10,7 +10,8 @@ var beta = require('../beta/beta.controller');
 var router = express.Router();
 
 router.get('/', auth.hasRole('admin'), controller.index);
-//TODO: check to see if this is secure
+router.post('/test/test', controller.tryIt)
+    //TODO: check to see if this is secure
 router.delete('/:id/deleteMyAccount', auth.isAuthenticated(), controller.deleteMyAccount);
 router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 router.get('/me', auth.isAuthenticated(), controller.me);
