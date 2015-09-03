@@ -86,7 +86,10 @@ TaskSchema
             return false;
         }
         if (name.indexOf('admin') !== -1) return false;
-    }, 'Title too long. Limit 64 characters');
+        var reg = /[^A-Za-z0-9 ]/;
+        if (reg.test(name)) //test for not matching
+            return false;
+    }, 'Title too long or uses invalid characters. Limit 64 characters');
 
 
 TaskSchema.pre('save', function(next) {

@@ -35,7 +35,7 @@ angular.module('snaptasqApp')
                                 var comm = success.data;
                                 Notification.success("Welcome to " + comm.name + "'s snaptasq community!");
                                 $timeout(function() {
-                                    $location.path('/community/' + comm._id);
+                                    $location.path('/community/view/' + comm._id);
                                 }, 2000);
                             }
                         }, function(failure) {
@@ -50,7 +50,8 @@ angular.module('snaptasqApp')
             }
         }
     }).controller('CommunitiesCtrl', function($scope, _me, Community, $http, $window) {
-        $scope._bgcolorSnapYellow();
+        //$scope._bgcolorSnapYellow();
+        $scope._bgcolorGrey();
         $scope._noFooter();
         $scope._me = _me.$promise.then(function(me) {
             $scope.communities = me.groups;

@@ -63,10 +63,7 @@ angular.module('snaptasqApp')
         $scope.deleteTask = function(t) {
             Modal.confirm.delete(function(data) {
                 Task.delete(t._id, function(data) {
-                    Notification.success({
-                        message: "tasq delete",
-                        delay: 4000
-                    });
+                    notifications.showSuccess("tasq deleted");
                     $location.path('/tasqs');
                 }, function(err) {
                     notifications.showError(err);
@@ -141,7 +138,6 @@ angular.module('snaptasqApp')
             if ($scope.id == undefined)
                 return;
             Task.getById($scope.id, function(data) {
-                console.log(data);
                 $scope.task = data;
                 $scope.task.locationCopy = _.clone(data.location, true);
 
@@ -212,7 +208,6 @@ angular.module('snaptasqApp')
         // in that case DO NOT reassign the varaible
         $scope.loadTaskData = function() {
             Task.getById($scope.id, function(data) {
-                console.log(data);
                 $scope.task = data;
                 $scope.task.locationCopy = _.clone(data.location, true);
             }, function(err) {
@@ -275,7 +270,11 @@ angular.module('snaptasqApp')
         //i have to watch the task
         //case they edit a pre-existing location
         $scope.setEditor = function(task) {
-            $scope.previousLocation = _.clone(task.location.name, true);
+            if (task.location) {
+                $scope.previousLocation = _.clone(task.location.name, true);
+            } else {
+                $scope.previousLocation = undefined;
+            }
         }
         $scope.changeStepTo = function(stepName) {
             if (stepName == "finish") {
@@ -338,7 +337,6 @@ angular.module('snaptasqApp')
             $scope.submitted = true;
 
             if (form.$valid) {
-                $scope.errors.location = undefined;
                 /** If they dont put a location there is no error **/
                 //if (!angular.isUndefined($scope.task.location) && !angular.isUndefined($scope.task.location.name) && !angular.isUndefined($scope.task.location.geo)) {
                 try {
@@ -346,7 +344,6 @@ angular.module('snaptasqApp')
                     $scope.task.location = TaskMarshaler.formatLocation($scope.task.location);
                 } catch (e) {
                     //if location is wrong simply invalidate the location
-                    $scope.errors.location = true;
                     $scope.task.location = {};
                 }
                 /*} else {
@@ -383,7 +380,7 @@ angular.module('snaptasqApp')
                         },
                         function(fail) {
                             notifications.showError({
-                                message: "Please login first."
+                                message: "Invalid fields for tasq"
                             });
                         });
                 }

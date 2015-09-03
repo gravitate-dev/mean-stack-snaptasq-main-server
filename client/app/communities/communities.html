@@ -1,24 +1,38 @@
 <div class="container top-buffer">
-    <div id="actionButtons">
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <a href="/communities/join">
-                    <button class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;join community</button>
-                </a>
+    <div class="row">
+        <div class="col-md-4 col-sm-4  col-xs-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="tasq-list-header">friends</div>
+                    <a href="">
+                        <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;add friends</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8 col-sm-8 col-xs-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="tasq-list-header">my communities</div>
+                    <a href="/communities/join">
+                        <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;join community</div>
+                    </a>
+                    <section class="col-md-12" style="background-color:white;">
+                        <div class="row" ng-repeat="item in communities" ng-click="_goToPath('/community/view/'+item._id)">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div style="float:left;margin-right:10px;">
+                                    <img src="{{item.pic}}" style="height:50px;width:50px;" />
+                                </div>
+                                <div>
+                                    <strong>{{item.name}}</strong>&nbsp;&middot;&nbsp;<span am-time-ago="task.created"></span>&nbsp;&middot;&nbsp;<span ng-if="task.payout">${{task.payout}}</span><span ng-if="!task.payout">free</span>
+                                </div>
+                                <div>{{task.name}}</div>
+                                <div><a href="/tasq/view/{{task._id}}">{{task.status}}</a></div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
             </div>
         </div>
     </div>
-    <section class="col-md-12" style="margin-top:50px;">
-        <div class="panel panel-info">
-            <div class="panel-body">
-                <h1 style="display:inline;" class="text-center">My Communities</h1>
-                <ul>
-                    <li ng-repeat="item in communities">
-                        <a href="/community/{{item._id}}" class="lead">{{item.name}}</a>
-                        <img src="{{item.pic}}" />
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </section>
 </div>

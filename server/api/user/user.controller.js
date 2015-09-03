@@ -403,7 +403,9 @@ exports.isEmailVerified = function(req, res, next) {
     });
 }
 
+exports.getFriendsFromFacebook = function(req, res, next) {
 
+};
 /**
  * Get my info
  */
@@ -412,12 +414,13 @@ exports.me = function(req, res, next) {
     var userId = req.user._id;
     User.findOne({
         _id: userId
-    }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) { // don't ever give out the password or salt
+    }, '-salt -hashedPassword -verification.code -forgotPassCode -friends', function(err, user) { // don't ever give out the password or salt
         if (err) return next(err);
         if (!user) return res.json(401);
         //test the accessToken if it expired then have them relog
         if (user.isConnectedWithFb && user.fb.accessToken) {
             graph.get("/me?access_token=" + user.fb.accessToken, function(err, data) {
+                console.log(data);
                 if (err) {
                     //this means that the token is no longer valid and will require the user to reconnect
                     //to make them reconnect we should send a message back

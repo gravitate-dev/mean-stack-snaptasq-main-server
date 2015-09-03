@@ -90,13 +90,19 @@ angular.module('snaptasqApp')
                 });
                 return deferred.promise;
             },
-            create: function(data, cb) {
+            create: function(data, cb, cbfail) {
+                var cbfail = cbfail || angular.noop;
                 var cb = cb || angular.noop;
                 var deferred = $q.defer();
                 Tsk.create({}, data, function(data) {
                     deferred.resolve(data);
                     if (cb)
                         return cb(data);
+                }, function(failure) {
+                    deferred.reject(failure);
+                    if (cbfail) {
+                        return cbfail(failure);
+                    }
                 });
                 return deferred.promise;
             },

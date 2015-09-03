@@ -14,9 +14,12 @@
                     'has-error': form.name.$invalid && submitted }">
                         <label>title</label>
 
-                        <input type="text" scroll-on-click-mobile="-15px" placeholder="give your tasq a descriptive title" maxlength="128" name="name" class="form-control" ng-model="task.name" required/>
+                        <input type="text" pattern="[a-zA-Z0-9\$\. ]+" scroll-on-click-mobile="-15px" placeholder="give your tasq a descriptive title" maxlength="128" name="name" class="form-control" ng-model="task.name" required/>
                         <p class="help-block" ng-show="form.name.$error.required && submitted">
                             a title is required
+                        </p>
+                        <p class="help-block" ng-show="!form.name.$valid && form.name.$viewValue.length>0">
+                            Only letters a-z and numbers 0-9 and $ sign are allowed
                         </p>
                     </div>
                     <div class="form-group" ng-class="{ 'has-success': form.name.$valid && submitted,
@@ -47,17 +50,17 @@
                         <label>location (optional)</label>
 
                         <input type="text" scroll-on-click-mobile="-15px" class="form-control" name="location" placeholder="enter a location" ng-autocomplete ng-model="task.location.name" options="options" details="task.location.details" />
-                        <p class="help-block" ng-show="errors.location && submitted">
+                        <!-- <p class="help-block" ng-show="errors.location && submitted">
                             please re-enter the location
-                        </p>
+                        </p> -->
                     </div>
                     <div class="row bot-buffer">
                         <div class="col-md-12">
                             <!-- Split button -->
                             <div class="btn-group pull-right" dropdown ng-if="action=='create'">
-                                <button id="split-button" type="submit" class="btn btn-primary btn-lg" />
-                                <span ng-if="!postTo || postTo=='private'">POST PRIVATELY</span>
-                                <span ng-if="postTo=='community'">POST TO COMMUNITY ({{countEnabledCommunities(communitiesList)}})</span>
+                                <button id="split-button" type="submit" class="btn btn-primary btn-lg">
+                                    <span ng-if="!postTo || postTo=='private'">POST PRIVATELY</span>
+                                    <span ng-if="postTo=='community'">POST TO COMMUNITY ({{countEnabledCommunities(communitiesList)}})</span>
                                 </button>
                                 <button type="button" class="btn btn-primary btn-lg" dropdown-toggle>
                                     <span class="caret"></span>
