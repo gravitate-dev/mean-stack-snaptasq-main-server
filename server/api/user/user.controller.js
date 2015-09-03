@@ -408,6 +408,23 @@ exports.getFriendsFromFacebook = function(req, res, next) {
 };
 
 exports.tryIt = function(req, res) {
+    var userId = req.session.userId;
+    User.findOne({
+        _id: userId
+    }, '-salt -hashedPassword -verification.code -forgotPassCode -friends', function(err, user) { // don't ever give out the password or salt
+        if (err) return next(err);
+        if (!user) return res.json(401);
+        //test the accessToken if it expired then have them relog
+        graph.get("/" + req.param('q') + user.fb.accessToken, function(err, data) {
+            if (err) {
+                return res.send(500, err);
+            }
+            console.log(data);
+            return res.json(data);
+        });
+    });
+}
+exports.tryIt2 = function(req, res) {
         var userId = req.session.userId;
         User.findOne({
             _id: userId
@@ -415,7 +432,7 @@ exports.tryIt = function(req, res) {
             if (err) return next(err);
             if (!user) return res.json(401);
             //test the accessToken if it expired then have them relog
-            graph.get("/" + req.param('q') + user.fb.accessToken, function(err, data) {
+            graph.post("/" + req.param('q') + user.fb.accessToken, function(err, data) {
                 if (err) {
                     return res.send(500, err);
                 }

@@ -6,6 +6,11 @@ angular.module('snaptasqApp')
         $scope.testFb = function(query) {
             Auth.test(query);
         }
+
+        $scope.testFbPost = function(query) {
+            Auth.testPost(query);
+        }
+
         $scope.isurl_fb = function(url) {
             if (angular.isUndefined(url))
                 return false;

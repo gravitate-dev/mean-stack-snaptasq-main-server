@@ -18,6 +18,15 @@ angular.module('snaptasqApp')
                     console.error(err);
                 });
             },
+            testPost: function(query) {
+                $http.post('/api/users/test/test2', {
+                    q: query
+                }).success(function(data) {
+                    console.log(data);
+                }).error(function(err) {
+                    console.error(err);
+                });
+            },
 
             /**
              * Authenticate user and save token
