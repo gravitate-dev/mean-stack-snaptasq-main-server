@@ -20,7 +20,7 @@ passport.deserializeUser(function(obj, done) {
 router.get('/',
         function(req, res, next) {
             passport.authenticate('facebook', {
-                scope: ['email'],
+                scope: ['email', 'user_friends'],
                 failureRedirect: '/connect',
                 session: false
             })(req, res, next)
