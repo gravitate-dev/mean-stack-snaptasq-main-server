@@ -17,7 +17,6 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
             console.log("User did not give user_friends permission");
             return cb(user);
         }
-        console.log(user);
         if (user.fb.id == undefined) {
             console.error("user has no property fb.id in linkFriendsOnSnaptasqToMeAsync");
             return cb(user);
@@ -39,7 +38,6 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                 user.friends = [];
                 user.friends.push(f);
                 */
-                user.friends = [];
 
                 //console.log(response.data);
                 var fbFriendCount = response.data.length;
@@ -52,17 +50,23 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                 var newFriends = NonfbFriends;
                 var currentFbFriendIds = _.pluck(fbFriends, "externalId");
                 var requestFbFriendIds = _.pluck(response.data, 'id');
-                //console.log("current:",currentFbFriendIds);
-                //console.log("request:",requestFbFriendIds);
                 //find the differences and store them seperately
                 //difference source, compareTo
                 //will keep whats diff on the left guy
                 //lets find the friends i have yet to delete
+
+                //console.log("Current fb friend ids",requestFbFriendIds);
+                //console.log("REQUEST fb friend ids",currentFbFriendIds);
                 var notDeltdYetIds = _.difference(currentFbFriendIds, requestFbFriendIds);
+                //console.log("Should delete these: ",notDeltdYetIds);
                 // lets remove the deleted friends from the user
+                //console.log("Before fbFriends",fbFriends)
                 var fbFriends = _.filter(fbFriends, function(item) {
-                    return item.externalId.indexOf(notDeltdYetIds) == -1;
+                    return !_.contains(notDeltdYetIds, item.externalId);
                 });
+                //console.log("After fbFriends",fbFriends)
+                //console.log(user.friends);
+
                 for (var i = 0; i < fbFriends.length; i++) {
                     newFriends.push(fbFriends[i]);
                 }
@@ -70,6 +74,7 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                 //console.log("after removed fakes:",fbFriends.length);
                 //lets find the friends that arent added yet
                 var notAddedYetIds = _.difference(requestFbFriendIds, currentFbFriendIds);
+                //console.log("NOT ADDED",notAddedYetIds);
                 // now lets add in the missing friends
                 User.find({
                     'fb.id': {

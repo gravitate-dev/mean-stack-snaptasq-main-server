@@ -571,7 +571,7 @@ exports.me = function(req, res, next) {
         //test the accessToken if it expired then have them relog
         if (user.isConnectedWithFb && user.fb.accessToken) {
             graph.get("/me?access_token=" + user.fb.accessToken, function(err, data) {
-                console.log(data);
+                //console.log(data);
                 if (err) {
                     //this means that the token is no longer valid and will require the user to reconnect
                     //to make them reconnect we should send a message back
