@@ -63,9 +63,23 @@ exports.getTasksResponsible = function(req, res) {
 }
 
 exports.getMyTasks = function(req, res) {
+    var currentUserId = req.session.userId;
+    Task.find({
+        'ownerId': currentUserId
+    }, '-__v', function(err, tasks) {
+        if (err) {
+            return handleError(res, err);
+        }
+        return res.json(200, tasks);
+    });
+}
+
+exports.getFriendsTasks = function(req, res) {
+        //TODO check if they are friends
         var currentUserId = req.session.userId;
+        var friendId = req.param('id');
         Task.find({
-            'ownerId': currentUserId
+            'ownerId': friendId
         }, '-__v', function(err, tasks) {
             if (err) {
                 return handleError(res, err);

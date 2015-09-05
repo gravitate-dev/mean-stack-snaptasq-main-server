@@ -8,26 +8,15 @@ angular.module('snaptasqApp')
         }
 
         return {
-
-            test: function(query) {
-                $http.post('/api/users/test/test', {
-                    q: query
-                }).success(function(data) {
-                    console.log(data);
+            getById: function(id, cb) {
+                var cb = cb || angular.noop;
+                $http.get('/api/users/' + id).success(function(data) {
+                    return cb(data);
                 }).error(function(err) {
                     console.error(err);
+                    return cb(undefined);
                 });
             },
-            testPost: function(query) {
-                $http.post('/api/users/test/test2', {
-                    q: query
-                }).success(function(data) {
-                    console.log(data);
-                }).error(function(err) {
-                    console.error(err);
-                });
-            },
-
             /**
              * Authenticate user and save token
              *

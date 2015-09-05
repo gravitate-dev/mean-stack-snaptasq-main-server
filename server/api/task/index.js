@@ -12,6 +12,7 @@ router.get('/meApplied', auth.isAuthenticated(), controller.getMyAppliedTasks);
 
 router.get('/countResponsible', auth.isAuthenticated(), controller.countResponsibleTasks);
 
+router.get('/friends/:id', controller.getFriendsTasks);
 router.get('/:id', controller.show);
 router.post('/', auth.isAuthenticated(), controller.create);
 router.post('/:id', auth.isAuthenticated(), controller.update);

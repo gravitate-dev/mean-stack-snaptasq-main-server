@@ -54,7 +54,8 @@ angular.module('snaptasqApp')
                 authenticate: true
             })
             .when('/user/view/:id', {
-                templateUrl: 'app/account/profile/profile.html',
+                templateUrl: 'app/account/friends/friend.html',
+                controller: 'FriendCtrl',
                 authenticate: true
             });
     });

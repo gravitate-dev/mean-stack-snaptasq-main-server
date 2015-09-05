@@ -1,0 +1,31 @@
+<div class="container top-buffer">
+    <p ng-if="userDoesntExist">this user can not be found</p>
+    <section style="background-color:white;">
+        <div class="row bot-buffer" ng-if="isStranger==true">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <button class="btn btn-success">add friend</button>
+            </div>
+        </div>
+        <div class="row" ng-if="user.name">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div style="float:left;margin-right:10px;">
+                    <img src="{{user.pic}}" style="height:50px;width:50px;" />
+                </div>
+                <div>
+                    <strong>{{user.name}}</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section ng-if="isStranger==false">
+        <div class="row top-buffer bot-buffer2">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="tasq-list-header">{{user.name}}'s tasqs</div>
+                <div class="well" style="background-color:white;margin:0px;" ng-if="friendTasks.length==0">no tasqs</div>
+                <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in friendTasks">
+                    <div class="task-view-compact-list" task="task"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

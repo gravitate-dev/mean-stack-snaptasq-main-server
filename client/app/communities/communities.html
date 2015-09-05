@@ -8,6 +8,7 @@
                         <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;add friends</div>
                     </a>
                     <section class="col-md-12" style="background-color:white;">
+                        <div class="well" style="background-color:white;margin:0px;" ng-if="_me.friends.length==0">you have not added any friends yet</div>
                         <div class="row" ng-repeat="item in _me.friends" ng-click="_goToPath('/user/view/'+item.id)">
                             <div class="col-md-12 col-sm-12 col-xs-12">
                                 <div style="float:left;margin-right:10px;">
@@ -15,6 +16,8 @@
                                 </div>
                                 <div>
                                     <strong>{{item.name}}</strong>
+                                    <span ng-if="item.source=='facebook'"><i class="fa fa-facebook-square"></i></span>
+                                    <span ng-if="item.source=='snaptasq'"></span>
                                 </div>
                             </div>
                         </div>
@@ -25,21 +28,29 @@
         <div class="col-md-8 col-sm-8 col-xs-12">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="tasq-list-header">my communities</div>
+                    <div class="tasq-list-header">my tasq communities</div>
                     <a href="/communities/join">
                         <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;join community</div>
                     </a>
                     <section class="col-md-12" style="background-color:white;">
+                        <div class="row" ng-click="_goToPath('/community/friends')">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div style="float:left;margin-right:10px;">
+                                    <img src="assets/logos/snaptasq.png" style="height:50px;width:50px;" />
+                                </div>
+                                <div>
+                                    <strong>My Friends</strong>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row" ng-repeat="item in communities" ng-click="_goToPath('/community/view/'+item._id)">
                             <div class="col-md-12 col-sm-12 col-xs-12">
                                 <div style="float:left;margin-right:10px;">
                                     <img src="{{item.pic}}" style="height:50px;width:50px;" />
                                 </div>
                                 <div>
-                                    <strong>{{item.name}}</strong>&nbsp;&middot;&nbsp;<span am-time-ago="task.created"></span>&nbsp;&middot;&nbsp;<span ng-if="task.payout">${{task.payout}}</span><span ng-if="!task.payout">free</span>
+                                    <strong>{{item.name}}</strong>
                                 </div>
-                                <div>{{task.name}}</div>
-                                <div><a href="/tasq/view/{{task._id}}">{{task.status}}</a></div>
                             </div>
                         </div>
                     </section>

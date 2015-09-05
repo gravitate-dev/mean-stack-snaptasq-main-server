@@ -281,12 +281,15 @@ exports.askFriend = function(req, res, next) {
  * Get a single user
  */
 exports.show = function(req, res, next) {
-    var userId = req.params.id;
+    var userId = req.param('id');
+    if (userId == undefined) {
+        return res.send(400, "Missing parameter id");
+    }
 
     User.findById(userId, function(err, user) {
         if (err) return next(err);
         if (!user) return res.send(401);
-        res.json(user.profile);
+        res.json(user);
     });
 };
 
