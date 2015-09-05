@@ -79,7 +79,7 @@ function setTokenCookie(req, res) {
     if (req.user.requiresBeta)
         res.redirect('/beta');
     else
-        res.redirect('/tasks/mine');
+        res.redirect('/tasqs');
 }
 
 exports.isAuthenticated = isAuthenticated;

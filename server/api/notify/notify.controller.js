@@ -40,14 +40,19 @@ var NOTIFICODES = {
         id: 200,
         sms: true
     },
+    'MYTASK_CREATED': {
+        msg: '{name} has created a task for {task}',
+        id: 201,
+        sms: false
+    },
     'MYTASK_LEFT_APPLICANT': {
         msg: '{tasker_name} has left to your task. {task}',
-        id: 201,
+        id: 202,
         sms: false
     },
     'MYTASK_FINISHED': {
         msg: '{tasker_name} has completed your task. {task}',
-        id: 202,
+        id: 203,
         sms: true
     },
     'TASKER_UNASSIGNED': {

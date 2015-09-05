@@ -39,6 +39,11 @@ var UserSchema = new Schema({
         gender: String,
         email: String,
         username: String,
+        friendCountAdded: {
+            type: Number,
+            default: 0
+        },
+        //permissions:[String],
         json: {}
     },
     verification: {
@@ -81,7 +86,11 @@ var friendSchema = new Schema({
         type: String,
         default: "assets/logos/no_avatar.gif"
     },
-    fbId: String
+    externalId: String, //this is like their fbID
+    source: {
+        type: String,
+        default: "snaptasq"
+    } //soource is where you got the friend, it can be facebook, snaptasq, twitter, etc
 });
 /**
  * Virtuals

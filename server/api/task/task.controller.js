@@ -4,6 +4,7 @@ var Task = require('./task.model');
 var User = require('../user/user.model');
 var Emailer = require('../email/email.controller');
 var config = require('../../config/environment');
+var Notify = require('../notify/notify.controller');
 // Get list of tasks
 exports.index = function(req, res) {
     Task.find({}, '-__v', function(err, tasks) {
@@ -108,6 +109,10 @@ exports.create = function(req, res) {
                     console.log(err);
                     return handleError(res, err);
                 }
+                Notify.put(user._id, "MYTASK_CREATED", {
+                    task: task.name,
+                    name: user.name
+                }, '/tasq/view/' + task._id.toString());
                 return res.json(201, task);
             });
         });

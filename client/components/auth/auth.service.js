@@ -285,6 +285,15 @@ angular.module('snaptasqApp')
                 return $cookieStore.get('token');
             },
 
+            hasFacebookPermission: function(permission, cb) {
+                $http.post('/api/users/me/permission', {
+                    permission: permission
+                }).success(function(data) {
+                    return cb(true);
+                }).error(function(err) {
+                    return cb(false);
+                });
+            },
             isUserInGroup: function(groupId, cb) {
                 for (var i = 0; i < currentUser.communityMemberships.length; i++) {
                     if (currentUser.communityMemberships[i] == groupId)

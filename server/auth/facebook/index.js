@@ -17,6 +17,15 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(obj, done) {
     done(null, obj);
 });
+router.get('/reauth',
+    function(req, res, next) {
+        passport.authenticate('facebook', {
+            authType: 'rerequest',
+            scope: ['email', 'user_friends'],
+            failureRedirect: '/connect',
+            session: false
+        })(req, res, next)
+    });
 router.get('/',
         function(req, res, next) {
             passport.authenticate('facebook', {

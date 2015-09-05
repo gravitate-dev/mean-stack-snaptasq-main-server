@@ -1,12 +1,137 @@
 var passport = require('passport');
 var User = require('../../api/user/user.model');
+var UserController = require('../../api/user/user.controller');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var graph = require('fbgraph');
 var uuid = require('uuid');
 var config = require('../../config/environment');
+var _ = require('lodash');
 
 function isLoggedIn(req) {
     return req.cookies.token != undefined;
+}
+
+function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
+    UserController.hasFbPermissionInternalByUserObject(user, 'user_friends', function(hasPermission) {
+        if (!hasPermission) {
+            console.log("User did not give user_friends permission");
+            return cb(user);
+        }
+        console.log(user);
+        if (user.fb.id == undefined) {
+            console.error("user has no property fb.id in linkFriendsOnSnaptasqToMeAsync");
+            return cb(user);
+        }
+        graph.get('/' + user.fb.id + '/friends', {
+            access_token: accessToken
+        }, function(err, response) {
+            if (err) {
+                console.error(err, "linkFriendsOnSnaptasqToMeAsync");
+                return cb(user);
+            }
+            if (response.data) {
+                /*var f = {
+                    id: "realsnaptasquserid",
+                    name: "Deleted Friend",
+                    externalId: "1337",
+                    source:"facebook"
+                };
+                user.friends = [];
+                user.friends.push(f);
+                */
+                user.friends = [];
+
+                //console.log(response.data);
+                var fbFriendCount = response.data.length;
+                var fbFriends = _.filter(user.friends, function(item) {
+                    return item.source === 'facebook';
+                });
+                var NonfbFriends = _.filter(user.friends, function(item) {
+                    return item.source !== 'facebook';
+                });
+                var newFriends = NonfbFriends;
+                var currentFbFriendIds = _.pluck(fbFriends, "externalId");
+                var requestFbFriendIds = _.pluck(response.data, 'id');
+                //console.log("current:",currentFbFriendIds);
+                //console.log("request:",requestFbFriendIds);
+                //find the differences and store them seperately
+                //difference source, compareTo
+                //will keep whats diff on the left guy
+                //lets find the friends i have yet to delete
+                var notDeltdYetIds = _.difference(currentFbFriendIds, requestFbFriendIds);
+                // lets remove the deleted friends from the user
+                var fbFriends = _.filter(fbFriends, function(item) {
+                    return item.externalId.indexOf(notDeltdYetIds) == -1;
+                });
+                for (var i = 0; i < fbFriends.length; i++) {
+                    newFriends.push(fbFriends[i]);
+                }
+                user.friends = newFriends;
+                //console.log("after removed fakes:",fbFriends.length);
+                //lets find the friends that arent added yet
+                var notAddedYetIds = _.difference(requestFbFriendIds, currentFbFriendIds);
+                // now lets add in the missing friends
+                User.find({
+                    'fb.id': {
+                        $in: notAddedYetIds
+                    }
+                }, function(err, newFwends) {
+                    if (err) return cb(user);
+                    if (!newFwends) return cb(user);
+                    _.each(newFwends, function(friend) {
+                        var f = {
+                            id: friend._id,
+                            name: friend.name,
+                            externalId: friend.fb.id,
+                            pic: friend.pic,
+                            source: "facebook"
+                        };
+                        user.friends.push(f);
+                    });
+                    //console.log("After putting friends in ",user.friends.length);
+                    return cb(user);
+                });
+                /*
+                var friendSchema = new Schema({
+                    id: Schema.Types.ObjectId,
+                    name: String,
+                    pic: {
+                        type: String,
+                        default: "assets/logos/no_avatar.gif"
+                    },
+                    externalId: String, //this is like their fbID
+                    source:{type: String, default: "snaptasq"} //soource is where you got the friend, it can be facebook, snaptasq, twitter, etc
+                });
+                    */
+            } else {
+                console.log("Error in linkFriendsOnSnaptasqToMeAsync no data returned");
+                return cb(user);
+            }
+        });
+
+    });
+}
+
+function getFbPicFromProfileObj(user, req, accessToken, profile, cb) {
+    if (profile.photos && profile.photos.length != 0) {
+        try {
+            user.fb.pic = profile.photos[0].value;
+            user.pic = user.fb.pic;
+        } catch (e) {
+            console.log(e);
+        }
+        return cb(user);
+    } else {
+        graph.get('/me?fields=picture', {
+            access_token: accessToken
+        }, function(err, res) {
+            if (!err && res.picture && res.picture.data && res.picture.data.url) {
+                user.fb.pic = res.picture.data.url;
+                user.pic = user.fb.pic;
+            }
+            return cb(user);
+        });
+    }
 }
 
 function createNewUserWithFacebook(user, req, accessToken, refreshToken, profile, done) {
@@ -41,47 +166,14 @@ function createNewUserWithFacebook(user, req, accessToken, refreshToken, profile
     } catch (e) {
         console.log(e);
     }
-    if (profile.photos && profile.photos.length != 0) {
-        /**
-         * If the fb picture is given to me its nice
-         * I will take it then be done
-         **/
-        try {
-            user.fb.pic = profile.photos[0].value;
-            user.pic = user.fb.pic;
-        } catch (e) {
-            console.log(e);
-        }
-        user.save(function(err) {
-            if (err) done(err);
-            return done(err, user);
-        });
-        user.save(function(err) {
-            if (err) done(err);
-            req.user = user;
-            return done(err, user);
-        });
-    } else {
-        /**
-         * Sometimes the fb pic may not be sent I will have to get this asynchrnously
-         * Then i will save it then I will call done
-         **/
-        graph.get('/me?fields=picture', {
-            access_token: accessToken
-        }, function(err, res) {
-            if (!err && res.picture && res.picture.data && res.picture.data.url) {
-                user.fb.pic = res.picture.data.url;
-                user.pic = user.fb.pic;
-            }
+    getFbPicFromProfileObj(user, req, accessToken, profile, function(user) {
+        linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, function(user) {
             user.save(function(err) {
-                if (err) {
-                    done(err);
-                }
-                //success here
+                if (err) done(err);
                 return done(err, user);
             });
         });
-    }
+    });
 }
 
 function linkFacebookAccountToExistingUser(user, req, accessToken, refreshToken, profile, done) {
@@ -97,39 +189,16 @@ function linkFacebookAccountToExistingUser(user, req, accessToken, refreshToken,
     user.fb.profileUrl = profile.profileUrl;
     user.fb.gender = profile.gender;
 
-    if (profile.photos && profile.photos.length != 0) {
-        /**
-         * If the fb picture is given to me its nice
-         * I will take it then be done
-         **/
-        user.fb.pic = profile.photos[0].value;
-        user.pic = user.fb.pic;
-        user.save(function(err) {
-            if (err) done(err);
-            return done(err, user);
-        });
-    } else {
-        /**
-         * Sometimes the fb pic may not be sent I will have to get this asynchrnously
-         * Then i will save it then I will call done
-         **/
-        graph.get('/me?fields=picture', {
-            access_token: accessToken
-        }, function(err, res) {
-            if (!err && res.picture && res.picture.data && res.picture.data.url) {
-                user.fb.pic = res.picture.data.url;
-                user.pic = user.fb.pic;
-            }
+    getFbPicFromProfileObj(user, req, accessToken, profile, function(user) {
+        linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, function(user) {
             user.save(function(err) {
                 if (err) done(err);
                 return done(err, user);
             });
         });
-    }
-
+    });
 }
 exports.setup = function(User, config) {
-    console.log("Facebook callbackURL : ", config.facebook.callbackURL);
     passport.use(new FacebookStrategy({
         clientID: config.facebook.clientID,
         clientSecret: config.facebook.clientSecret,
@@ -138,7 +207,6 @@ exports.setup = function(User, config) {
         profileFields: ['id', 'name', 'emails', 'displayName', 'link', 'gender', 'friends']
     }, function(req, accessToken, refreshToken, profile, done) {
         var currentUserId = req.session.userId;
-        console.log(currentUserId);
 
         /* This is how login will work */
         /* 1.  Check for facebook profile id already registered, if so then return that user
@@ -160,7 +228,13 @@ exports.setup = function(User, config) {
                 //TODO: Check to see if the account id is under the current user, if its not
                 //then i will have to display a notification telling them about that.
                 console.log("Found a facebook account logging you in with that one");
-                return done(err, fbuser);
+                linkFriendsOnSnaptasqToMeAsync(req, fbuser, accessToken, function(user) {
+                    user.save(function(err) {
+                        if (err) done(err);
+                        return done(err, user);
+                    });
+                });
+                //return done(err, fbuser);
             } else {
                 isFacebookProfileRegistered = false;
             }

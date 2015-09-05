@@ -12,7 +12,7 @@
             <img src="{{task.ownerPic}}" style="height:50px;width:50px;" />
         </div>
         <div>
-            <strong>{{task.ownerName}}</strong>&nbsp;&middot;&nbsp;<span am-time-ago="task.created"></span>&nbsp;&middot;&nbsp;<span ng-if="task.payout">${{task.payout}}</span><span ng-if="!task.payout">free</span>
+            <strong id="owner_name">{{task.ownerName}}</strong>&nbsp;&middot;&nbsp;<span am-time-ago="task.created"></span>&nbsp;&middot;&nbsp;<span id="payout" ng-if="task.payout">${{task.payout}}</span><span ng-if="!task.payout">free</span>
         </div>
         <div>{{task.name}}</div>
         <div><a href="/tasq/view/{{task._id}}">{{task.status}}</a></div>

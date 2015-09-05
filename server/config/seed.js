@@ -82,13 +82,35 @@ User.find({}).remove(function() {
             status: true
         }
     }, {
-        provider: 'local',
-        name: 'Friends User A',
-        email: 'frienda@test.com',
-        password: 'test',
+        name: 'Rohit Jindal',
+        provider: 'facebook',
+        forgotPassCode: '16b91e98-7ec3-4232-876f-c8bf6cfe1181',
+        email: 'rohitjindal@gmail.com',
+        __v: 0,
+        requiresBeta: true,
+        friends: [],
+        groups: [],
+        otherTasks: [],
+        myTasks: [],
+        role: 'user',
         verification: {
+            code: '4656a75b-f0fc-4f19-8abf-cb07b651969f',
             status: true
-        }
+        },
+        fb: {
+            gender: 'male',
+            id: '1020448581319794',
+            json: {
+                id: '1020448581319794',
+                last_name: 'Jindal',
+                first_name: 'Rohit',
+                email: 'rohitjindal@gmail.com',
+                name: 'Rohit Jindal',
+                link: 'https://www.facebook.com/app_scoped_user_id/1020448581319794/',
+                gender: 'male',
+            }
+        },
+        pic: "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xap1/v/t1.0-1/p50x50/11855733_1013864421978210_6164071379240397877_n.jpg?oh=3e70dbdc7fdc21e531425d96f31d4d3e&oe=5678B7C4&__gda__=1449227013_f435cff87ce4cf8d53c62f8f55d112d1"
     }, {
         provider: 'local',
         name: 'Friends User B',

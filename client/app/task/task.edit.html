@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-sm-12">
             <p class="lead"><strong style="padding-right:15px;">tell us what tasq you need done</strong>
-                <button ng-click="cancelEditingTask(task);" type="button" class="btn btn-warning" style="height:46px;">cancel</button>
+                <button id="task_cancel" ng-click="cancelEditingTask(task);" type="button" class="btn btn-warning" style="height:46px;">cancel</button>
             </p>
         </div>
     </div>
@@ -14,7 +14,7 @@
                     'has-error': form.name.$invalid && submitted }">
                         <label>title</label>
 
-                        <input type="text" pattern="[a-zA-Z0-9\$\. ]+" scroll-on-click-mobile="-15px" placeholder="give your tasq a descriptive title" maxlength="128" name="name" class="form-control" ng-model="task.name" required/>
+                        <input id="title" type="text" pattern="[a-zA-Z0-9\$\. ]+" scroll-on-click-mobile="-15px" placeholder="give your tasq a descriptive title" maxlength="128" name="name" class="form-control" ng-model="task.name" required/>
                         <p class="help-block" ng-show="form.name.$error.required && submitted">
                             a title is required
                         </p>
@@ -25,7 +25,8 @@
                     <div class="form-group" ng-class="{ 'has-success': form.name.$valid && submitted,
                 'has-error': form.name.$invalid && submitted }">
                         <label popover-placement="right" popover="It is reccomended you learn how to set price points accurately, clicking the link won't clear your task information" popover-trigger="mouseenter">reward price</label>
-                        <input scroll-on-click-mobile="-15px" class="form-control" format-as-currency="" type="text" style="display:inline;" ng-model="task.payout" popover-placement="right" popover="By offering as little as 5$ it greatly increases the chances of success" required/>
+                        <input id="payout" scroll-on-click-mobile="-15px" class="form-control" format-as-currency="" type="text" style="display:inline;" ng-model="task.payout" popover-placement="right" popover="By offering as little as 5$ it greatly increases the chances of success"
+                        required/>
                         <div class="price-bar-container" style="margin-top:5px;">
                             <div class="price-bar-item" ng-class="{'price-bar-filled':task.payout>0}"></div>
                             <div class="price-bar-item" ng-class="{'price-bar-filled':task.payout>10}"></div>
@@ -40,7 +41,7 @@
             'has-error': (form.description.$invalid || errors.description) && submitted }">
                         <label>additional details (optional)</label>
 
-                        <textarea scroll-on-click-mobile="-15px" placeholder="Ex: Couch is small enough to fit in an SUV." name="description" cols="40" maxlength="1000" rows="5" ng-model="task.description" class="form-control"></textarea>
+                        <textarea id="details" scroll-on-click-mobile="-15px" placeholder="Ex: Couch is small enough to fit in an SUV." name="description" cols="40" maxlength="1000" rows="5" ng-model="task.description" class="form-control"></textarea>
                         <p class="help-block" ng-show="errors.description && submitted">
                             provide any extra details or requirements
                         </p>
@@ -49,35 +50,17 @@
         'has-error': (form.location.$invalid || errors.location) && submitted }">
                         <label>location (optional)</label>
 
-                        <input type="text" scroll-on-click-mobile="-15px" class="form-control" name="location" placeholder="enter a location" ng-autocomplete ng-model="task.location.name" options="options" details="task.location.details" />
+                        <input id="location" type="text" scroll-on-click-mobile="-15px" class="form-control" name="location" placeholder="enter a location" ng-autocomplete ng-model="task.location.name" options="options" details="task.location.details" />
                         <!-- <p class="help-block" ng-show="errors.location && submitted">
                             please re-enter the location
                         </p> -->
                     </div>
                     <div class="row bot-buffer">
                         <div class="col-md-12">
-                            <!-- Split button -->
-                            <div class="btn-group pull-right" dropdown ng-if="action=='create'">
-                                <button id="split-button" type="submit" class="btn btn-primary btn-lg">
-                                    <span ng-if="!postTo || postTo=='private'">POST PRIVATELY</span>
-                                    <span ng-if="postTo=='community'">POST TO COMMUNITY ({{countEnabledCommunities(communitiesList)}})</span>
-                                </button>
-                                <button type="button" class="btn btn-primary btn-lg" dropdown-toggle>
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" ng-click="$event.stopPropagation()" role="menu" aria-labelledby="split-button">
-                                    <li role="menuitem" ng-click="postTo='private';uncheckAllCommunities(communitiesList);"><a href="">POST PRIVATELY</a></li>
-                                    <li role="menuitem" ng-click="postTo='community'"><a href="">POST TO COMMUNITY ({{countEnabledCommunities(communitiesList)}})</a></li>
-                                    <li class="divider"></li>
-                                    <ul style="max-height:100px;overflow-y:auto;list-style:none;margin:0px;padding:0px;padding-left:5px;padding-right:5px;">
-                                        <li role="menuitem" ng-repeat="item in communitiesList" ng-click="postTo='community'">
-                                            <a href="" style="display:inline;" ng-click="item.active=!item.active">
-                                                <input type="checkbox" ng-model="item.active" style="display:inline;padding-left:10px;" />{{item.name}}</a>
-                                        </li>
-                                    </ul>
-                                </ul>
-                            </div>
-                            <button ng-if="action=='update'" class="btn btn-success btn-lg pull-right" type="submit">
+                            <button id="create_task" ng-if="action=='create'" class="btn btn-primary btn-lg pull-right" type="submit">
+                                CREATE TASQ!
+                            </button>
+                            <button id="update_task" ng-if="action=='update'" class="btn btn-success btn-lg pull-right" type="submit">
                                 UPDATE TASQ!
                             </button>
                         </div>

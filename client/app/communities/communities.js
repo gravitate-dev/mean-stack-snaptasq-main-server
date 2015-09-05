@@ -8,6 +8,11 @@ angular.module('snaptasqApp')
                 controller: 'CommunitiesCtrl',
                 authenticate: true,
             })
+            .when('/communities/permission', {
+                templateUrl: 'app/communities/communities.permission.html',
+                controller: 'CommunityFacebookConnect',
+                authenticate: true,
+            })
             .when('/communities/join', {
                 templateUrl: 'app/communities/join.community.html',
                 controller: 'CommunityJoinCtrl',

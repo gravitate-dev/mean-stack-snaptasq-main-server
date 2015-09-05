@@ -8,6 +8,7 @@ var jwt = require('jsonwebtoken');
 var uuid = require('uuid');
 var graph = require('fbgraph');
 var sha1 = require('sha1');
+var _ = require('lodash');
 //var notify = require('../notify/notify.controller');
 
 var validationError = function(res, err) {
@@ -84,6 +85,121 @@ exports.getFbAccessToken = function(req, res, next) {
         next();
     });
 }
+
+exports.hasFbPermissionInternalByUserObject = function(user, permission, cb) {
+    if (!user) return cb(false);
+    if (!user.fb) return cb(false);
+    graph.get('/' + user.fb.id + '/permissions', {
+        access_token: user.fb.accessToken
+    }, function(err, response) {
+        if (err) {
+            cb(false);
+        }
+        //user.fb.permissions = [];
+        var hasPermission = false;
+        if (!response) return cb(false);
+        if (!response.data) return cb(false);
+        for (var i = 0; i < response.data.length; i++) {
+            var item = response.data[i];
+            if (item.status == "granted" && item.permission == permission) {
+                return cb(true);
+            }
+        }
+        return cb(false);
+    });
+}
+
+exports.hasFbPermissionInternal = function(req, permission, cb) {
+    User.findOne({
+        _id: req.session.userId
+    }, function(err, user) {
+        if (err) validationError(res, err);
+        if (!user) return cb(false);
+        if (!user.fb) return cb(false);
+        graph.get('/' + user.fb.id + '/permissions', {
+            access_token: user.fb.accessToken
+        }, function(err, response) {
+            if (err) {
+                cb(false);
+            }
+            //user.fb.permissions = [];
+            var hasPermission = false;
+            if (!response) return cb(false);
+            if (!response.data) return cb(false);
+            for (var i = 0; i < response.data.length; i++) {
+                var item = response.data[i];
+                if (item.status == "granted" && item.permission == permission) {
+                    return cb(true);
+                }
+            }
+            return cb(false);
+        });
+    });
+}
+
+exports.hasFbPermission = function(req, res) {
+    if (req.param('permission') == undefined) {
+        return res.send(400, "Missing parameter req.permission");
+    }
+    var permission = req.param('permission');
+    User.findOne({
+        _id: req.session.userId
+    }, function(err, user) {
+        if (err) validationError(res, err);
+        if (!user) return res.send(403, "Please login again");
+        if (!user.fb) return res.send(500, "You are not connected with facebook");
+        /** if facebook starts bitching about API call rates turn this baby on **/
+        /*if (user.fb.permissions){
+            for (var i = 0; i < user.fb.permissions.length;i++){
+                if (user.fb.permissions[i]==permission){
+                    return res.send(200,"Permissions granted already");
+                }
+            }
+        }*/
+        graph.get('/' + user.fb.id + '/permissions', {
+            access_token: user.fb.accessToken
+        }, function(err, response) {
+            if (err) {
+                return res.send(500, "Error with getting /permissions from user " + user._id.toString());
+            }
+            //user.fb.permissions = [];
+            var hasPermission = false;
+            if (!response) return res.send(500, "no response");
+            if (!response.data) return res.send(500, "bad response");
+            for (var i = 0; i < response.data.length; i++) {
+                var item = response.data[i];
+                if (item.status == "granted" && item.permission == permission) {
+                    return res.send(200, "Facebook permission exists");
+                }
+            }
+            return res.send(500, "Facebook permission not there");
+            /*_.each(response.data,function(item){
+                
+                    if (item.permission==permission){
+                        hasPermission=true;
+                    }
+                    //user.fb.permissions.push(item.permission)
+                }
+            });
+            if (hasPermission)
+                    
+                else
+                    return res.status(403,"Permission not granted");*/
+            /*
+            user.save(function(err) {
+                if (err) {
+                    return res.send(500,"Failed to save user to db");
+                }
+                //success here
+                if (hasPermission)
+                    return res.status(200,"Facebook permission exists");
+                else
+                    return res.status(403,"Permission not granted");
+            });
+            */
+        });
+    });
+};
 exports.applyBetaCode = function(req, res, next) {
         if (!req.session.userId) {
             return res.send(401); //they need to relogin
@@ -157,7 +273,7 @@ exports.askFriend = function(req, res, next) {
           if (response.fb)
             response.fb = undefined;
           res.json(response);
-        }*/
+      }*/
     });
 }
 
@@ -449,7 +565,7 @@ exports.me = function(req, res, next) {
     var userId = req.user._id;
     User.findOne({
         _id: userId
-    }, '-salt -hashedPassword -verification.code -forgotPassCode -friends', function(err, user) { // don't ever give out the password or salt
+    }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) { // don't ever give out the password or salt
         if (err) return next(err);
         if (!user) return res.json(401);
         //test the accessToken if it expired then have them relog

@@ -56,13 +56,27 @@ angular.module('snaptasqApp')
                 }
             }
         }
-    }).controller('CommunitiesCtrl', function($scope, _me, Community, $http, $window) {
+    }).controller('CommunitiesCtrl', function($scope, _me, Community, $http, $window, Auth, $location) {
         //$scope._bgcolorSnapYellow();
         $scope._bgcolorGrey();
         $scope._noFooter();
-        $scope._me = _me.$promise.then(function(me) {
+        _me.$promise.then(function(me) {
             $scope.communities = me.groups;
         });
+        /*
+        Auth.hasFacebookPermission('user_friends',function(hasPermission){
+            console.log(hasPermission);
+            if (!hasPermission){
+                $location.path('/communities/permission');
+            }
+        });
+        */
+
+    })
+    .controller('CommunityFacebookConnect', function($scope, _me, $http, Auth, $window) {
+        $scope.reconnect = function() {
+            $window.location.href = '/auth/facebook/reauth';
+        };
     }).controller('CommunityCtrl', function($scope, Community, Auth, $routeParams, Notification, notifications) {
         $scope.groupId = $routeParams.id;
         $scope.allowed = undefined;

@@ -186,6 +186,13 @@ var app = angular.module('snaptasqApp', ['bcherny/formatAsCurrency', 'slick', 'a
                     if (next.adminRequired && !Auth.isAdmin()) {
                         $location.path('/');
                     }
+                    /*if (next.fbFriendsPermission){
+                        Auth.hasFacebookPermission('user_friends',function(hasPermission){
+                            if (!hasPermission){
+                                $location.path('/communities/permission');
+                            }
+                        });
+                    }*/
                 });
             }
             if (next.adminRequired && !next.authenticate) {

@@ -7,6 +7,18 @@
                     <a href="">
                         <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;add friends</div>
                     </a>
+                    <section class="col-md-12" style="background-color:white;">
+                        <div class="row" ng-repeat="item in _me.friends" ng-click="_goToPath('/user/view/'+item.id)">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div style="float:left;margin-right:10px;">
+                                    <img src="{{item.pic}}" style="height:50px;width:50px;" />
+                                </div>
+                                <div>
+                                    <strong>{{item.name}}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>
