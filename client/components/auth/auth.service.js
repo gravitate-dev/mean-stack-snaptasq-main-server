@@ -8,15 +8,6 @@ angular.module('snaptasqApp')
         }
 
         return {
-            getById: function(id, cb) {
-                var cb = cb || angular.noop;
-                $http.get('/api/users/' + id).success(function(data) {
-                    return cb(data);
-                }).error(function(err) {
-                    console.error(err);
-                    return cb(undefined);
-                });
-            },
             /**
              * Authenticate user and save token
              *

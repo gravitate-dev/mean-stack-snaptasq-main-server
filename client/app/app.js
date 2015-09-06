@@ -72,7 +72,7 @@ var app = angular.module('snaptasqApp', ['bcherny/formatAsCurrency', 'slick', 'a
             // This is my FB app id for plunker demo app
             appId: '764169247036130'
         });
-        moment.locale('en', {
+        /*moment.locale('en', {
             relativeTime: {
                 future: "in %s",
                 past: "%s ago",
@@ -88,7 +88,7 @@ var app = angular.module('snaptasqApp', ['bcherny/formatAsCurrency', 'slick', 'a
                 y: "1y",
                 yy: "%dy"
             }
-        });
+        });*/
     })
     .factory('Page', function() {
         var title = 'snaptasq';
@@ -432,7 +432,7 @@ app.controller('GlobalCtrl', GlobalCtrl)
                 });
             }
         };
-    })
+    });
 
 /* Global Functions */
 

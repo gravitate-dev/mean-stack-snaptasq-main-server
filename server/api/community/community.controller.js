@@ -39,6 +39,28 @@ exports.index = function(req, res) {
     });
 };
 
+/**
+ * Search for users
+ * the max number of users that can be returned is 30
+ * this is used in the find friends
+ **/
+exports.search = function(req, res) {
+    var name = req.param('name');
+    if (name == undefined) return res.send(400, "Missing parameter, name");
+    if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) return res.send(400, "Name contains invalid characters");
+    Community.find({
+            name: new RegExp('^' + name, "i")
+        }, '-challenges')
+        .sort({
+            'updated': -1
+        })
+        .limit(30)
+        .exec(function(err, comms) {
+            if (err) return res.send(500, err);
+            return res.json(200, comms);
+        });
+}
+
 exports.doesCommunityExistByIdentifier = function(id, source, cb) {
     Community.findOne({
         identifier: id,

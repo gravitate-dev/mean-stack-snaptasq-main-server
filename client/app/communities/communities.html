@@ -1,60 +1,89 @@
 <div class="container top-buffer">
     <div class="row">
         <div class="col-md-4 col-sm-4  col-xs-12">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="tasq-list-header">friends</div>
-                    <a href="">
-                        <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;add friends</div>
-                    </a>
-                    <section class="col-md-12" style="background-color:white;">
-                        <div class="well" style="background-color:white;margin:0px;" ng-if="_me.friends.length==0">you have not added any friends yet</div>
-                        <div class="row" ng-repeat="item in _me.friends" ng-click="_goToPath('/user/view/'+item.id)">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div style="float:left;margin-right:10px;">
-                                    <img src="{{item.pic}}" style="height:50px;width:50px;" />
-                                </div>
-                                <div>
-                                    <strong>{{item.name}}</strong>
-                                    <span ng-if="item.source=='facebook'"><i class="fa fa-facebook-square"></i></span>
-                                    <span ng-if="item.source=='snaptasq'"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+            <div class="panel panel-default">
+                <div class="panel-heading c-list">
+                    <span class="title">my friends</span>
+                    <ul class="pull-right c-controls">
+                        <li><a href="/users/find" data-toggle="tooltip" data-placement="top" title="Add Friend"><i class="fa fa-plus"></i></a></li>
+                    </ul>
                 </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="input-group c-search">
+                            <input type="text" class="form-control" ng-model="friendFilter" id="contact-list-search">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search text-muted"></span></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <ul class="list-group" id="contact-list">
+                    <li class="list-group-item" ng-repeat="item in _me.friends | filter:{'name':friendFilter}" ng-click="_goToPath('/user/'+item.id)">
+                        <div class="col-xs-12 col-sm-3">
+                            <img src="{{item.pic}}" alt="{{item.name}}" class="img-responsive img-circle" />
+                        </div>
+                        <div class="col-xs-12 col-sm-9">
+                            <span class="name">{{item.name}}</span>
+                            <br/>
+                            <!-- <span class="glyphicon glyphicon-map-marker text-muted c-info" data-toggle="tooltip" title="5842 Hillcrest Rd"></span>
+                            <span class="visible-xs"> <span class="text-muted">5842 Hillcrest Rd</span><br/></span>
+                            <span class="glyphicon glyphicon-earphone text-muted c-info" data-toggle="tooltip" title="(870) 288-4149"></span>
+                            <span class="visible-xs"> <span class="text-muted">(870) 288-4149</span><br/></span>
+                            <span class="fa fa-comments text-muted c-info" data-toggle="tooltip" title="scott.stevens@example.com"></span>
+                            <span class="visible-xs"> <span class="text-muted">scott.stevens@example.com</span><br/></span> -->
+                        </div>
+                        <div class="clearfix"></div>
+                    </li>
+
+                </ul>
             </div>
         </div>
-        <div class="col-md-8 col-sm-8 col-xs-12">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="tasq-list-header">my tasq communities</div>
-                    <a href="/communities/join">
-                        <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;join community</div>
-                    </a>
-                    <section class="col-md-12" style="background-color:white;">
-                        <div class="row" ng-click="_goToPath('/community/friends')">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div style="float:left;margin-right:10px;">
-                                    <img src="assets/logos/snaptasq.png" style="height:50px;width:50px;" />
-                                </div>
-                                <div>
-                                    <strong>My Friends</strong>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row" ng-repeat="item in communities" ng-click="_goToPath('/community/view/'+item._id)">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div style="float:left;margin-right:10px;">
-                                    <img src="{{item.pic}}" style="height:50px;width:50px;" />
-                                </div>
-                                <div>
-                                    <strong>{{item.name}}</strong>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+        <div class="col-md-8 col-sm-8  col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading c-list">
+                    <span class="title">my communities</span>
+                    <ul class="pull-right c-controls">
+                        <li><a href="/communities/join" data-toggle="tooltip" data-placement="top" title="Add Community"><i class="fa fa-plus"></i></a></li>
+                    </ul>
                 </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="input-group c-search">
+                            <input type="text" class="form-control" ng-model="communityFilter" id="contact-list-search">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search text-muted"></span></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <ul class="list-group" id="communities-list">
+                    <li class="list-group-item" ng-click="_goToPath('/communities/friends')">
+                        <div class="col-xs-12 col-sm-3">
+                            <img src="assets/logos/snaptasq.png" style="max-width:64px;" alt="my friends" class="img-responsive img-circle" />
+                        </div>
+                        <div class="col-xs-12 col-sm-9">
+                            <span class="name">my friends</span>
+                            <br/>
+                        </div>
+                        <div class="clearfix"></div>
+                    </li>
+                    <li class="list-group-item" ng-repeat="item in communities | filter:{'name':communityFilter}" ng-click="_goToPath('/communities/'+item.id)">
+                        <div class="col-xs-12 col-sm-3">
+                            <img src="{{item.pic}}" alt="{{item.name}}" style="max-width:64px;" class="img-responsive img-circle" />
+                        </div>
+                        <div class="col-xs-12 col-sm-9">
+                            <span class="name">{{item.name}}</span>
+                            <br/>
+                        </div>
+                        <div class="clearfix"></div>
+                    </li>
+
+                </ul>
             </div>
         </div>
     </div>

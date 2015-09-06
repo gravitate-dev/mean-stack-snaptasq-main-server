@@ -31,6 +31,7 @@ exports.index = function(req, res) {
  */
 exports.create = function(req, res, next) {
     var newUser = new User(req.body);
+    //name is already set!
     newUser.accountName = newUser.name;
     newUser.provider = 'local';
     newUser.role = 'user';
@@ -600,8 +601,32 @@ exports.me = function(req, res, next) {
 };
 
 /**
- * Authentication callback
- */
+ * Search for users
+ * the max number of users that can be returned is 30
+ * this is used in the find friends
+ **/
+exports.search = function(req, res) {
+        var name = req.param('name');
+        if (name == undefined) return res.send(400, "Missing parameter, name");
+        if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) return res.send(400, "Name contains invalid characters");
+        User.find({
+                name: new RegExp('^' + name, "i")
+            }, '-salt -hashedPassword -verification.code -forgotPassCode')
+            .sort({
+                'updated': -1
+            })
+            .limit(30)
+            .exec(function(err, users) {
+                if (err) return res.send(500, err);
+                var everyoneButMe = _.filter(users, function(item) {
+                    return !item._id.equals(req.session.userId);
+                });
+                return res.json(200, everyoneButMe);
+            });
+    }
+    /**
+     * Authentication callback
+     */
 exports.authCallback = function(req, res, next) {
     res.redirect('/');
 };

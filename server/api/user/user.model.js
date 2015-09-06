@@ -6,7 +6,10 @@ var crypto = require('crypto');
 var authTypes = ['facebook'];
 var config = require('../../config/environment');
 var UserSchema = new Schema({
-    name: String,
+    name: {
+        type: String,
+        index: true
+    },
     accountName: String, //this is the input box they can use to set their username customly when they signup
     email: {
         type: String,

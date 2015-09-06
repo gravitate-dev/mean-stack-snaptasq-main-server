@@ -1,59 +1,72 @@
 'use strict';
 angular.module('snaptasqApp')
     .controller('CommunityJoinCtrl', function($scope, Auth, Community, Notification, FbCommunity, $timeout, $location) {
-        $scope.submitted = false;
-        $scope.error = undefined;
-        $scope.testFb = function(query) {
-            Auth.test(query);
-        }
-
-        $scope.testFbPost = function(query) {
-            Auth.testPost(query);
-        }
+        $scope.freezeInput = false;
+        $scope.searchResults = [];
+        $scope.$watch("searchCommunity", _.debounce(function(newvalue) {
+            // This code will be invoked after 1 second from the last time 'id' has changed.
+            $scope.$apply(function() {
+                // Code that does something based on $scope.id
+                if (angular.isUndefined(newvalue)) {
+                    return;
+                }
+                if ($scope.isurl_fb(newvalue) && !$scope._me.isConnectedWithFb) {
+                    console.error("you must first connect with facebook to join a facebook community");
+                    return;
+                }
+                $scope.searchForCommunities(newvalue);
+            })
+        }, 1000));
 
         $scope.isurl_fb = function(url) {
-            if (angular.isUndefined(url))
+            if (angular.isUndefined(url)) {
                 return false;
-            if (url.indexOf("facebook") != -1) {
+            }
+            if (url.indexOf("facebook") != -1 && url.indexOf(".com") != -1) {
                 return true;
             }
             return false;
-        };
-        $scope.validateUrl = function(url) {
-            /** Facebook **/
-            if ($scope.isurl_fb(url) && !$scope._me.isConnectedWithFb) {
-                throw "To join a facebook community, you need to connect your account with facebook first";
-            }
-            return true;
         }
-        $scope.processJoinUrl = function(form) {
-            $scope.submitted = true;
-            if (form.$valid) {
-
-                //console.log(form.url.$viewValue);
-                try {
-                    var url = form.url.$viewValue;
-                    $scope.validateUrl(form.url.$viewValue);
-                    if ($scope.isurl_fb(url)) {
-                        FbCommunity.joinByUrl(url, function(success) {
-                            if (angular.isString(success.data))
-                                Notification.success(success.data);
-                            else {
-                                var comm = success.data;
-                                Notification.success("Welcome to " + comm.name + "'s snaptasq community!");
-                                $timeout(function() {
-                                    $location.path('/community/view/' + comm._id);
-                                }, 2000);
-                            }
-                        }, function(failure) {
-                            Notification.error(failure.data);
-                        })
+        $scope.searchForCommunities = function(name) {
+            if ($scope.isurl_fb(name)) {
+                $scope.joinFacebookUrl(name);
+            } else {
+                Community.searchByName(name, function(users) {
+                    if (angular.isUndefined(users)) {
+                        $scope.searchResults = [];
+                    } else {
+                        $scope.searchResults = users;
                     }
-                    //Community.joinWithUrl(form.$)    
-                } catch (e) {
-                    $scope.error = e;
-                    Notification.error(e);
+                });
+            }
+            console.log("Searching for users with name ", name);
+        }
+
+        $scope.joinFacebookUrl = function(url) {
+            $scope.freezeInput = true;
+            try {
+                if ($scope.isurl_fb(url)) {
+                    FbCommunity.joinByUrl(url, function(success) {
+                        if (angular.isString(success.data)) {
+                            $scope.freezeInput = false;
+                            Notification.success(success.data);
+                        } else {
+                            var comm = success.data;
+                            Notification.success("Welcome to " + comm.name + "'s snaptasq community!");
+                            $timeout(function() {
+                                $scope.freezeInput = false;
+                                $location.path('/community/view/' + comm._id);
+                            }, 2000);
+                        }
+                    }, function(failure) {
+                        $scope.freezeInput = false;
+                        Notification.error(failure.data);
+                    })
                 }
+            } catch (e) {
+                $scope.error = e;
+                $scope.freezeInput = false;
+                Notification.error(e);
             }
         }
     }).controller('CommunitiesCtrl', function($scope, _me, Community, $http, $window, Auth, $location) {
@@ -70,7 +83,7 @@ angular.module('snaptasqApp')
                 $location.path('/communities/permission');
             }
         });
-        */
+*/
 
     })
     .controller('CommunityFacebookConnect', function($scope, _me, $http, Auth, $window) {

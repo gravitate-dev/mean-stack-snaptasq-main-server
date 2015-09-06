@@ -70,6 +70,15 @@ angular.module('snaptasqApp')
             },
         });
         return {
+            searchByName: function(name, cb) {
+                $http.post('/api/communities/search', {
+                    name: name
+                }).success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    return cb(undefined);
+                });
+            },
             delete: function(id, cb) {
                 var cb = cb || angular.noop;
                 var deferred = $q.defer();

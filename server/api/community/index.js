@@ -14,6 +14,7 @@ router.get('/me', auth.isAuthenticated(), controller.getMine);
 router.get('/:id', auth.isAuthenticated(), controller.show);
 router.get('/:id/join/:encUserId', controller.join);
 router.post('/:id/requestJoin', auth.isAuthenticated(), controller.requestJoin);
+router.post('/search', controller.search);
 router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 
 module.exports = router;

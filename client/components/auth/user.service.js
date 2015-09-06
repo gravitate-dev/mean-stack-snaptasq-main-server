@@ -54,5 +54,32 @@ angular.module('snaptasqApp')
                 }
             }
         });
-        return Usr;
+        return {
+            searchByName: function(name, cb) {
+                $http.post('/api/users/search', {
+                    name: name
+                }).success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    return cb(undefined);
+                });
+            },
+            getById: function(id, cb) {
+                var cb = cb || angular.noop;
+                $http.get('/api/users/' + id).success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    console.error(err);
+                    return cb(undefined);
+                });
+            },
+            get: Usr.get,
+            applyBetaCode: Usr.applyBetaCode,
+            changePassword: Usr.changePassword,
+            resetChangePassword: Usr.resetChangePassword,
+            create: Usr.create,
+            sendVerificationEmail: Usr.sendVerificationEmail,
+            sendForgotPasswordEmail: Usr.sendForgotPasswordEmail,
+            deleteMyAccount: Usr.deleteMyAccount,
+        }
     });
