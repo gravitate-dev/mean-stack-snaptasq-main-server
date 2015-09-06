@@ -2,15 +2,24 @@
     <div class="col-md-12 col-sm-12  col-xs-12">
         <div class="panel panel-default">
             <div class="panel-heading c-list" style="padding:10px;">
-                <span class="title" style="display:inline;float:left;">find friends</span>
-                <span class="input-group c-search" style="">
-					<input type="text" autofocus="autofocus" class="form-control" ng-model="searchFriendName" id="contact-list-search">
-					<span class="input-group-btn">
-						<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search text-muted"></span></button>
-                </span>
+                <span class="title" style="display:inline;float:left;min-height:60px;">find friends</span>
+                <!-- <div ng-show="searching" style="display:inline-block;" class="loader small">
+                    <div class="loader-inner ball-scale-ripple small">
+                        <div></div>
+                    </div>
+                </div> -->
+                <div class="clearfix"></div>
+                <div class="input-group c-search" style="">
+                    <input type="text" autofocus="autofocus" class="form-control" ng-model="searchFriendName" id="contact-list-search">
+                    <span class="input-group-btn">
+              <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search text-muted"></span></button>
+                </div>
                 </span>
             </div>
             <ul class="list-group" id="contact-list">
+                <li class="list-group-item" ng-if="noResults && !searching">
+                    no results
+                </li>
                 <li class="list-group-item" ng-repeat="item in searchResults" ng-click="_goToPath('/user/'+item.id)">
                     <div style="width:50px;float:left;">
                         <img src="{{item.pic}}" alt="{{item.name}}" class="img-responsive img-circle" />

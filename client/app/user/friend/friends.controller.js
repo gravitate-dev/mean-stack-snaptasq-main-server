@@ -32,8 +32,17 @@ angular.module('snaptasqApp')
 
     })
     .controller('FriendsCtrl', function($scope, User, _me) {
+        $scope._bgcolorGrey();
+        $scope._noFooter();
+        $scope.freezeInput = false;
+        $scope.searching = false;
+        $scope.searchResults = [];
+        $scope.noResults = false;
+
         $scope.$watch("searchFriendName", _.debounce(function(newvalue) {
             // This code will be invoked after 1 second from the last time 'id' has changed.
+            $scope.searching = true;
+            $scope.noResults = false;
             $scope.$apply(function() {
                 // Code that does something based on $scope.id
                 if (angular.isUndefined(newvalue)) {
@@ -42,10 +51,19 @@ angular.module('snaptasqApp')
                 $scope.searchForUsers(newvalue);
             })
         }, 1000));
+        $scope.$watch('searchFriendName', function(newval) {
+            if (angular.isUndefined(newval) || _.isEmpty(newval)) {
+                $scope.searching = false;
+            } else {
+                $scope.searching = true;
+            }
+        });
         $scope.searchResults = [];
         $scope.searchForUsers = function(name) {
             User.searchByName(name, function(users) {
-                if (angular.isUndefined(users)) {
+                $scope.searching = false;
+                if (angular.isUndefined(users) || _.isEmpty(users)) {
+                    $scope.noResults = true;
                     $scope.searchResults = [];
                 } else {
                     $scope.searchResults = users;
