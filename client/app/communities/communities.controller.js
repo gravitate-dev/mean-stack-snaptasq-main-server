@@ -90,11 +90,13 @@ angular.module('snaptasqApp')
         $scope.reconnect = function() {
             $window.location.href = '/auth/facebook/reauth';
         };
-    }).controller('CommunityCtrl', function($scope, Community, Auth, $routeParams, Notification, notifications) {
+    }).controller('CommunityCtrl', function($scope, Community, Task, Auth, $routeParams, Notification, notifications) {
         $scope.groupId = $routeParams.id;
         $scope.allowed = undefined;
         $scope.tasks = [];
         $scope.filter = {};
+        //getMyFriendsTasks
+
 
         $scope.init = function() {
             /**
@@ -140,4 +142,15 @@ angular.module('snaptasqApp')
                 Notification.error(fail.data);
             })
         }
+    })
+    .controller('CommunityFriendCtrl', function($scope, Community, Task, Auth, $routeParams, Notification, notifications) {
+        $scope.tasks = [];
+        $scope.filter = {};
+        Task.getMyFriendsTasks(function(data) {
+            if (angular.isUndefined(data)) {
+                console.error("No tasks found");
+            } else {
+                $scope.tasks = data;
+            }
+        });
     });

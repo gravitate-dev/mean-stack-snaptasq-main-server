@@ -9,6 +9,7 @@ router.get('/', controller.index);
 router.get('/me', auth.isAuthenticated(), controller.getMyTasks);
 router.get('/meResponsible', auth.isAuthenticated(), controller.getTasksResponsible);
 router.get('/meApplied', auth.isAuthenticated(), controller.getMyAppliedTasks);
+router.get('/meFriends', auth.isAuthenticated(), controller.getMyFriendsTasks);
 
 router.get('/countResponsible', auth.isAuthenticated(), controller.countResponsibleTasks);
 

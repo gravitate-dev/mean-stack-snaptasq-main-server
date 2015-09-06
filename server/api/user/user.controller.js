@@ -9,7 +9,6 @@ var uuid = require('uuid');
 var graph = require('fbgraph');
 var sha1 = require('sha1');
 var _ = require('lodash');
-//var notify = require('../notify/notify.controller');
 
 var validationError = function(res, err) {
     return res.json(422, err);
@@ -440,43 +439,6 @@ exports.sendForgotPasswordEmail = function(req, res, next) {
         }
     });
 }
-
-/**
- * Old way no longer used
- *
- **/
-/*exports.resetPassword = function(req, res, next){
-  if (typeof req.param('code') == 'undefined'){
-    return res.json("Missing password reset code, please check your email again");
-  }
-  User.findOne({
-    "forgotPassCode": req.param('code')
-  },function(err, user){
-    if(err || user==null) {
-      return res.status(500).json({message:"Invalid password reset code. Try resubmitting forgot password"});
-    }
-    //here we will randomly set their password
-    //this generates a random string 
-    function randomPassword(){
-    var d = new Date().getTime();
-    var uuid = 'xxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = (d + Math.random()*16)%16 | 0;
-        d = Math.floor(d/16);
-        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
-    });
-    return uuid;
-};
-    user.password = randomPassword();
-    user.forgotPassCode = uuid.v4();
-    user.save(function(err) {
-      if (err) return validationError(res, err);
-      Emailer.sendNewPasswordEmail(req, res, user.email,user.password);
-      return res.redirect('/');
-    });
-  });
-}*/
-
-
 exports.verifyEmailCompleted = function(req, res, next) {
     //TODO: find the verification code in the thing
     if (typeof req.param('code') == 'undefined') {
@@ -523,47 +485,9 @@ exports.isEmailVerified = function(req, res, next) {
     });
 }
 
-exports.getFriendsFromFacebook = function(req, res, next) {
-
-};
-
-exports.tryIt = function(req, res) {
-    var userId = req.session.userId;
-    User.findOne({
-        _id: userId
-    }, '-salt -hashedPassword -verification.code -forgotPassCode -friends', function(err, user) { // don't ever give out the password or salt
-        if (err) return next(err);
-        if (!user) return res.json(401);
-        //test the accessToken if it expired then have them relog
-        graph.get("/" + req.param('q') + user.fb.accessToken, function(err, data) {
-            if (err) {
-                return res.send(500, err);
-            }
-            console.log(data);
-            return res.json(data);
-        });
-    });
-}
-exports.tryIt2 = function(req, res) {
-        var userId = req.session.userId;
-        User.findOne({
-            _id: userId
-        }, '-salt -hashedPassword -verification.code -forgotPassCode -friends', function(err, user) { // don't ever give out the password or salt
-            if (err) return next(err);
-            if (!user) return res.json(401);
-            //test the accessToken if it expired then have them relog
-            graph.post("/" + req.param('q') + user.fb.accessToken, function(err, data) {
-                if (err) {
-                    return res.send(500, err);
-                }
-                console.log(data);
-                return res.json(data);
-            });
-        });
-    }
-    /**
-     * Get my info
-     */
+/**
+ * Get my info
+ */
 exports.me = function(req, res, next) {
     //console.log("Session: ",req.session);
     var userId = req.user._id;

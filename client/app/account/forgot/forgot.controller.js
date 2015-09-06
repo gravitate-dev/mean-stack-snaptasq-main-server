@@ -1,8 +1,13 @@
 'use strict';
-angular.module('snaptasqApp').controller('ForgotCtrl', function($scope, vcRecaptchaService, User, Auth, notifications) {
+angular.module('snaptasqApp').controller('ForgotCtrl', function($scope, _me, vcRecaptchaService, User, Auth, notifications) {
     $scope.errors = {};
     $scope._bgcolorSnapYellow();
     $scope._noFooter();
+
+    _me.$promise.then(function(me) {
+        $scope.userCanFbConnect = !_me.isConnectedWithFb;
+        $scope._me = me;
+    });
 
     $scope.resetCaptcha = function() {
         vcRecaptchaService.reload();
@@ -13,7 +18,7 @@ angular.module('snaptasqApp').controller('ForgotCtrl', function($scope, vcRecapt
             $scope.submitted = false;
             Auth.sendForgotPasswordEmail(form.captchaResponse.$viewValue, form.email.$viewValue, function(success) {
                 notifications.showSuccess({
-                    message: 'Check your inbox! We sent you a reset password email to ' + $scope.email
+                    message: 'Check your inbox! We sent you a reset password email to ' + form.email.$viewValue
                 });
                 $scope.resetCaptcha();
             }, function(fail) {

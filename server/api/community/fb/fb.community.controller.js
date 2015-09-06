@@ -82,8 +82,8 @@ function _getGroupIdFromUrl(req, res, url, cb) {
         //get the groupid by doing a search with the fb token
         var query = '/search?q=' + url + '&type=group';
         graph.get(query + "&access_token=" + req.token, function(err, response) {
-            if (err) return res.send(500, "Facebook graph query failed in searching for a group");
-            if (!response) return res.send(404, "No Response. Facebook graph query failed in searching for a group");
+            if (err) return res.send(500, "No group found from the facebook group link you provided.");
+            if (!response) return res.send(404, "No group found from the facebook group link you provided.");
             if (response.data.length == 0) return res.send(404, "Facebook group not found with the given url");
             return cb(response.data[0].id)
         });
@@ -99,8 +99,8 @@ function _isUserAllowedToGroup(req, res, groupId, cb) {
     }
     var query = '/' + groupId + '/members?limit=1';
     graph.get(query + "&access_token=" + req.token, function(err, response) {
-        if (err) return res.send(500, "Facebook graph query failed in searching for a group");
-        if (!response) return res.send(404, "No Response. Facebook graph query failed in searching for a group");
+        if (err) return res.send(500, "No group found from the facebook group link you provided.");
+        if (!response) return res.send(404, "No group found from the facebook group link you provided.");
         if (response.data.length == 0) return res.send(404, "Not allowed into group");
         return cb(true);
     });

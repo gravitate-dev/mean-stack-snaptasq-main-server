@@ -1,14 +1,13 @@
 'use strict';
-angular.module('snaptasqApp').controller('SettingsCtrl', function($scope, Task, $window, $location, $timeout, Modal, User, Auth, notifications, Notification) {
+angular.module('snaptasqApp').controller('SettingsCtrl', function($scope, _me, Task, $window, $location, $timeout, Modal, User, Auth, notifications, Notification) {
     $scope.errors = {};
     $scope._bgcolorSnapYellow();
     $scope._noFooter();
-    $scope.currentUser = new User(Auth.getCurrentUser());
     $scope.userCanFbConnect = false;
 
-    var unbindWatchingMe = $scope.$watch('_me', function(newVal) {
-        if (angular.isUndefined(newVal)) return;
-        $scope.userCanFbConnect = !$scope._me.isConnectedWithFb;
+    _me.$promise.then(function(me) {
+        $scope.userCanFbConnect = !_me.isConnectedWithFb;
+        $scope._me = me;
     });
 
     $scope.loginOauth = function(provider) {
@@ -56,7 +55,7 @@ angular.module('snaptasqApp').controller('SettingsCtrl', function($scope, Task, 
     $scope.sendForgotPassword = function(form) {
         Auth.sendVerificationEmail(form.captchaResponse.$viewValue, function(success) {
             notifications.showSuccess({
-                message: 'Check your inbox! We sent you a reset password email to ' + $scope.currentUser.email
+                message: 'Check your inbox! We sent you a reset password email to ' + $scope._me.email
             });
             grecaptcha.reset();
         }, function(fail) {

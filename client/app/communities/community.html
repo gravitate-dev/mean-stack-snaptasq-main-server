@@ -1,5 +1,15 @@
-<div class="container">
-    <!-- group {{group}} -->
-    <div ng-if="allowed===false" ng-include src="'app/communities/partials/join.community.html'"></div>
-    <div ng-if="allowed" ng-include src="'app/communities/partials/main.community.html'"></div>
+<div class="container top-buffer">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            {{group.name}}
+            <div class="top-buffer">
+                <div ng-if="tasks.length==0" class="well top-buffer">
+                    <div class="task-view-compact-list-empty"></div>
+                </div>
+                <div class="well top-buffer" ng-repeat="task in tasks | searchTaskFilter:filter">
+                    <div class="task-view-compact-list" task="task"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

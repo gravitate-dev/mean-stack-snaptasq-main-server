@@ -448,3 +448,24 @@ exports.destroy = function(req, res) {
 function handleError(res, err) {
     return res.send(500, err);
 }
+
+exports.getMyFriendsTasks = function(req, res) {
+    User.findOne({
+        _id: req.session.userId
+    }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) { // don't ever give out the password or salt
+        if (err) return next(err);
+        if (!user) return res.send(401);
+        var myFriendsIds = _.pluck(user.friends, "id");
+        Task.find({
+            'ownerId': {
+                $in: myFriendsIds
+            }
+        }, '-__v', function(err, tasks) {
+            if (err) {
+                return handleError(res, err);
+            }
+            return res.json(200, tasks);
+        });
+        //from me i want to get all my tasks owned by my friends
+    });
+}

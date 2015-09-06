@@ -24,8 +24,8 @@ angular.module('snaptasqApp')
                 authenticate: true,
             })
             .when('/community/friends', {
-                templateUrl: 'app/communities/friend.community.html',
-                controller: 'CommunitiesCtrl',
+                templateUrl: 'app/communities/community.html',
+                controller: 'CommunityFriendCtrl',
                 authenticate: true,
             });
     });

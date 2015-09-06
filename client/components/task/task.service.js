@@ -121,6 +121,16 @@ angular.module('snaptasqApp')
                 });
                 return deferred.promise;
             },
+            getMyFriendsTasks: function(cb) {
+                var cb = cb || angular.noop;
+                var deferred = $q.defer();
+                $http.get('/api/tasks/meFriends').success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    return cb(undefined);
+                });
+                return deferred.promise;
+            },
             getMyAppliedTasks: function(cb) {
                 var cb = cb || angular.noop;
                 var deferred = $q.defer();

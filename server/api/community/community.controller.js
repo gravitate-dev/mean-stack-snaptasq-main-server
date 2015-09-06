@@ -409,7 +409,6 @@ exports.join = function(req, res) {
             return _addUserToComm(req, res, comm, user);
         });
     });
-
 }
 
 function handleError(res, err) {
