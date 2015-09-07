@@ -1,4 +1,5 @@
 'use strict';
+/*
 angular.module("ngAutocomplete", [])
     .directive('ngAutocomplete', function() {
         return {
@@ -315,6 +316,7 @@ angular.module("ngAutocomplete", [])
 
     return module;
 }));
+*/
 
 var app = angular.module('snaptasqApp', ['angucomplete-alt', 'bcherny/formatAsCurrency', 'slick', 'angularMoment', 'LocalStorageModule', 'seo', 'FBAngular', 'ezfb', 'djds4rce.angular-socialshare', 'ngDisqus', 'ui-notification', 'pasvaz.bindonce', 'uiGmapgoogle-maps', 'ngAutocomplete', 'commentBox', 'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', /*'btford.socket-io',*/ 'ui.bootstrap', 'ngAnimate', 'ngNotificationsBar', 'vcRecaptcha'])
     .config(function($routeProvider) {
