@@ -216,274 +216,273 @@ var app = angular.module('snaptasqApp', ['angucomplete-alt', 'bcherny/formatAsCu
         })
     });
 
-function GlobalCtrl($scope, BadgeAlerts, localStorageService, $q, $templateCache, smoothScroll, $interval, notifications, $http, $anchorScroll, Auth, User, $location, $rootScope) {
-    $rootScope.title = "snaptasq";
-    $scope.scrollTop = function() {
-        $('html, body').animate({
-            scrollTop: 0
-        }, 'slow');
-    }
-    $scope._goToPath = function(url) {
-        $location.path(url);
-    }
-    $scope.$on('$routeChangeStart', function(next, current) {
-        /*
-         * To reset the styles each time the page changes
-         */
-        $scope._showFooter = true;
-        $scope._bgcolor = "white";
-    });
-    $scope.snapYellowCSS = "#fcd11a";
-    $scope._bgcolorSnapYellow = function() {
-        $scope._bgcolor = "#fcd11a";
-    }
-    $scope._bgcolorWhite = function() {
-        $scope._bgcolor = "white";
-    }
-    $scope._bgcolorGrey = function() {
-        $scope._bgcolor = "#f6f6f6";
-    }
-    $scope._noFooter = function() {
-        $scope._showFooter = false;
-    }
+app.controller('GlobalCtrl', function GlobalCtrl($scope, BadgeAlerts, localStorageService, $q, $templateCache, $interval, notifications, $http, $anchorScroll, Auth, User, $location, $rootScope) {
+            $rootScope.title = "snaptasq";
+            $scope.scrollTop = function() {
+                $('html, body').animate({
+                    scrollTop: 0
+                }, 'slow');
+            }
+            $scope._goToPath = function(url) {
+                $location.path(url);
+            }
+            $scope.$on('$routeChangeStart', function(next, current) {
+                /*
+                 * To reset the styles each time the page changes
+                 */
+                $scope._showFooter = true;
+                $scope._bgcolor = "white";
+            });
+            $scope.snapYellowCSS = "#fcd11a";
+            $scope._bgcolorSnapYellow = function() {
+                $scope._bgcolor = "#fcd11a";
+            }
+            $scope._bgcolorWhite = function() {
+                $scope._bgcolor = "white";
+            }
+            $scope._bgcolorGrey = function() {
+                $scope._bgcolor = "#f6f6f6";
+            }
+            $scope._noFooter = function() {
+                $scope._showFooter = false;
+            }
 
-    $scope._needsBetaCode = function() {}
+            $scope._needsBetaCode = function() {}
 
-    $scope.viewport = '';
-    // hook for viewport
-    (function($, viewport) {
-        // Execute code each time window size changes
-        $(window).resize(
-            viewport.changed(function() {
-                $scope.viewport = viewport.current();
-            }));
-        $(document).ready(function() {
-            $scope.viewport = viewport.current();
-        });
+            $scope.viewport = '';
+            // hook for viewport
+            (function($, viewport) {
+                // Execute code each time window size changes
+                $(window).resize(
+                    viewport.changed(function() {
+                        $scope.viewport = viewport.current();
+                    }));
+                $(document).ready(function() {
+                    $scope.viewport = viewport.current();
+                });
 
-    })(jQuery, ResponsiveBootstrapToolkit);
-    $scope.isViewCompact = function() {
-            if ($scope.viewport == "xs" || $scope.viewport == "sm")
-                return true;
-            if ($scope._isMobile)
-                return true;
-            return false;
-        }
-        //When true people who go to sign up, will be required to enter a beta code
-        //before they are allowed to login.
-        //In the case of continue with faceboook its tricky
-    $scope._beta = true;
-    window._beta = true;
-    $scope._badgeAlerts = BadgeAlerts;
-    $scope._showFooter = true;
-    $scope._bgcolor = "white";
-    $scope._isLive = $location.absUrl().indexOf("snaptasq.com") != -1;
-    $scope._hostName = $scope._isLive ? "http://snaptasq.com" : "http://localhost:8000";
-    //$rootScope._me = undefined;
-    $scope._isMobile = $.browser.mobile;
-
-    $rootScope._refreshMe = function(cb) {
-        //console.log("not needed");
-
-    }
-
-    $scope.$on('refreshME', function(event) {
-        //$rootScope._refreshMe();
-    });
-    $scope._share = function(provider, title, desc) {
-        var url = $location.absUrl();
-        var snaptasqLogoUrl = "http://snaptasq.com/assets/logos/snaptasq.png";
-        title = title || "snaptasq";
-        desc = desc || "Help your friend out. snaptasq";
-        var windowOpenOptions = 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600';
-        if (provider == 'fb') {
-            FB.ui({
-                    method: 'feed',
-                    name: title,
-                    link: url,
-                    //picture: 'http://fbrell.com/f8.jpg',
-                    caption: 'via snaptasq',
-                    description: desc
-                },
-                function(response) {
-                    if (response && response.post_id) {
-                        //alert('Post was published.');
-                    } else {
-                        //alert('Post was not published.');
-                    }
+            })(jQuery, ResponsiveBootstrapToolkit);
+            $scope.isViewCompact = function() {
+                    if ($scope.viewport == "xs" || $scope.viewport == "sm")
+                        return true;
+                    if ($scope._isMobile)
+                        return true;
+                    return false;
                 }
-            );
-        } else if (provider == "google") {
-            window.open("https://plus.google.com/share?url=" + url, '', windowOpenOptions);
-        } else if (provider == "pintrest") {
-            window.open("http://pinterest.com/pin/create/button/?url=" + url + "&media=" + snaptasqLogoUrl + "&description=" + desc, '', windowOpenOptions);
-        }
-    }
-};
+                //When true people who go to sign up, will be required to enter a beta code
+                //before they are allowed to login.
+                //In the case of continue with faceboook its tricky
+            $scope._beta = true;
+            window._beta = true;
+            $scope._badgeAlerts = BadgeAlerts;
+            $scope._showFooter = true;
+            $scope._bgcolor = "white";
+            $scope._isLive = $location.absUrl().indexOf("snaptasq.com") != -1;
+            $scope._hostName = $scope._isLive ? "http://snaptasq.com" : "http://localhost:8000";
+            //$rootScope._me = undefined;
+            $scope._isMobile = $.browser.mobile;
 
-app.controller('GlobalCtrl', GlobalCtrl)
-    .filter("typeAheadNoResultsOnEmpty", function() {
-        return function(input, searchInput) {
-            if (_.isEmpty(input)) input = [{
-                name: searchInput,
-                noresults: true
-            }];
-            return input;
-        };
-    }).filter('chunk', function() {
-        return _.memoize(chunk);
-    }).directive('includeReplace', function() {
-        return {
-            require: 'ngInclude',
-            restrict: 'A',
-            /* optional */
-            link: function(scope, el, attrs) {
-                el.replaceWith(el.children());
+            $rootScope._refreshMe = function(cb) {
+                //console.log("not needed");
+
+            }
+
+            $scope.$on('refreshME', function(event) {
+                //$rootScope._refreshMe();
+            });
+            $scope._share = function(provider, title, desc) {
+                var url = $location.absUrl();
+                var snaptasqLogoUrl = "http://snaptasq.com/assets/logos/snaptasq.png";
+                title = title || "snaptasq";
+                desc = desc || "Help your friend out. snaptasq";
+                var windowOpenOptions = 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600';
+                if (provider == 'fb') {
+                    FB.ui({
+                            method: 'feed',
+                            name: title,
+                            link: url,
+                            //picture: 'http://fbrell.com/f8.jpg',
+                            caption: 'via snaptasq',
+                            description: desc
+                        },
+                        function(response) {
+                            if (response && response.post_id) {
+                                //alert('Post was published.');
+                            } else {
+                                //alert('Post was not published.');
+                            }
+                        }
+                    );
+                } else if (provider == "google") {
+                    window.open("https://plus.google.com/share?url=" + url, '', windowOpenOptions);
+                } else if (provider == "pintrest") {
+                    window.open("http://pinterest.com/pin/create/button/?url=" + url + "&media=" + snaptasqLogoUrl + "&description=" + desc, '', windowOpenOptions);
+                }
             }
         };
-    }).filter('capitalize', function() {
-        return function(input, scope) {
-            if (input != null)
-                input = input.toLowerCase();
-            return input.substring(0, 1).toUpperCase() + input.substring(1);
-        }
-    }).filter('capslock', function() {
-        return function(input, scope) {
-            if (input != null) return input.toUpperCase();
-            else return null;
-        }
-    }).directive('capitalize', function() {
-        return {
-            require: 'ngModel',
-            link: function(scope, element, attrs, modelCtrl) {
-                var capitalize = function(inputValue) {
-                    if (inputValue == undefined) inputValue = '';
-                    var capitalized = inputValue.toUpperCase();
-                    if (capitalized !== inputValue) {
-                        modelCtrl.$setViewValue(capitalized);
-                        modelCtrl.$render();
-                    }
-                    return capitalized;
-                }
-                modelCtrl.$parsers.push(capitalize);
-                capitalize(scope[attrs.ngModel]); // capitalize initial value
-            }
-        };
-    })
-    // this is used for SEO
-    .directive('ngContent', [
-        function() {
+
+        app.filter("typeAheadNoResultsOnEmpty", function() {
+            return function(input, searchInput) {
+                if (_.isEmpty(input)) input = [{
+                    name: searchInput,
+                    noresults: true
+                }];
+                return input;
+            };
+        }).filter('chunk', function() {
+            return _.memoize(chunk);
+        }).directive('includeReplace', function() {
             return {
-                link: function($scope, $el, $attrs) {
-                    $scope.$watch($attrs.ngContent, function(value) {
-                        $el.attr('content', value);
+                require: 'ngInclude',
+                restrict: 'A',
+                /* optional */
+                link: function(scope, el, attrs) {
+                    el.replaceWith(el.children());
+                }
+            };
+        }).filter('capitalize', function() {
+            return function(input, scope) {
+                if (input != null)
+                    input = input.toLowerCase();
+                return input.substring(0, 1).toUpperCase() + input.substring(1);
+            }
+        }).filter('capslock', function() {
+            return function(input, scope) {
+                if (input != null) return input.toUpperCase();
+                else return null;
+            }
+        }).directive('capitalize', function() {
+            return {
+                require: 'ngModel',
+                link: function(scope, element, attrs, modelCtrl) {
+                    var capitalize = function(inputValue) {
+                        if (inputValue == undefined) inputValue = '';
+                        var capitalized = inputValue.toUpperCase();
+                        if (capitalized !== inputValue) {
+                            modelCtrl.$setViewValue(capitalized);
+                            modelCtrl.$render();
+                        }
+                        return capitalized;
+                    }
+                    modelCtrl.$parsers.push(capitalize);
+                    capitalize(scope[attrs.ngModel]); // capitalize initial value
+                }
+            };
+        })
+        // this is used for SEO
+        .directive('ngContent', [
+            function() {
+                return {
+                    link: function($scope, $el, $attrs) {
+                        $scope.$watch($attrs.ngContent, function(value) {
+                            $el.attr('content', value);
+                        });
+                    }
+                };
+            }
+        ]).factory('BadgeAlerts', function() {
+            var objSet = new Set();
+            var MISSING_BETA_CODE = "beta_code_missing";
+            objSet.MISSING_BETA_CODE = "beta_code_missing";
+            objSet.IS_MISSING_BETA_CODE = function() {
+                return this.contains(MISSING_BETA_CODE);
+            }
+            return objSet;
+        }).directive('scrollOnClick', function($timeout, $window) {
+            return {
+                restrict: 'A',
+                link: function($scope, $elm, $attrs) {
+                    $elm.bind('click', function($event) {
+                        var target = $event.currentTarget;
+                        if (angular.isUndefined(target))
+                            return;
+                        // we want something like -40 or 35 not -40px or 35%
+                        var offset = parseInt($attrs.scrollOnClick.replace(/(A-Za-z|%)+/g, ''));
+                        var y = $(target).offset().top + offset;
+
+                        $('html, body').animate({
+                            scrollTop: y
+                        }, 'slow');
+
+                        //document.body.scrollTop
+                        $(target).focus();
                     });
                 }
             };
-        }
-    ]).factory('BadgeAlerts', function() {
-        var objSet = new Set();
-        var MISSING_BETA_CODE = "beta_code_missing";
-        objSet.MISSING_BETA_CODE = "beta_code_missing";
-        objSet.IS_MISSING_BETA_CODE = function() {
-            return this.contains(MISSING_BETA_CODE);
-        }
-        return objSet;
-    }).directive('scrollOnClick', function($timeout, $window) {
-        return {
-            restrict: 'A',
-            link: function($scope, $elm, $attrs) {
-                $elm.bind('click', function($event) {
-                    var target = $event.currentTarget;
-                    if (angular.isUndefined(target))
+        }).directive('scrollOnClickMobile', function($timeout, $window) {
+            return {
+                restrict: 'A',
+                link: function($scope, $elm, $attrs) {
+                    //block non mobile
+                    if (!$.browser.mobile)
                         return;
-                    // we want something like -40 or 35 not -40px or 35%
-                    var offset = parseInt($attrs.scrollOnClick.replace(/(A-Za-z|%)+/g, ''));
-                    var y = $(target).offset().top + offset;
+                    $elm.bind('click', function($event) {
+                        var target = $event.currentTarget;
+                        if (angular.isUndefined(target))
+                            return;
+                        // we want something like -40 or 35 not -40px or 35%
+                        var offset = parseInt($attrs.scrollOnClick.replace(/(A-Za-z|%)+/g, ''));
+                        var y = $(target).offset().top + offset;
 
-                    $('html, body').animate({
-                        scrollTop: y
-                    }, 'slow');
+                        $('html, body').animate({
+                            scrollTop: y
+                        }, 'slow');
+                        $(target).focus();
+                    });
+                }
+            };
+        });
 
-                    //document.body.scrollTop
-                    $(target).focus();
-                });
+        /* Global Functions */
+
+        function chunk(arr, size) {
+            var newArr = [];
+            for (var i = 0; i < arr.length; i += size) {
+                newArr.push(arr.slice(i, i + size));
+            }
+            return newArr;
+        }
+
+        function randomString(length, chars) {
+            var result = '';
+            for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
+            return result;
+        }
+
+        function Set(hashFunction) {
+            this._hashFunction = hashFunction || JSON.stringify;
+            this._values = {};
+            this._size = 0;
+        }
+
+
+        // beacuse ie doesnt implement everything
+        Set.prototype = {
+            add: function add(value) {
+                if (!this.contains(value)) {
+                    this._values[this._hashFunction(value)] = value;
+                    this._size++;
+                }
+            },
+
+            remove: function remove(value) {
+                if (this.contains(value)) {
+                    delete this._values[this._hashFunction(value)];
+                    this._size--;
+                }
+            },
+
+            contains: function contains(value) {
+                return typeof this._values[this._hashFunction(value)] !== "undefined";
+            },
+
+            size: function size() {
+                return this._size;
+            },
+
+            each: function each(iteratorFunction, thisObj) {
+                for (var value in this._values) {
+                    iteratorFunction.call(thisObj, this._values[value]);
+                }
             }
         };
-    }).directive('scrollOnClickMobile', function($timeout, $window) {
-        return {
-            restrict: 'A',
-            link: function($scope, $elm, $attrs) {
-                //block non mobile
-                if (!$.browser.mobile)
-                    return;
-                $elm.bind('click', function($event) {
-                    var target = $event.currentTarget;
-                    if (angular.isUndefined(target))
-                        return;
-                    // we want something like -40 or 35 not -40px or 35%
-                    var offset = parseInt($attrs.scrollOnClick.replace(/(A-Za-z|%)+/g, ''));
-                    var y = $(target).offset().top + offset;
-
-                    $('html, body').animate({
-                        scrollTop: y
-                    }, 'slow');
-                    $(target).focus();
-                });
-            }
-        };
-    });
-
-/* Global Functions */
-
-function chunk(arr, size) {
-    var newArr = [];
-    for (var i = 0; i < arr.length; i += size) {
-        newArr.push(arr.slice(i, i + size));
-    }
-    return newArr;
-}
-
-function randomString(length, chars) {
-    var result = '';
-    for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
-    return result;
-}
-
-function Set(hashFunction) {
-    this._hashFunction = hashFunction || JSON.stringify;
-    this._values = {};
-    this._size = 0;
-}
-
-
-// beacuse ie doesnt implement everything
-Set.prototype = {
-    add: function add(value) {
-        if (!this.contains(value)) {
-            this._values[this._hashFunction(value)] = value;
-            this._size++;
-        }
-    },
-
-    remove: function remove(value) {
-        if (this.contains(value)) {
-            delete this._values[this._hashFunction(value)];
-            this._size--;
-        }
-    },
-
-    contains: function contains(value) {
-        return typeof this._values[this._hashFunction(value)] !== "undefined";
-    },
-
-    size: function size() {
-        return this._size;
-    },
-
-    each: function each(iteratorFunction, thisObj) {
-        for (var value in this._values) {
-            iteratorFunction.call(thisObj, this._values[value]);
-        }
-    }
-};
