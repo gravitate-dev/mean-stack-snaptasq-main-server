@@ -56,7 +56,57 @@ angular.module('snaptasqApp')
         }
         $scope.refreshAllInboxes(false);
     })
-    .controller('UserMessageCtrl', function($scope, _me, User, UserMessage, $timeout, $location, $routeParams, Notification) {
+    .controller('NewUserMessageCtrl', function($scope, _me, User, UserMessage, $location, Notification) {
+        $scope.msg = {
+            body: "",
+            type: "normal",
+            title: ""
+        };
+        _me.$promise.then(function(me) {
+            $scope._me = me;
+        });
+
+        $scope.$watch('msg.body', _.debounce(function(newvalue) {
+            // This code will be invoked after 1 second from the last time 'id' has changed.
+            $scope.$apply(function() {
+                if (angular.isUndefined(newvalue)) {
+                    return;
+                }
+                //count the # of newlines and limit it
+                var newlineCount = newvalue.split(/\r\n|\r|\n/).length;
+                if (newlineCount > 10) {
+                    $scope.tooManyNewLines = true;
+                } else {
+                    $scope.tooManyNewLines = false;
+                }
+            });
+        }, 200));
+
+        $scope.sendMessage = function() {
+            if (angular.isUndefined($scope.msg.to) || angular.isUndefined($scope.msg.to.originalObject)) {
+                return Notification.error("Please enter a valid recipient")
+            }
+            var target = $scope.msg.to.originalObject;
+            if (_.isEmpty($scope.msg.body)) {
+                return Notification.error("Please enter a message to send.")
+            }
+            if (_.isEmpty($scope.msg.title)) {
+                return Notification.error("Please enter a title");
+            }
+            UserMessage.create({
+                toId: target.id,
+                type: "normal"
+            }, {
+                title: $scope.msg.title,
+                body: $scope.msg.body,
+                type: $scope.msg.type,
+            }, function(success) {
+                Notification.success("Message sent");
+            }, function(fail) {
+                Notification.error("There was an error sending your message");
+            });
+        }
+    }).controller('UserMessageCtrl', function($scope, _me, User, UserMessage, $timeout, $location, $routeParams, Notification) {
         $scope.messages = undefined;
         $scope.id = $routeParams.id;
         $scope.replyMessage = "";

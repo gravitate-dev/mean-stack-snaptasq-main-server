@@ -1,6 +1,6 @@
 'use strict';
 angular.module('snaptasqApp')
-    .controller('TaskGlobalCtrl', function($scope, Page, notifications, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
+    .controller('TaskGlobalCtrl', function($scope, Page, Notification, notifications, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
 
         $scope.connect = function() {
             $window.location.href = '/auth/facebook';
@@ -39,25 +39,16 @@ angular.module('snaptasqApp')
 
         }
         $scope.unapplyToTask = function(task) {
-            if (!Auth.isLoggedIn()) {
-                $scope.connect();
-                //Notification.warning({message: "Task Saved. Please signup or login to publish your task."});
-                //$location.path("/login");
-            } else {
-                Task.unapplyToTask({
-                    id: task._id
-                }, {}, function(data) {
-                    if (task.tasker.id == $scope._me.id) {
-                        Notification.success({
-                            message: "You are no longer a helper for this task."
-                        });
-                    } else {
-                        notifications.showSuccess("You are no longer listed as a helper for this task.");
-                    }
-                    task.applicants = data.applicants;
-                    task.tasker = data.tasker;
+            Task.unapplyToTask({
+                id: task._id
+            }, {}, function(data) {
+                Notification.success({
+                    message: "You are no longer a helper for this task.",
+                    replace: true
                 });
-            }
+                task.applicants = data.applicants;
+                task.tasker = data.tasker;
+            });
         }
 
         $scope.deleteTask = function(t) {
@@ -80,6 +71,10 @@ angular.module('snaptasqApp')
                     Task.applyToTask({
                         id: task._id
                     }, {}, function(data) {
+                        Notification.success({
+                            message: "You have applied to help for this task.",
+                            replace: true
+                        });
                         task.applicants = data.applicants;
                         task.tasker = data.tasker;
                     });

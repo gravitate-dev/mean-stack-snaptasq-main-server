@@ -10,7 +10,7 @@ angular.module('snaptasqApp')
             })
             .when('/newmessage', {
                 templateUrl: 'app/account/messages/new.userMessage.html',
-                controller: 'UserMessageCtrl',
+                controller: 'NewUserMessageCtrl',
                 authenticate: true,
             })
             .when('/message/:id', {

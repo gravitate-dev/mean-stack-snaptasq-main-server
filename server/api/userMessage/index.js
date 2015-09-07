@@ -12,5 +12,6 @@ router.get('/getFriends', controller.getMyMessagesFriendRequests);
 router.post('/', auth.isAuthenticated(), controller.create);
 router.get('/:id', auth.isAuthenticated(), controller.getMessageById);
 router.post('/:id/reply', auth.isAuthenticated(), controller.replyToMessage);
+router.post('/newMessage', auth.isAuthenticated(), controller.create);
 router.delete('/:id', auth.isAuthenticated(), controller.deleteById);
 module.exports = router;

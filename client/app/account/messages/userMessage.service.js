@@ -27,7 +27,6 @@ angular.module('snaptasqApp')
             }
         });
         return {
-
             replyToMessage: function(id, reply, cb, cbfail) {
                 var cb = cb || angular.noop;
                 var cbfail = cbfail || angular.noop;
