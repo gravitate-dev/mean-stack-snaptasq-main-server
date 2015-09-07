@@ -17,7 +17,7 @@ angular.module('snaptasqApp')
             else if (isMedium(p)) return MED;
             else if (isBig(p)) return BIG;
             //this will never happen but i return free anyways
-            return this.FREE;
+            return FREE;
         }
 
         function asString(p) {
