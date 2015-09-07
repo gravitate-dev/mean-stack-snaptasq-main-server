@@ -568,6 +568,7 @@ app.controller('GlobalCtrl', function GlobalCtrl($scope, BadgeAlerts, localStora
 
     $scope.viewport = '';
     // hook for viewport
+    /*
     (function($, viewport) {
         // Execute code each time window size changes
         $(window).resize(
@@ -579,6 +580,7 @@ app.controller('GlobalCtrl', function GlobalCtrl($scope, BadgeAlerts, localStora
         });
 
     })(jQuery, ResponsiveBootstrapToolkit);
+    */
     $scope.isViewCompact = function() {
             if ($scope.viewport == "xs" || $scope.viewport == "sm")
                 return true;
