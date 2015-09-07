@@ -827,6 +827,7 @@ module.exports = function (grunt) {
     'injector',
     'wiredep',
     'useminPrepare',
+    'useminPatch',
     'autoprefixer',
     'ngtemplates',
     'concat',
@@ -859,7 +860,18 @@ module.exports = function (grunt) {
   grunt.registerTask('beautify', [
     "jsbeautifier:default"
     ]);
-
+ grunt.registerTask('useminPatch', function () {
+    var concat = grunt.config('concat');
+    var uglify = grunt.config('uglify');
+    for (var dest in concat) {
+      if (uglify[dest] === dest) {
+        uglify[dest] = concat[dest];
+        delete concat[dest];
+      }
+    }
+    grunt.config('concat', concat);
+    grunt.config('uglify', uglify);
+  });
   
 
   grunt.registerTask('default', [
