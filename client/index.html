@@ -43,15 +43,17 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(client) app/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/ng-notifications-bar/dist/ngNotificationsBar.min.css" />
-    <link rel="stylesheet" href="bower_components/angular-ui-notification/dist/angular-ui-notification.min.css" />
+    <link rel="stylesheet" href="bower_components/angucomplete-alt/angucomplete-alt.css" />
     <link rel="stylesheet" href="bower_components/slick-carousel/slick/slick.css" />
     <link rel="stylesheet" href="bower_components/slick-carousel/slick/slick-theme.css" />
+    <link rel="stylesheet" href="bower_components/angular-ui-notification/dist/angular-ui-notification.min.css" />
+    <link rel="stylesheet" href="bower_components/ng-notifications-bar/dist/ngNotificationsBar.min.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <link rel="stylesheet" href="bower_components/angular-socialshare/angular-socialshare.min.css">
     <!-- build:css({.tmp,client}) app/app.css -->
     <link rel="stylesheet" href="app/app.css">
+    <link href="licenses.html" rel="license" title="Licensing Information">
     <!-- endbuild -->
 </head>
 <body style="display: flex;
@@ -148,16 +150,30 @@ if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
     <!-- build:js({client,node_modules}) app/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/angular-resource/angular-resource.js"></script>
-    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
-    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="bower_components/angular-route/angular-route.js"></script>
-    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="bower_components/lodash/lodash.js"></script>
-    <script src="bower_components/angular-socket-io/socket.js"></script>
+    <script src="bower_components/angucomplete-alt/angucomplete-alt.js"></script>
     <script src="bower_components/angular-animate/angular-animate.js"></script>
-    <script src="bower_components/ng-notifications-bar/dist/ngNotificationsBar.min.js"></script>
+    <script src="bower_components/angular-bindonce/bindonce.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-disqus/angular-disqus.js"></script>
+    <script src="bower_components/angular-easyfb/angular-easyfb.js"></script>
+    <script src="bower_components/angular-fullscreen/src/angular-fullscreen.js"></script>
+    <script src="bower_components/lodash/lodash.js"></script>
+    <script src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
+    <script src="bower_components/moment/moment.js"></script>
+    <script src="bower_components/angular-moment/angular-moment.js"></script>
     <script src="bower_components/angular-recaptcha/release/angular-recaptcha.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-seo/angular-seo.js"></script>
+    <script src="bower_components/slick-carousel/slick/slick.min.js"></script>
+    <script src="bower_components/angular-slick/dist/slick.js"></script>
+    <script src="bower_components/angular-socialshare/angular-socialshare.js"></script>
+    <script src="bower_components/angular-socket-io/socket.js"></script>
+    <script src="bower_components/angular-ui-notification/dist/angular-ui-notification.min.js"></script>
+    <script src="bower_components/chance/chance.js"></script>
+    <script src="bower_components/format-as-currency/format-as-currency.js"></script>
     <script src="bower_components/get-style-property/get-style-property.js"></script>
     <script src="bower_components/get-size/get-size.js"></script>
     <script src="bower_components/matches-selector/matches-selector.js"></script>
@@ -168,23 +184,10 @@ if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
     <script src="bower_components/outlayer/outlayer.js"></script>
     <script src="bower_components/masonry/masonry.js"></script>
     <script src="bower_components/isotope/js/isotope.js"></script>
-    <script src="bower_components/chance/chance.js"></script>
+    <script src="bower_components/ng-notifications-bar/dist/ngNotificationsBar.min.js"></script>
     <script src="bower_components/ngAutocomplete/src/ngAutocomplete.js"></script>
-    <script src="bower_components/angular-bindonce/bindonce.js"></script>
-    <script src="bower_components/angular-ui-notification/dist/angular-ui-notification.min.js"></script>
-    <script src="bower_components/angular-disqus/angular-disqus.js"></script>
-    <script src="bower_components/angular-socialshare/angular-socialshare.js"></script>
-    <script src="bower_components/angular-easyfb/angular-easyfb.js"></script>
-    <script src="bower_components/angular-fullscreen/src/angular-fullscreen.js"></script>
     <script src="bower_components/ngSmoothScroll/angular-smooth-scroll.js"></script>
-    <script src="bower_components/angular-seo/angular-seo.js"></script>
-    <script src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
-    <script src="bower_components/moment/moment.js"></script>
-    <script src="bower_components/angular-moment/angular-moment.js"></script>
-    <script src="bower_components/slick-carousel/slick/slick.min.js"></script>
-    <script src="bower_components/angular-slick/dist/slick.js"></script>
     <script src="bower_components/responsive-toolkit/dist/bootstrap-toolkit.js"></script>
-    <script src="bower_components/format-as-currency/format-as-currency.js"></script>
     <!-- endbower -->
     <!-- <script src="socket.io-client/socket.io.js"></script> -->
     <script src="assets/js/angular-isotope-patched/dist/angular-isotope.js"></script>
@@ -202,6 +205,9 @@ if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
     <script src="app/account/beta/beta.controller.js"></script>
     <script src="app/account/connect/connect.controller.js"></script>
     <script src="app/account/forgot/forgot.controller.js"></script>
+    <script src="app/account/messages/userMessage.service.js"></script>
+    <script src="app/account/messages/userMessages.controller.js"></script>
+    <script src="app/account/messages/userMessages.js"></script>
     <script src="app/account/resetPassword/resetPassword.js"></script>
     <script src="app/account/rewards/rewards.controller.js"></script>
     <script src="app/account/settings/settings.controller.js"></script>

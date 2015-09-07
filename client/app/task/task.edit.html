@@ -37,15 +37,6 @@
                 </div>
                 <!-- ./col-sm-6 -->
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                    <div class="form-group" ng-class="{ 'has-success': form.description.$valid && submitted,
-            'has-error': (form.description.$invalid || errors.description) && submitted }">
-                        <label>additional details (optional)</label>
-
-                        <textarea id="details" scroll-on-click-mobile="-15px" placeholder="Ex: Couch is small enough to fit in an SUV." name="description" cols="40" maxlength="1000" rows="5" ng-model="task.description" class="form-control"></textarea>
-                        <p class="help-block" ng-show="errors.description && submitted">
-                            provide any extra details or requirements
-                        </p>
-                    </div>
                     <div class="form-group" ng-class="{ 'has-success': form.location.$valid && !errors.location && submitted,
         'has-error': (form.location.$invalid || errors.location) && submitted }">
                         <label>location (optional)</label>
@@ -54,6 +45,15 @@
                         <!-- <p class="help-block" ng-show="errors.location && submitted">
                             please re-enter the location
                         </p> -->
+                    </div>
+                    <div class="form-group" ng-class="{ 'has-success': form.description.$valid && submitted,
+            'has-error': (form.description.$invalid || errors.description) && submitted }">
+                        <label>additional details (optional)</label>
+
+                        <textarea id="details" scroll-on-click-mobile="-15px" placeholder="Ex: Couch is small enough to fit in an SUV." name="description" cols="40" maxlength="1000" rows="5" ng-model="task.description" class="form-control"></textarea>
+                        <p class="help-block" ng-show="errors.description && submitted">
+                            provide any extra details or requirements
+                        </p>
                     </div>
                     <div class="row bot-buffer">
                         <div class="col-md-12">

@@ -1,0 +1,27 @@
+<div class="container top-buffer">
+    <div class="row">
+        <p class="lead"><a href="/messages"><i class="fa fa-back"></i>&nbsp;back to inbox</a></p>
+        <form role="form" id="contact-form" class="contact-form">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <angucomplete-alt id="toName" placeholder="enter a name" pause="100" selected-object="toName" local-data="_me.friends" search-fields="name" title-field="name" minlength="1" input-class="form-control form-control-small" />
+                        <!-- <input type="text" class="form-control" name="Name" autocomplete="off" id="Name" placeholder="Name"> -->
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <textarea class="form-control textarea" rows="3" name="Message" id="Message" placeholder="Message"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn main-btn">Send a message</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

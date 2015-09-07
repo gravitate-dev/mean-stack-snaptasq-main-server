@@ -13,6 +13,7 @@ module.exports = function(app) {
     //app.use('/api/things', require('./api/thing'));
     app.use('/api/users', require('./api/user'));
     app.use('/api/beta', require('./api/beta'));
+    app.use('/api/userMessages', require('./api/userMessage'));
     app.use('/api/notify', require('./api/notify'));
     app.use('/api/fbcommunities', require('./api/community/fb'));
     app.use('/api/communities', require('./api/community'));

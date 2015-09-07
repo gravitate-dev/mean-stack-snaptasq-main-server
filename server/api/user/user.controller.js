@@ -2,6 +2,7 @@
 var Notify = require('../notify/notify.controller');
 var Emailer = require('../email/email.controller');
 var User = require('../user/user.model');
+var UserMessageCtrl = require('../userMessage/userMessage.controller');
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
@@ -196,84 +197,113 @@ exports.hasFbPermission = function(req, res) {
                 else
                     return res.status(403,"Permission not granted");
             });
-            */
+*/
         });
     });
 };
 exports.applyBetaCode = function(req, res, next) {
-        if (!req.session.userId) {
-            return res.send(401); //they need to relogin
-        }
-        //if (req.param('id')!=req.session.userId){
-        //  return res.send(500);
-        //}
-        User.findOne({
-            _id: req.session.userId
-        }, function(err, user) {
-            if (err) validationError(res, err);
-            if (!user) return res.status(500).json({
-                message: "Please login again"
-            });
-            if (!user.requiresBeta) return res.status(200).json({
-                message: "Success, you have already entered a beta code!"
-            });
-            user.requiresBeta = false;
-            user.save(function(err) {
-                if (err) return validationError(res, err);
-                Notify.put(user._id, "BETA_CODE_REGISTER_SUCCESS", {
-                    name: user.name
-                }, undefined);
-                return next();
-            });
-        });
+    if (!req.session.userId) {
+        return res.send(401); //they need to relogin
     }
-    /**
-     * Sends an invitation to another user to accept friend
-     * Request
-     */
-exports.askFriend = function(req, res, next) {
-    var targetFriendId = req.param('id');
-    if (targetFriendId == undefined)
-        return res.status(500).json({
-            message: "Missing friend id to add, failed to add friend."
-        });
-
-    var myId = req.user._id;
+    //if (req.param('id')!=req.session.userId){
+    //  return res.send(500);
+    //}
     User.findOne({
-        _id: myId
-    }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) { // don't ever give out the password or salt
-        if (err) return next(err);
-        if (!user) return res.json(401);
-        //test the accessToken if it expired then have them relog
-        User.findOne({
-            _id: targetFriendId
-        }, function(err, friend) {
-            if (err) validationError(res, err);
-            return res.status(200).json("todo");
+        _id: req.session.userId
+    }, function(err, user) {
+        if (err) validationError(res, err);
+        if (!user) return res.status(500).json({
+            message: "Please login again"
         });
-        /*if (user.isConnectedWithFb && user.fb.accessToken){
-          graph.get("/me?access_token="+user.fb.accessToken, function(err, data) {
-              if (err){
-                //this means that the token is no longer valid and will require the user to reconnect
-                //to make them reconnect we should send a message back
-              user.isConnectedWithFb = false;
-              user.save(function(err) {
+        if (!user.requiresBeta) return res.status(200).json({
+            message: "Success, you have already entered a beta code!"
+        });
+        user.requiresBeta = false;
+        user.save(function(err) {
+            if (err) return validationError(res, err);
+            Notify.put(user._id, "BETA_CODE_REGISTER_SUCCESS", {
+                name: user.name
+            }, undefined);
+            return next();
+        });
+    });
+}
+
+
+function _friendObjectFromUser(friend) {
+    return {
+        id: friend._id,
+        name: friend.name,
+        externalId: friend.fb.id,
+        pic: friend.pic,
+        source: "snaptasq"
+    }
+}
+
+function _isFriendsAlready(user, friendId) {
+    for (var i = 0; i < user.friends.length; i++) {
+        if (user.friends[i].id == friendId)
+            return true;
+    }
+    return false;
+}
+
+function _makeFriends(req, res, idOther, idMe, cb) {
+    //this can only be called by addFriendToMe
+    if (idMe != req.session.userId) {
+        return res.send(403, "Only you can add friends to yourself");
+    }
+    User.findOne({
+        _id: idOther
+    }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, other) { // don't ever give out the password or salt
+        if (err) return res.send(500, err);
+        if (!other) return res.send(404, "This user no longer exists");
+        User.findOne({
+            _id: idMe
+        }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, me) { // don't ever give out the password or salt
+            if (err) return res.send(500, err);
+            if (!me) return res.send(404, "Your account no longer exists"); //strange but logical
+
+            //now check if i am already their friend
+            var needToSaveOther = false;
+            if (!_isFriendsAlready(me, other._id)) {
+                me.friends.push(_friendObjectFromUser(other));
+            }
+            if (!_isFriendsAlready(other, me._id)) {
+                other.friends.push(_friendObjectFromUser(me));
+                needToSaveOther = true;
+            }
+            if (needToSaveOther) {
+                console.error("Suspicious one sided friendship");
+            }
+            //most likely friend system was hacked if one sided friendship
+            //or perhaps they already added you with some other way
+            me.save(function(err) {
                 if (err) return validationError(res, err);
-                return res.send(200);
-              });
-              } else {
-                var response = user;
-                if (response.fb)
-                  response.fb = undefined;
-                return res.json(response);
-              }
-          });
-        } else {
-          var response = user;
-          if (response.fb)
-            response.fb = undefined;
-          res.json(response);
-      }*/
+                other.save(function(err) {
+                    if (err) return validationError(res, err);
+                    //i should also remove the friendrequest because it was already accepted!
+                    return cb(true);
+                });
+            });
+        });
+    });
+}
+exports.addFriendToMe = function(req, res) {
+    var fromUserId = req.param('id');
+    var messageId = req.param('messageId');
+    if (messageId == undefined) return res.send(400, "Missing parameter messageId.");
+    if (fromUserId == undefined) return res.send(400, "Missing parameter id");
+    var toUserId = req.session.userId;
+    //first check to see if the friendRequestUserMessageId Exists
+    //this MAY consume if bad validation
+    UserMessageCtrl.isValidFriendRequest(req, res, messageId, fromUserId, toUserId, function(isValid) {
+        // @consumes. This consumes the request
+        _makeFriends(req, res, fromUserId, toUserId, function(wasSuccess) {
+            UserMessageCtrl.deleteMessageIdInternal(req, res, messageId, function(isMsgDeleted) {
+                return res.send(200, "You are now friends");
+            });
+        });
     });
 }
 

@@ -1,0 +1,33 @@
+<div class="container top-buffer">
+    <p class="lead"><a href="/messages"><i class="fa fa-back"></i>&nbsp;back to inbox</a></p>
+    <div class="row top-buffer">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div style="float:left;margin-right:10px;">
+                <img src="{{message.from.pic}}" style="height:50px;width:50px;" />
+            </div>
+            <div>
+                <strong id="owner_name">{{message.from.name}}</strong>&nbsp;&middot;&nbsp;<span am-time-ago="message.created"></span>&nbsp;&middot;&nbsp;
+            </div>
+            <p class="lead">{{message.title}}</p>
+            <p>{{message.body}}</p>
+        </div>
+    </div>
+    <div class="row" ng-if="message.type=='friendRequest' && notFriendsYet(message.from.id)">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="row">{{message.from.name}} would like to be your friend on snaptasq.</div>
+            <div class="row">
+                <button ng-click="acceptFriend(message.from.id,message._id);" class="btn btn-success">Accept</button>
+                <button ng-click="rejectFriend(message.from.id);" class="btn btn-secondary">Reject</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12 well" style="padding-bottom:0">
+            <form id="replyForm" role="form" name="replyForm" ng-submit="respondToMessage(replyMessage)">
+                <textarea class="col-md-12 col-sm-12 col-xs-12" maxlength="512" id="replyMessage" name="replyMessage" placeholder="Type in your message" rows="6" ng-model="replyMessage"></textarea>
+                <h6 class="pull-right">{{512 - replyMessage.length}} characters remaining</h6>
+                <button class="btn btn-info" type="submit">Post New Message</button>
+            </form>
+        </div>
+    </div>
+</div>

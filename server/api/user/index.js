@@ -24,6 +24,7 @@ router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
 router.get('/:id', auth.isAuthenticated(), controller.show);
 router.post('/', recaptcha.check, controller.create);
 router.post('/applyBetaCode', auth.isAuthenticated(), beta.isValidCode, controller.applyBetaCode, beta.redeem);
+router.post('/addFriend', auth.isAuthenticated(), controller.addFriendToMe);
 
 
 

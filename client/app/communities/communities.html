@@ -21,6 +21,13 @@
                 </div>
 
                 <ul class="list-group" id="contact-list">
+                    <li class="list-group-item ng-cloak" ng-if="_me.friends.length==0">
+                        <div class="col-xs-12 col-sm-12">
+                            <span class="name">no friends yet</span>
+                            <br/>
+                        </div>
+                        <div class="clearfix"></div>
+                    </li>
                     <li class="list-group-item" ng-repeat="item in _me.friends | filter:{'name':friendFilter}" ng-click="_goToPath('/user/'+item.id)">
                         <div class="col-xs-12 col-sm-3">
                             <img src="{{item.pic}}" alt="{{item.name}}" class="img-responsive img-circle" />

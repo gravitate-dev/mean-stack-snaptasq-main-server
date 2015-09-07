@@ -21,6 +21,11 @@ angular.module('snaptasqApp')
                             'link': '/communities',
                             reqLogin: true
                         });
+                        $scope.menu.push({
+                            'title': 'Inbox',
+                            'link': '/messages',
+                            reqLogin: true
+                        });
                     } else {
                         $scope.menu.push({
                             'title': 'Request Beta',

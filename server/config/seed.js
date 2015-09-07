@@ -7,9 +7,13 @@
 
 var Community = require('../api/community/community.model');
 var User = require('../api/user/user.model');
+var UserMessage = require('../api/userMessage/userMessage.model');
 var Task = require('../api/task/task.model');
 var Beta = require('../api/beta/beta.model');
+var config = require('./environment');
 var uuid = require('uuid');
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 Community.find({}).remove(function() {
     Community.create({
@@ -74,14 +78,6 @@ Beta.find({}).remove(function() {
 Task.find({}).remove();
 User.find({}).remove(function() {
     User.create({
-        provider: 'local',
-        name: 'Test User',
-        email: 'test@test.com',
-        password: 'test',
-        verification: {
-            status: true
-        }
-    }, {
         name: 'Rohit Jindal',
         provider: 'facebook',
         forgotPassCode: '16b91e98-7ec3-4232-876f-c8bf6cfe1181',
@@ -128,9 +124,87 @@ User.find({}).remove(function() {
         verification: {
             status: true
         },
+    }, {
+        provider: 'local',
+        name: 'Test User',
+        email: 'test@test.com',
+        password: 'test',
+        friends: [],
+        groups: [],
+        otherTasks: [],
+        myTasks: [],
+        role: 'user',
+        verification: {
+            status: true
+        }
     }, function() {
         //after adding the users we need to friend them!
-
         console.log('finished populating users');
+        User.findOne({
+            email: "test@test.com"
+        }, function(err, fromUser) {
+            User.findOne({
+                email: "admin@snaptasq.com"
+            }, function(err, toUser) {
+                UserMessage.find({}).remove(function() {
+                    UserMessage.create(
+                        //an example inbound message
+                        {
+                            body: "Hello World",
+                            from: {
+                                name: "Test Account",
+                                id: fromUser._id,
+                                status: "sent"
+                            },
+                            to: {
+                                name: "Admin",
+                                id: toUser._id,
+                                status: "unread"
+                            },
+                            type: "normal",
+                            title: "Hello title",
+                            threadId: uuid.v4(), //threadID is to keep track of the back and forth
+                        },
+                        // a sent message to test account
+                        {
+                            body: "Hello Response",
+                            from: {
+                                name: "Admin",
+                                id: toUser._id,
+                                status: "sent"
+                            },
+                            to: {
+                                name: "Test Account",
+                                id: fromUser._id,
+                                status: "unread"
+                            },
+                            type: "normal",
+                            title: "Hello title",
+                            threadId: uuid.v4(), //threadID is to keep track of the back and forth
+                        },
+                        // a friend request to admin account
+                        {
+                            body: "Incoming Friend Request",
+                            from: {
+                                name: "Test Account",
+                                id: fromUser._id,
+                                status: "sent"
+                            },
+                            to: {
+                                name: "Admin",
+                                id: toUser._id,
+                                status: "unread"
+                            },
+                            type: "friendRequest",
+                            title: "Hello title",
+                            threadId: uuid.v4(), //threadID is to keep track of the back and forth
+                        },
+                        function() {
+                            console.log('finished send a usermessage from test@test.com to admin@snaptasq.com');
+                        })
+                });
+            });
+
+        });
     });
 });
