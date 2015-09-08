@@ -1,14 +1,14 @@
 'use strict';
 
 angular.module('snaptasqApp')
-    .controller('BetaCtrl', function($scope, BadgeAlerts, $window, $interval, $location, $timeout, Beta, User, notifications, Notification, moment) {
+    .controller('BetaCtrl', function($scope, BadgeAlerts, _me, $window, $interval, $location, $timeout, Beta, User, notifications, Notification, moment) {
         $scope.buttonDisable = false;
         $scope._bgcolorSnapYellow();
         $scope._noFooter();
         $scope.errors = {};
         $scope.betaCode = "";
-        $scope.$watch('_me', function(newval) {
-            if ($scope._me && !$scope._me.requiresBeta) {
+        _me.$promise.then(function(me) {
+            if (!me.requiresBeta) {
                 $location.path('/tasqs');
             }
         });

@@ -7,7 +7,8 @@
 
 var Community = require('../api/community/community.model');
 var User = require('../api/user/user.model');
-var UserMessage = require('../api/userMessage/userMessage.model');
+var UserMessage = require('../api/userMessage/userMessage.model').Message;
+var UserMessageThread = require('../api/userMessage/userMessage.model').Thread;
 var Task = require('../api/task/task.model');
 var Beta = require('../api/beta/beta.model');
 var config = require('./environment');
@@ -75,7 +76,9 @@ Beta.find({}).remove(function() {
     });
 });
 
-Task.find({}).remove();
+UserMessageThread.find({}).remove(function() {});
+UserMessage.find({}).remove(function() {});
+Task.find({}).remove(function() {});
 User.find({}).remove(function() {
     User.create({
         name: 'Rohit Jindal',
@@ -146,65 +149,25 @@ User.find({}).remove(function() {
             User.findOne({
                 email: "admin@snaptasq.com"
             }, function(err, toUser) {
-                UserMessage.find({}).remove(function() {
-                    UserMessage.create(
-                        //an example inbound message
-                        {
-                            body: "Hello World",
-                            from: {
-                                name: "Test Account",
-                                id: fromUser._id,
-                                status: "sent"
-                            },
-                            to: {
-                                name: "Admin",
-                                id: toUser._id,
-                                status: "unread"
-                            },
-                            type: "normal",
-                            title: "Hello title",
-                            threadId: uuid.v4(), //threadID is to keep track of the back and forth
-                        },
-                        // a sent message to test account
-                        {
-                            body: "Hello Response",
-                            from: {
-                                name: "Admin",
-                                id: toUser._id,
-                                status: "sent"
-                            },
-                            to: {
-                                name: "Test Account",
-                                id: fromUser._id,
-                                status: "unread"
-                            },
-                            type: "normal",
-                            title: "Hello title",
-                            threadId: uuid.v4(), //threadID is to keep track of the back and forth
-                        },
-                        // a friend request to admin account
-                        {
-                            body: "Incoming Friend Request",
-                            from: {
-                                name: "Test Account",
-                                id: fromUser._id,
-                                status: "sent"
-                            },
-                            to: {
-                                name: "Admin",
-                                id: toUser._id,
-                                status: "unread"
-                            },
-                            type: "friendRequest",
-                            title: "Hello title",
-                            threadId: uuid.v4(), //threadID is to keep track of the back and forth
-                        },
-                        function() {
-                            console.log('finished send a usermessage from test@test.com to admin@snaptasq.com');
-                        })
-                });
-            });
+                var friendShipToAdmin = {
+                    id: fromUser._id,
+                    name: fromUser.name,
+                    pic: fromUser.pic,
+                    source: "snaptasq"
+                };
+                //make admin friends with test
+                var friendShipToTest = {
+                    id: toUser._id,
+                    name: toUser.name,
+                    pic: toUser.pic,
+                    source: "snaptasq"
+                };
+                fromUser.friends.push(friendShipToTest);
+                toUser.friends.push(friendShipToAdmin);
+                fromUser.save();
+                toUser.save();
 
-        });
-    });
+            });
+        })
+    })
 });

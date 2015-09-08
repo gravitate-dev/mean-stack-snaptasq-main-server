@@ -55,6 +55,15 @@ angular.module('snaptasqApp')
             }
         });
         return {
+            hasFacebookPermission: function(permission, cb) {
+                $http.post('/api/users/me/permission', {
+                    permission: permission
+                }).success(function(data) {
+                    return cb(true);
+                }).error(function(err) {
+                    return cb(false);
+                });
+            },
             searchByName: function(name, cb) {
                 var cb = cb || angular.noop;
                 $http.post('/api/users/search', {

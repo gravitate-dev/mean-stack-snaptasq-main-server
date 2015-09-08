@@ -1,12 +1,12 @@
 'use strict';
 
 angular.module('snaptasqApp')
-    .controller('FriendCtrl', function($scope, User, Task, _me, $routeParams) {
+    .controller('FriendCtrl', function($scope, $location, User, Task, _me, $routeParams) {
         $scope.id = $routeParams.id;
         $scope.user = {};
         $scope.userDoesntExist = false;
-
         _me.$promise.then(function(me) {
+
             var found = false;
             for (var i = 0; i < me.friends.length; i++) {
                 if (me.friends[i].id == $scope.id) {
@@ -31,13 +31,27 @@ angular.module('snaptasqApp')
         });
 
     })
-    .controller('FriendsCtrl', function($scope, User, _me) {
+    .controller('FriendsCtrl', function($scope, $location, User, _me) {
         $scope._bgcolorGrey();
         $scope._noFooter();
         $scope.freezeInput = false;
         $scope.searching = false;
         $scope.searchResults = [];
         $scope.noResults = false;
+        $scope.connectedWithFacebook = true;
+        _me.$promise.then(function(me) {
+            if (me.isConnectedWithFb == true) {
+                User.hasFacebookPermission("user_friends", function(hasPermission) {
+                    if (!hasPermission) {
+                        $location.path('/communities/permission');
+                    } else {
+                        console.log("You have given friends permission");
+                    }
+                });
+            } else {
+                $scope.connectedWithFacebook = false;
+            }
+        });
 
         $scope.$watch("searchFriendName", _.debounce(function(newvalue) {
             // This code will be invoked after 1 second from the last time 'id' has changed.

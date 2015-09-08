@@ -30,7 +30,6 @@ router.get('/',
         function(req, res, next) {
             passport.authenticate('facebook', {
                 scope: ['email', 'user_friends'],
-                failureRedirect: '/connect',
                 session: false
             })(req, res, next)
         }
@@ -38,8 +37,13 @@ router.get('/',
     .get('/callback', function(req, res, next) {
         passport.authenticate('facebook', {
             scope: ['email', 'user_friends'],
-            failureRedirect: '/connect',
             session: false
+        }, function(err, user, info) {
+            if (err || !user) {
+                return res.redirect("/inuse");
+            }
+            req.user = user;
+            return next(err, user);
         })(req, res, next)
     }, function(req, res, next) {
         // when there is no req.user it is because not logged in or facebook account already taken

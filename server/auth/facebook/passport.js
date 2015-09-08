@@ -233,18 +233,28 @@ exports.setup = function(User, config) {
                 //TODO: Check to see if the account id is under the current user, if its not
                 //then i will have to display a notification telling them about that.
                 console.log("Found a facebook account logging you in with that one");
-                linkFriendsOnSnaptasqToMeAsync(req, fbuser, accessToken, function(user) {
-                    user.save(function(err) {
-                        if (err) done(err);
-                        return done(err, user);
+                if (isLoggedIn(req)) {
+                    if (fbuser._id.equals(currentUserId)) {
+                        console.log("Reauth case");
+                        //this will happen if a user wants to give permissions to the same account.
+                        //this is not connecting this is fine.
+                        return done(err, fbuser);
+                    } else {
+                        console.error("This account is already used to link a different facebook account. I should return error");
+                        return done(err);
+                    }
+                } else {
+                    linkFriendsOnSnaptasqToMeAsync(req, fbuser, accessToken, function(user) {
+                        user.save(function(err) {
+                            if (err) done(err);
+                            return done(err, user);
+                        });
                     });
-                });
+                }
+                //if so then error message because the account is already linked
+
                 //return done(err, fbuser);
             } else {
-                isFacebookProfileRegistered = false;
-            }
-
-            if (!isFacebookProfileRegistered) {
                 /** 2a. Check if fb account is not yet linked **/
                 if (isLoggedIn(req)) {
                     User.findOne({
@@ -260,7 +270,7 @@ exports.setup = function(User, config) {
                                 console.log("Linking your facebook account to this sharetask account", user.email);
                                 return linkFacebookAccountToExistingUser(user, req, accessToken, refreshToken, profile, done);
                             } else {
-                                console.log("Nothing to do, this account is already linked with a facebook account");
+                                //check if already logged into an account
                                 return done(err, user);
                             }
                         }

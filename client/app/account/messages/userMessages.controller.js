@@ -9,6 +9,11 @@ angular.module('snaptasqApp')
         $scope.friendRequests = [];
         $scope.inboxType = "primary";
 
+
+        $scope.stahp = function(item) {
+            console.log("STAHP");
+        }
+
         $scope.switchBox = function(boxName) {
             $scope.inboxType = boxName;
             $scope.refreshInbox(false);
@@ -56,7 +61,7 @@ angular.module('snaptasqApp')
         }
         $scope.refreshAllInboxes(false);
     })
-    .controller('NewUserMessageCtrl', function($scope, _me, User, UserMessage, $location, Notification) {
+    .controller('NewUserMessageCtrl', function($scope, _me, User, UserMessage, $location, $timeout, Notification) {
         $scope.msg = {
             body: "",
             type: "normal",
@@ -102,18 +107,23 @@ angular.module('snaptasqApp')
                 type: $scope.msg.type,
             }, function(success) {
                 Notification.success("Message sent");
+                $timeout(function() {
+                    $location.path('/messages');
+                }, 1000);
             }, function(fail) {
                 Notification.error("There was an error sending your message");
             });
         }
-    }).controller('UserMessageCtrl', function($scope, _me, User, UserMessage, $timeout, $location, $routeParams, Notification) {
-        $scope.messages = undefined;
+    }).controller('UserMessageCtrl', function($scope, _me, User, UserMessage, $timeout, $location, $route, $routeParams, Notification) {
+        $scope.messages = [];
         $scope.id = $routeParams.id;
         $scope.replyMessage = "";
 
+
+
         $scope.notFriendsYet = function(otherPersonsId) {
             for (var i = 0; i < $scope._me.friends.length; i++) {
-                if (me.friends[i].id == otherPersonsId) {
+                if ($scope._me.friends[i].id == otherPersonsId) {
                     return false;
                 }
             }
@@ -140,15 +150,15 @@ angular.module('snaptasqApp')
         _me.$promise.then(function(me) {
             $scope._me = me;
             if ($scope.id == undefined) return;
-            UserMessage.getById($scope.id, function(msg) {
-                if (msg == undefined) {
-                    Notification.error("This message no longer exists");
+            UserMessage.getMessagesByThreadId($scope.id, function(messages) {
+                if (messages == undefined || _.isEmpty(messages)) {
+                    Notification.error("This message thread no longer exists");
                     $timeout(function() {
                         $location.path('/messages');
                     }, 1000);
-
+                } else {
+                    $scope.messages = messages;
                 }
-                $scope.message = msg;
             });
         });
 
@@ -167,13 +177,15 @@ angular.module('snaptasqApp')
                 }
             });
         }, 200));
-        $scope.respondToMessage = function(reply) {
+        $scope.respondToThread = function(reply) {
             if ($scope.tooManyNewLines) {
                 return Notification.error("Your reply can only take up 10 lines. Remove extra spaces and try to send again.");
             }
-            UserMessage.replyToMessage($scope.message._id, reply, function(data) {
+            UserMessage.replyToThread($scope.id, reply, function(data) {
                 Notification.success("Your reply was sent");
-                $timeout
+                $timeout(function() {
+                    $route.reload();
+                }, 100);
             }, function(fail) {
                 if (angular.isUndefined(fail)) {
                     return Notification.error("Failed");

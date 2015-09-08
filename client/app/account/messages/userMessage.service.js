@@ -27,10 +27,10 @@ angular.module('snaptasqApp')
             }
         });
         return {
-            replyToMessage: function(id, reply, cb, cbfail) {
+            replyToThread: function(id, reply, cb, cbfail) {
                 var cb = cb || angular.noop;
                 var cbfail = cbfail || angular.noop;
-                $http.post('/api/userMessages/' + id + '/reply', {
+                $http.post('/api/userMessages/' + id + '/thread/reply', {
                     reply: reply
                 }).success(function(data) {
                     return cb(data);
@@ -40,6 +40,15 @@ angular.module('snaptasqApp')
                     } else {
                         return cb(undefined);
                     }
+                });
+            },
+            getMessagesByThreadId: function(id, cb) {
+                var cb = cb || angular.noop;
+                $http.get('/api/userMessages/' + id + '/thread').success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    console.error(err);
+                    return cb(undefined);
                 });
             },
             getById: function(id, cb) {

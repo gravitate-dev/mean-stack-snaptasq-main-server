@@ -3,6 +3,45 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var config = require('../../config/environment');
+
+var UserMessageThreadSchema = new Schema({
+    ownerIds: [{
+        type: Schema.Types.ObjectId,
+        index: true
+    }],
+    viewerIds: [{
+        type: Schema.Types.ObjectId,
+        index: true
+    }], //if an owner deletes it from inbox it will remove them
+    //this will change whenever a new message appears
+    last: {
+        id: Schema.Types.ObjectId,
+        name: String,
+        pic: {
+            type: String,
+            default: config.host.url + "assets/logos/no_avatar.gif"
+        },
+        status: String, //read deleted sent
+        body: String
+    },
+    title: String, //this is sent once
+    type: String, //normal friendRequest
+    created: {
+        type: Date,
+        default: Date.now
+    },
+    updated: {
+        type: Date,
+        default: Date.now
+    },
+    messages: [{
+            id: Schema.Types.ObjectId,
+            created: {
+                type: Date,
+                default: Date.now
+            }
+        }] // these are the ids to the messages that are in the thread
+});
 var UserMessageSchema = new Schema({
     body: String,
     from: {
@@ -26,7 +65,7 @@ var UserMessageSchema = new Schema({
     title: String,
     type: String, //normal friendRequest
     threadId: {
-        type: String,
+        type: Schema.Types.ObjectId,
         index: true
     }, //threadID is to keep track of the back and forth
     created: {
@@ -39,6 +78,10 @@ var UserMessageSchema = new Schema({
     }
 });
 
+UserMessageThreadSchema.pre('save', function(next) {
+    this.updated = new Date();
+    next();
+});
 UserMessageSchema.pre('save', function(next) {
     this.updated = new Date();
     next();
@@ -63,4 +106,7 @@ UserMessageSchema
     }, 'Message too long. Limit 512 characters');
 
 //exports.UserTask = mongoose.model('UserTask', taskSchemaForUser);
-module.exports = mongoose.model('UserMessage', UserMessageSchema);
+module.exports = {
+    Message: mongoose.model('UserMessage', UserMessageSchema),
+    Thread: mongoose.model('UserMessageThread', UserMessageThreadSchema)
+}

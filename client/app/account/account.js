@@ -52,5 +52,8 @@ angular.module('snaptasqApp')
                 templateUrl: 'app/account/notifications/notifications.html',
                 controller: 'NotificationsCtrl',
                 authenticate: true
+            })
+            .when('/inuse', {
+                templateUrl: 'app/account/inuse/inuse.html',
             });
     });

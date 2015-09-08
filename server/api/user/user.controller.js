@@ -240,9 +240,14 @@ function _friendObjectFromUser(friend) {
     }
 }
 
+exports.isFriendsAlready = function(user, friendId) {
+    return _isFriendsAlready(user, friendId);
+}
+
 function _isFriendsAlready(user, friendId) {
+    if (user.friends == undefined) return false;
     for (var i = 0; i < user.friends.length; i++) {
-        if (user.friends[i].id == friendId)
+        if (user.friends[i].id.equals(friendId))
             return true;
     }
     return false;
