@@ -1,10 +1,43 @@
 'use strict';
 
 angular.module('snaptasqApp')
-    .controller('NavbarCtrl', function($scope, $location, Auth, Notify, TaskMarshaler, $interval, $timeout) {
+    .controller('NavbarCtrl', function($scope, $location, Auth, Notify, User, TaskMarshaler, $interval, $timeout) {
         $scope.responsibleCount = 0;
         $scope.menuAdmin = [];
         $scope.menu = [];
+        $scope.accountName = "";
+        // User.get(function(me) {
+        //     $scope._me = me;
+        //     $scope.isUserBetaLocked = me.requiresBeta;
+        //     $scope.reloadMenu();
+
+        // });
+
+        $scope.$watch(function() {
+            return Auth.isBetaUnlocked()
+        }, function(newVal, oldVal) {
+
+            //$scope.reloadMenu();
+        });
+
+        $scope.$watch(function() {
+            return Auth.getCurrentUser()
+        }, function(newVal, oldVal) {
+            if (typeof newVal !== 'undefined') {
+                $scope._me = newVal;
+                if (!angular.isUndefined($scope._me.name)) {
+                    var temp = $scope._me.name.split(' ')[0];
+                    if (temp.length > 9) {
+                        $scope.accountName = "Account"
+                    } else {
+                        $scope.accountName = temp;
+                    }
+                } else {
+                    $scope.accountName = "";
+                }
+                $scope.reloadMenu();
+            }
+        });
 
         $scope.reloadMenu = function() {
             Auth.isLoggedInAsync(function(isLoggedIn) {
@@ -98,26 +131,11 @@ angular.module('snaptasqApp')
         $scope.isLoggedIn = Auth.isLoggedIn;
         $scope.isUserBetaLocked = !Auth.isBetaUnlocked();
         $scope.isAdmin = Auth.isAdmin;
-        $scope.currentUser = Auth.getCurrentUser();
+        $scope._me = Auth.getCurrentUser();
 
         // happens when user logs in with email
         $scope.$on('user.state_change', function(event) {
             $scope.reloadMenu();
-        });
-        $scope.$watch(function() {
-            return Auth.isBetaUnlocked()
-        }, function(newVal, oldVal) {
-            $scope.isUserBetaLocked = !Auth.isBetaUnlocked();
-            //$scope.reloadMenu();
-        });
-
-        $scope.$watch(function() {
-            return Auth.getCurrentUser()
-        }, function(newVal, oldVal) {
-            if (typeof newVal !== 'undefined') {
-                $scope.currentUser = newVal;
-                $scope.reloadMenu();
-            }
         });
 
         $scope.logout = function() {

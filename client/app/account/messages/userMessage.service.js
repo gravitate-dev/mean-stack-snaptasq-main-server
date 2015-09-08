@@ -27,6 +27,42 @@ angular.module('snaptasqApp')
             }
         });
         return {
+            /**
+             * Hides a thread id from the user, if both people hide the thread. then it is deleted
+             **/
+            hideConversation: function(id, cb, cbfail) {
+                var cb = cb || angular.noop;
+                var cbfail = cbfail || angular.noop;
+                $http.post('/api/userMessages/' + id + '/thread/hide').success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    if (cbfail) {
+                        return cbfail(err);
+                    } else {
+                        return cb(undefined);
+                    }
+                });
+            },
+            makeFriendRequest: function(id, cb, cbfail) {
+                var cb = cb || angular.noop;
+                var cbfail = cbfail || angular.noop;
+                UsrMsg.create({
+                    toId: id,
+                    type: "friendRequest"
+                }, {
+                    title: "New Friend Request",
+                    body: "Will you accept my friend request?",
+                    type: "friendRequest",
+                }, function(success) {
+                    return cb(success);
+                }, function(fail) {
+                    if (cbfail) {
+                        return cbfail(fail)
+                    } else {
+                        return cb(undefined);
+                    }
+                });
+            },
             replyToThread: function(id, reply, cb, cbfail) {
                 var cb = cb || angular.noop;
                 var cbfail = cbfail || angular.noop;
@@ -44,20 +80,33 @@ angular.module('snaptasqApp')
             },
             getMessagesByThreadId: function(id, cb) {
                 var cb = cb || angular.noop;
-                $http.get('/api/userMessages/' + id + '/thread').success(function(data) {
+                $http.get('/api/userMessages/' + id + '/thread/messages').success(function(data) {
                     return cb(data);
                 }).error(function(err) {
                     console.error(err);
                     return cb(undefined);
                 });
             },
-            getById: function(id, cb) {
+            getMessageById: function(id, cb) {
                 var cb = cb || angular.noop;
                 $http.get('/api/userMessages/' + id).success(function(data) {
                     return cb(data);
                 }).error(function(err) {
                     console.error(err);
                     return cb(undefined);
+                });
+            },
+            getThreadById: function(id, cb, cbfail) {
+                var cb = cb || angular.noop;
+                var cbfail = cbfail || angular.noop;
+                $http.get('/api/userMessages/' + id + '/thread').success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    if (cbfail) {
+                        return cbfail(err);
+                    } else {
+                        return cb(undefined);
+                    }
                 });
             },
             getPrimary: function(offset, limit, cb, cbfail) {

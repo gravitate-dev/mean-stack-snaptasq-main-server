@@ -1,38 +1,28 @@
 <div class="container top-buffer">
-    <div class="row">
-        <p class="lead"><a href="/messages"><i class="fa fa-back"></i>&nbsp;back to inbox</a></p>
-        <form role="form" id="contact-form" class="contact-form">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <angucomplete-alt id="toName" placeholder="enter a name" pause="100" selected-object="msg.to" local-data="_me.friends" search-fields="name" title-field="name" minlength="1" input-class="form-control form-control-small" />
-                        <!-- <input type="text" class="form-control" name="Name" autocomplete="off" id="Name" placeholder="Name"> -->
-                    </div>
+    <p class="lead"><a href="/messages"><i class="fa fa-back"></i>&nbsp;back to inbox</a></p>
+    <form role="form" id="contact-form" class="contact-form well">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <div angucomplete-alt id="toName" placeholder="enter a name" pause="100" selected-object="msg.to" local-data="_me.friends" search-fields="name" title-field="name" minlength="1" input-class="form-control form-control-small"></div>
+                    <!-- <input type="text" class="form-control" name="Name" autocomplete="off" id="Name" placeholder="Name"> -->
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <input type="text" placeholder="enter a title" class="form-control" ng-model="msg.title" />
-                        <!-- <input type="text" class="form-control" name="Name" autocomplete="off" id="Name" placeholder="Name"> -->
-                    </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <input type="text" placeholder="enter a title" class="form-control" ng-model="msg.title" />
+                    <!-- <input type="text" class="form-control" name="Name" autocomplete="off" id="Name" placeholder="Name"> -->
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <textarea class="form-control textarea" rows="3" maxlength="512" id="newMessage" rows="6" ng-model="msg.body" name="newMessage" placeholder="Message"></textarea>
-                        <h6 class="pull-right">{{512 - newMessage.length}} characters remaining</h6>
-        </form>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <textarea class="col-md-12 col-sm-12 col-xs-12" maxlength="512" id="newMessage" name="replyMessage" placeholder="Type in your message" rows="6" ng-model="msg.body"></textarea>
+                <h6 class="pull-right">{{512 - msg.body.length}} characters remaining</h6>
+                <button class="btn btn-info" ng-click="sendMessage()" type="submit">Post New Message</button>
+            </div>
         </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <button type="submit" ng-click="sendMessage()" class="btn main-btn">Send a message</button>
-        </div>
-    </div>
     </form>
-</div>
 </div>

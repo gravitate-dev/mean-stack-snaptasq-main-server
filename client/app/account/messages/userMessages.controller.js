@@ -1,18 +1,10 @@
 'use strict';
 
-/**
-TODO make inbox and sent filters
-**/
 angular.module('snaptasqApp')
     .controller('UserMessagesCtrl', function($scope, UserMessage, $timeout, $location, Notification) {
         $scope.messages = [];
         $scope.friendRequests = [];
         $scope.inboxType = "primary";
-
-
-        $scope.stahp = function(item) {
-            console.log("STAHP");
-        }
 
         $scope.switchBox = function(boxName) {
             $scope.inboxType = boxName;
@@ -58,6 +50,19 @@ angular.module('snaptasqApp')
         };
         $scope.refreshAllInboxes = function(notifyUser) {
             $scope.refreshInbox(notifyUser, true);
+        }
+
+
+        $scope.hideMessage = function($event, $index, thread) {
+            console.log($index);
+            UserMessage.hideConversation(thread._id, function(success) {
+                Notification.success("Conversation removed");
+                $scope.messages.splice($index, 1);
+            }, function(fail) {
+                Notification.error("Error removing conversation.");
+            });
+            $event.preventDefault();
+
         }
         $scope.refreshAllInboxes(false);
     })
@@ -107,9 +112,7 @@ angular.module('snaptasqApp')
                 type: $scope.msg.type,
             }, function(success) {
                 Notification.success("Message sent");
-                $timeout(function() {
-                    $location.path('/messages');
-                }, 1000);
+                $location.path('/message/' + success.threadId);
             }, function(fail) {
                 Notification.error("There was an error sending your message");
             });
@@ -118,6 +121,8 @@ angular.module('snaptasqApp')
         $scope.messages = [];
         $scope.id = $routeParams.id;
         $scope.replyMessage = "";
+        $scope.thread = {};
+        $scope.friendId = undefined;
 
 
 
@@ -132,12 +137,13 @@ angular.module('snaptasqApp')
 
         $scope.acceptFriend = function(otherId, messageId) {
             User.addFriend(otherId, messageId, function(response) {
-                Notification.success(response);
+                Notification.success("Friend added");
                 $timeout(function() {
                     $location.path('/messages');
                 }, 1000);
             }, function(fail) {
-                Notification.error(fail);
+                console.error(fail);
+                Notification.error("An error happened");
             });
         }
         $scope.rejectFriend = function(otherId) {
@@ -150,12 +156,24 @@ angular.module('snaptasqApp')
         _me.$promise.then(function(me) {
             $scope._me = me;
             if ($scope.id == undefined) return;
+
+
+            UserMessage.getThreadById($scope.id, function(success) {
+                $scope.thread = success;
+                //this code will get the other persons id in the message
+                var temp = _.filter($scope.thread.ownerIds, function(item) {
+                    return item != _me._id;
+                });
+                if (temp.length != 1) {
+                    return console.error("ownerID is broken");
+                } else {
+                    $scope.friendId = temp[0];
+                }
+            });
             UserMessage.getMessagesByThreadId($scope.id, function(messages) {
                 if (messages == undefined || _.isEmpty(messages)) {
                     Notification.error("This message thread no longer exists");
-                    $timeout(function() {
-                        $location.path('/messages');
-                    }, 1000);
+                    $location.path('/messages');
                 } else {
                     $scope.messages = messages;
                 }

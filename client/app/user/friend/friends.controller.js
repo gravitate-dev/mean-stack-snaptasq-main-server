@@ -31,7 +31,7 @@ angular.module('snaptasqApp')
         });
 
     })
-    .controller('FriendsCtrl', function($scope, $location, User, _me) {
+    .controller('FriendsCtrl', function($scope, $location, User, UserMessage, _me, Notification) {
         $scope._bgcolorGrey();
         $scope._noFooter();
         $scope.freezeInput = false;
@@ -52,6 +52,29 @@ angular.module('snaptasqApp')
                 $scope.connectedWithFacebook = false;
             }
         });
+        $scope.sendFriendRequest = function($event, id) {
+            $event.stopPropagation();
+            UserMessage.makeFriendRequest(id, function(success) {
+                Notification.success("Friend request sent to their inbox");
+            }, function(fail) {
+                //check if friends
+                if ($scope.notFriendsYet(id)) {
+                    Notification.error("Friend request already sent.");
+                } else {
+                    Notification.success("You are already friends");
+                }
+
+            });
+        }
+
+        $scope.notFriendsYet = function(otherPersonsId) {
+            for (var i = 0; i < $scope._me.friends.length; i++) {
+                if ($scope._me.friends[i].id == otherPersonsId) {
+                    return false;
+                }
+            }
+            return true;
+        }
 
         $scope.$watch("searchFriendName", _.debounce(function(newvalue) {
             // This code will be invoked after 1 second from the last time 'id' has changed.
@@ -64,7 +87,7 @@ angular.module('snaptasqApp')
                 }
                 $scope.searchForUsers(newvalue);
             })
-        }, 1000));
+        }, 500));
         $scope.$watch('searchFriendName', function(newval) {
             if (angular.isUndefined(newval) || _.isEmpty(newval)) {
                 $scope.searching = false;
@@ -83,6 +106,5 @@ angular.module('snaptasqApp')
                     $scope.searchResults = users;
                 }
             });
-            console.log("Searching for users with name ", name);
         }
     });

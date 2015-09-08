@@ -305,7 +305,7 @@ exports.addFriendToMe = function(req, res) {
     UserMessageCtrl.isValidFriendRequest(req, res, messageId, fromUserId, toUserId, function(isValid) {
         // @consumes. This consumes the request
         _makeFriends(req, res, fromUserId, toUserId, function(wasSuccess) {
-            UserMessageCtrl.deleteMessageIdInternal(req, res, messageId, function(isMsgDeleted) {
+            UserMessageCtrl.deleteThreadIdInternalFromMessageId(req, res, messageId, function(isMsgDeleted) {
                 return res.send(200, "You are now friends");
             });
         });

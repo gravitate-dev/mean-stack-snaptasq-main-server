@@ -42,7 +42,7 @@
                 </li>
                 <li ng-show="isLoggedIn()" ng-class="{active: isActive('/settings')}">
                     <a href="/settings">
-                        <span><img style="height:20px;padding-right:5px;" ng-if="currentUser.pic" class="ng-cloak" ng-src="{{currentUser.pic}}"/>{{ currentUser.name }} <span ng-if="_badgeAlerts.size()>0" class="badge">{{_badgeAlerts._size}}</span></span>
+                        <span><img style="height:20px;padding-right:5px;" ng-if="_me.pic" class="ng-cloak" ng-src="{{_me.pic}}"/>{{ accountName }} <span ng-if="_badgeAlerts.size()>0" class="badge">{{_badgeAlerts._size}}</span></span>
                     </a>
                 </li>
                 <li ng-show="isLoggedIn()">
