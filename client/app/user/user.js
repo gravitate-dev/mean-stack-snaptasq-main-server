@@ -3,7 +3,7 @@
 angular.module('snaptasqApp')
     .config(function($routeProvider) {
         $routeProvider
-            .when('/user/:id', {
+            .when('/user/view/:id', {
                 templateUrl: 'app/user/friend/friend.html',
                 controller: 'FriendCtrl',
                 authenticate: true

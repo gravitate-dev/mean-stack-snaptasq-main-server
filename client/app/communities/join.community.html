@@ -13,15 +13,16 @@
                 </span>
             </div>
             <ul class="list-group" id="contact-list">
-                <li class="list-group-item" ng-repeat="item in searchResults" ng-click="_goToPath('/user/'+item.id)">
-                    <div style="width:50px;float:left;">
-                        <img src="{{item.pic}}" alt="{{item.name}}" class="img-responsive img-circle" />
-                    </div>
-                    <div class="col-xs-9 col-sm-9 col-md-9">
-                        <span class="name">{{item.name}}</span>
-                        <button>Add friend</button>
-                    </div>
-                    <div class="clearfix"></div>
+                <li class="list-group-item" ng-repeat="item in searchResults">
+                    <a href="/community/view/{{item._id}}">
+                        <div style="width:50px;float:left;">
+                            <img src="{{item.pic}}" alt="{{item.name}}" class="img-responsive img-circle" />
+                        </div>
+                        <div class="col-xs-9 col-sm-9 col-md-9">
+                            <span class="name">{{item.name}}</span>
+                        </div>
+                        <div class="clearfix"></div>
+                    </a>
                 </li>
             </ul>
         </div>

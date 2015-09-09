@@ -39,7 +39,6 @@ angular.module('snaptasqApp')
                     }
                 });
             }
-            console.log("Searching for users with name ", name);
         }
 
         $scope.joinFacebookUrl = function(url) {
@@ -90,7 +89,7 @@ angular.module('snaptasqApp')
         $scope.reconnect = function() {
             $window.location.href = '/auth/facebook/reauth';
         };
-    }).controller('CommunityCtrl', function($scope, Community, Task, Auth, $routeParams, Notification, notifications) {
+    }).controller('CommunityCtrl', function($scope, Community, _me, Task, Auth, $routeParams, Notification, notifications) {
         $scope.groupId = $routeParams.id;
         $scope.allowed = undefined;
         $scope.tasks = [];
@@ -107,9 +106,16 @@ angular.module('snaptasqApp')
                     /**
                      * If the group is not public, then see if i am a member
                      **/
-                    Auth.isUserInGroupAsync($scope.groupId, function(isAllowed) {
+                    Community.amIMember($scope.groupId, function(isAllowed) {
                         $scope.allowed = isAllowed;
-                        $scope.loadGroupDetails($scope.groupId);
+                        if (isAllowed) {
+                            $scope.loadGroupDetails($scope.groupId);
+                        } else {
+                            Community.getById($scope.groupId, function(item) {
+                                $scope.group = item;
+                            });
+                        }
+
                     });
                 } else {
                     $scope.allowed = true;
@@ -129,7 +135,6 @@ angular.module('snaptasqApp')
         };
 
         $scope.requestJoin = function(challenge, creds) {
-            console.log(challenge);
             Community.requestJoin($scope.groupId, $scope._me._id, challenge.id, creds, function(success) {
                 if (challenge.type == "email") {
                     notifications.showSuccess("Please check your email for an emailed join link");

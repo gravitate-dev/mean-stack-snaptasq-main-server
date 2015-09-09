@@ -70,6 +70,18 @@ angular.module('snaptasqApp')
             },
         });
         return {
+            getUserCommunties: function(id, cb) {
+                var cb = cb || angular.noop;
+                var deferred = $q.defer();
+                $http({
+                    method: "GET",
+                    url: '/api/communities/user/' + id
+                }).then(function(response) {
+                    deferred.resolve(response.data);
+                    return cb(response.data);
+                });
+                return deferred.promise;
+            },
             searchByName: function(name, cb) {
                 $http.post('/api/communities/search', {
                     name: name
@@ -147,32 +159,36 @@ angular.module('snaptasqApp')
                 });
                 return deferred.promise;
             },
+            amIMember: function(id, cb) {
+                var cb = cb || angular.noop;
+                var deferred = $q.defer();
+
+                $http.get('/api/communities/' + id + '/amIMember').then(function(response) {
+                    deferred.resolve(response);
+                    return cb(true);
+                }, function(fail) {
+                    deferred.reject(fail);
+                    return cb(false);
+                });
+                return deferred.promise;
+            },
             /**
              * A user can try to join a group
              * Will trigger success if the joining was accepted
              * Will trigger failure if the joining was rejected
              **/
-            requestJoin: function(id, applicantId, challengeId, creds, success, failure) {
-                var failure = failure || angular.noop;
-                var success = success || angular.noop;
+            requestJoin: function(id, cb) {
+                var cb = cb || angular.noop;
                 var deferred = $q.defer();
-
-                $http({
-                    method: "POST",
-                    url: '/api/communities/' + id + '/requestJoin',
-                    data: {
-                        applicantId: applicantId,
-                        creds: creds,
-                        challengeId: challengeId
-                    }
-                }).then(function(response) {
+                $http.post('/api/communities/' + id + '/requestJoin').success(function(data) {
                     deferred.resolve(response);
-                    return success(response);
-                }, function(fail) {
+                    return cb(data);
+                }).error(function(err) {
                     deferred.reject(fail);
-                    return failure(fail);
+                    return cb(undefined);
                 });
                 return deferred.promise;
-            }
+            },
+
         };
     });

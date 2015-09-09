@@ -50,15 +50,22 @@ exports.processJoinUrl = function(req, res) {
         });
     });
 };
-exports.join = function(req, res) {
-    return res.send(200, "Not implemeneted");
-}
 
+//TODO: Finish this
+exports.isUserAllowedToJoinInternal = function(req, res, id, cb) {
+        if (id == undefined) {
+            console.error("Failed to pass id to function, isUserAllowedToJoinInternal");
+            return res.send(400, "An error occured");
+        }
 
-/**
- * @pre: requires an auth token first in the router i have specified for req.token check index.js
- *
- **/
+        _isUserAllowedToGroup(req, res, id, function(allowed) {
+            return cb(allowed);
+        });
+    }
+    /**
+     * @pre: requires an auth token first in the router i have specified for req.token check index.js
+     *
+     **/
 function _getGroupIdFromUrl(req, res, url, cb) {
     if (req.token == undefined) {
         return res.send(400, "Call getFbAccessToken first");
@@ -95,7 +102,8 @@ function _getGroupIdFromUrl(req, res, url, cb) {
 function _isUserAllowedToGroup(req, res, groupId, cb) {
     //if they are not allowed the response.data.length==0 or error will be there
     if (req.token == undefined) {
-        return res.send(400, "Call getFbAccessToken first");
+        console.error("Call getFbAccessToken First");
+        return res.send(500, "An error occured");
     }
     var query = '/' + groupId + '/members?limit=1';
     graph.get(query + "&access_token=" + req.token, function(err, response) {

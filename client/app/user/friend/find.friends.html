@@ -20,7 +20,7 @@
                 <li class="list-group-item" ng-if="noResults && !searching">
                     no results
                 </li>
-                <li class="list-group-item" ng-repeat="item in searchResults" ng-click="_goToPath('/user/'+item.id)">
+                <li class="list-group-item" ng-repeat="item in searchResults" ng-click="_goToPath('/user/view/'+item.id)">
                     <div style="width:50px;float:left;">
                         <img src="{{item.pic}}" alt="{{item.name}}" class="img-responsive img-circle" />
                     </div>

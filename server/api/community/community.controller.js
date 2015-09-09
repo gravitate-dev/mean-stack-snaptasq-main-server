@@ -74,15 +74,30 @@ exports.doesCommunityExistByIdentifier = function(id, source, cb) {
     });
 }
 
-exports.getMine = function(req, res) {
-    Community.find({}, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, comms) {
-        if (err) {
-            return handleError(res, err);
-        }
-        return res.json(200, comms);
-    });
-};
-// Get a single comm
+exports.getCommunitiesByUser = function(req, res) {
+        var id = req.param('id');
+        if (id == undefined) return res.send(400, "Missing parameter id. (User id)");
+        User.findOne({
+            _id: id
+        }, function(err, usr) {
+            if (err) {
+                return handleError(res, err);
+            }
+            if (!usr) return res.send(404, "User does not exist");
+            return res.json(200, usr.groups);
+        });
+    }
+    /*
+    exports.getMine = function(req, res) {
+        Community.find({}, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, comms) {
+            if (err) {
+                return handleError(res, err);
+            }
+            return res.json(200, comms);
+        });
+    };
+    */
+    // Get a single comm
 exports.show = function(req, res) {
     Community.findById(req.params.id, function(err, comm) {
         if (err) {
@@ -106,7 +121,25 @@ exports.create = function(req, res) {
     });
 };
 
-// Updates an existing thing in the DB.
+// Returns true if the current user is a member
+exports.amIMember = function(req, res) {
+        var id = req.param('id');
+        var currentUserId = req.session.userId;
+        if (id == undefined) return res.send(400, "Missing parameter id");
+        User.findOne({
+            _id: currentUserId
+        }, function(err, usr) {
+            if (err) return res.send(500, err);
+            if (!usr) return res.send(401, "Please login again");
+            for (var i = 0; i < usr.groups.length; i++) {
+                if (usr.groups[i].id.equals(id)) {
+                    return res.send(200);
+                }
+            }
+            return res.send(403, "You are not in this group");
+        });
+    }
+    // Updates an existing thing in the DB.
 exports.update = function(req, res) {
     if (req.body._id) {
         delete req.body._id;

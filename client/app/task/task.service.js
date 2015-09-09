@@ -239,7 +239,7 @@ angular.module('snaptasqApp')
                 });
                 return deferred.promise;
             },
-            getFriendsTasks: function(friendId, cb) {
+            getFriendTasks: function(friendId, cb) {
                 var cb = cb || angular.noop;
                 var deferred = $q.defer();
                 $http({
@@ -250,7 +250,7 @@ angular.module('snaptasqApp')
                     return cb(response.data);
                 });
                 return deferred.promise;
-            }
+            },
         };
     })
     .factory('TaskMarshaler', function(localStorageService) {

@@ -1,31 +1,42 @@
 <div class="container top-buffer">
     <p ng-if="userDoesntExist">this user can not be found</p>
-    <section style="background-color:white;">
-        <div class="row bot-buffer" ng-if="isStranger==true">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <button class="btn btn-success">add friend</button>
-            </div>
-        </div>
-        <div class="row" ng-if="user.name">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div style="float:left;margin-right:10px;">
-                    <img src="{{user.pic}}" style="height:50px;width:50px;" />
-                </div>
-                <div>
-                    <strong>{{user.name}}</strong>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section ng-if="isStranger==false">
-        <div class="row top-buffer bot-buffer2">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="tasq-list-header">{{user.name}}'s tasqs</div>
-                <div class="well" style="background-color:white;margin:0px;" ng-if="friendTasks.length==0">no tasqs</div>
-                <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in friendTasks">
-                    <div class="task-view-compact-list" task="task"></div>
+    <div class="row top-buffer bot-buffer2">
+        <div class="col-md-6 col-sm-6 hidden-xs">
+            <div class="well" style="background-color:white;margin:0px;">
+                <div class="row" ng-if="user.name">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div style="float:left;margin-right:10px;">
+                            <img src="{{user.pic}}" class="img-circle" style="height:50px;width:50px;" />
+                        </div>
+                        <div>
+                            <strong>{{user.name}}</strong>
+                        </div>
+                        <button ng-if="isStranger==true" class="btn btn-success">add friend</button>
+                    </div>
                 </div>
             </div>
+            <div class="tasq-list-header">{{user.name | lowercase}}'s communities</div>
+            <div class="well" style="background-color:white;margin:0px;" ng-if="friendCommunities.length==0">user has not joined any communities</div>
+            <ul class="list-group" id="communities-list">
+                <li class="list-group-item" ng-repeat="item in friendCommunities" ng-click="_goToPath('/community/view/'+item.id)">
+                    <div class="col-xs-12 col-sm-3">
+                        <img src="{{item.pic}}" alt="{{item.name}}" style="max-width:64px;" class="img-responsive img-circle" />
+                    </div>
+                    <div class="col-xs-12 col-sm-9">
+                        <span class="name">{{item.name}}</span>
+                        <br/>
+                    </div>
+                    <div class="clearfix"></div>
+                </li>
+
+            </ul>
         </div>
-    </section>
+        <div ng-if="isStranger==false" class="col-md-6 col-sm-6 hidden-xs">
+            <div class="tasq-list-header">{{user.name | lowercase}}'s tasqs</div>
+            <div class="well" style="background-color:white;margin:0px;" ng-if="friendTasks.length==0">no tasqs</div>
+            <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in friendTasks">
+                <div class="task-view-compact-list" task="task"></div>
+            </div>
+        </div>
+    </div>
 </div>

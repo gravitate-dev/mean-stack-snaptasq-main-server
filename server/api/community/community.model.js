@@ -33,6 +33,10 @@ var CommunitySchema = new Schema({
         default: "snaptasq"
     }, // facebook,reddit,tumblr,twitter
     status: String, // public, private, closed, hidden, deleted
+    isOpen: {
+        type: Boolean,
+        default: false
+    },
     challenges: [ChallengeSchema],
     created: {
         type: Date,

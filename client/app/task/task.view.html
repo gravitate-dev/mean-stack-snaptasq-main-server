@@ -1,4 +1,5 @@
 <div class="container top-buffer" ng-controller="TaskGlobalCtrl">
+    <a href="/tasqs">Back to my tasqs</a>
     <div class="well" style="background-color:white">
         <div class="row ng-cloak" ng-if="_me._id && task.tasker.id==_me._id">
             <div class="col-md-12">
@@ -10,20 +11,20 @@
         </div>
 
 
-        <div class="row" id="currentTasker" ng-if="task.tasker.id">
+        <!-- <div class="row" id="currentTasker" ng-if="task.tasker.id">
             <div class="col-md-12">
                 <div>
                     <img ng-if="task.tasker.pic" src="{{task.tasker.pic}}" style="height:50px;width:50px;margin-right:5px;" /><a ng-if="task.tasker.fbId" href="http://www.facebook.com/{{task.tasker.fbId}}">{{task.tasker.name}}</a><span ng-if="!task.tasker.fbId">{{task.tasker.name}} (<strong>Current <span ng-if="task.tasker.confirmed">active </span>                    Tasker</strong>)</span>
                 </div>
             </div>
-        </div>
-        <div class="row">
+        </div> -->
+        <div class="row bot-buffer">
             <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
                 <div style="float:left;margin-right:10px;">
-                    <img src="{{task.ownerPic}}" style="height:50px;width:50px;" />
+                    <img src="{{task.ownerPic}}" class="img-circle" style="height:50px;width:50px;" />
                 </div>
                 <div>
-                    <strong>{{task.ownerName}}</strong>
+                    <strong><a href="/user/view/{{task.ownerId}}">{{task.ownerName}}</a></strong>
                 </div>
                 <div>{{task.created | date:'MMM d, y h:mm a'}}&nbsp;<span class="badge badge-info">{{task.status | capslock}}</span>
                 </div>
@@ -46,7 +47,15 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div style="font-size:1.5em;">{{task.name}}</div>
+                <h4>{{task.name}}</h4>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                    Reward:&nbsp;<span id="payout" ng-if="task.payout">${{task.payout}}</span><span ng-if="!task.payout">free</span>
+                </p>
             </div>
         </div>
         <div class="row">
@@ -73,7 +82,7 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row top-buffer2">
             <!--share stuff -->
             <!-- Facebook Share Button -->
             <!--btnz share facebook-->
@@ -90,7 +99,7 @@
 
             <!-- Pinterest Share Button -->
             <!-- btnz share pinterest -->
-            <a href="#" class="col-md-3 col-sm-3 col-xs-3 btn" style="background-color:#fcd11a;color:white" ng-click="_share('pintrest','Help '+task.ownerName+' with '+task.name+' link: '+currentUrl,task.description)"><i class="fa fa-share-alt"></i> snap</a>
+            <a href="#" class="col-md-3 col-sm-3 col-xs-3 btn" style="background-color:#fcd11a;color:white" ng-click="_share('pintrest','Help '+task.ownerName+' with '+task.name+' link: '+currentUrl,task.description)"><i class="fa fa-share-alt"></i> Snap</a>
 
 
 

@@ -1,25 +1,39 @@
 'use strict';
 
 angular.module('snaptasqApp')
-    .controller('FriendCtrl', function($scope, $location, User, Task, _me, $routeParams) {
+    .controller('FriendCtrl', function($scope, $location, User, Task, Community, _me, $routeParams) {
+        $scope._bgcolorGrey();
+        $scope._noFooter();
         $scope.id = $routeParams.id;
         $scope.user = {};
         $scope.userDoesntExist = false;
+        $scope.friendCommunities = [];
+        $scope.friendTasks = [];
         _me.$promise.then(function(me) {
-
-            var found = false;
-            for (var i = 0; i < me.friends.length; i++) {
-                if (me.friends[i].id == $scope.id) {
-                    found = true;
-                    break;
+            if ($scope.id == me._id) {
+                $scope.isStranger = false;
+            } else {
+                var found = false;
+                for (var i = 0; i < me.friends.length; i++) {
+                    if (me.friends[i].id == $scope.id) {
+                        found = true;
+                        break;
+                    }
                 }
+                $scope.isStranger = !found;
             }
-            $scope.isStranger = !found;
             if ($scope.isStranger == false) {
-                Task.getFriendsTasks($scope.id, function(data) {
+                Task.getFriendTasks($scope.id, function(data) {
                     $scope.friendTasks = data;
                 });
             }
+            Community.getUserCommunties($scope.id, function(data) {
+                if (data == undefined || data == null) {
+                    $scope.friendCommunities = [];
+                } else {
+                    $scope.friendCommunities = data;
+                }
+            });
         });
         User.getById($scope.id, function(user) {
             if (angular.isUndefined(user)) {

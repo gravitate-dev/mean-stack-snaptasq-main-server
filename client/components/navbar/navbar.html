@@ -29,6 +29,13 @@
                 <li id="loggedOutMenu" ng-if="!isLoggedIn()" class="ng-cloak">
                     <a ng-href="/signin?action=register" style="position:relative;top:10px;text-transform:uppercase;font-weight:bold;padding:5px;"><span style="border:2px solid black;border-radius:5px;padding:5px;">Become a beta tester</span></a>
                 </li>
+                <li ng-if="isLoggedIn()" class="show-only-when-collapsed-navbar" ng-class="{active: isActive('/settings')}">
+                    <a href="/user/view/{{myId}}"><img style="height:20px;padding-right:5px;" ng-if="_me.pic" class="ng-cloak" ng-src="{{_me.pic}}" />Profile</a>
+                </li>
+                <li ng-if="isLoggedIn()" class="show-only-when-collapsed-navbar" ng-class="{active: isActive('/settings')}">
+                    <a href="/settings">Account</a>
+                </li>
+                <li ng-if="isLoggedIn()" class="show-only-when-collapsed-navbar" ng-class="{active: isActive('/logout')}"><a href="" ng-click="logout()">Logout</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
@@ -40,11 +47,12 @@
                         </a>
                     </div>
                 </li>
-                <li class="dropdown hide-when-collapsed-navbar" ng-class="{active: isActive('/settings')}" ng-if="isLoggedIn()">
+                <li class="dropdown hide-when-collapsed-navbar" ng-if="isLoggedIn()">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"><span><img style="height:20px;padding-right:5px;" ng-if="_me.pic" class="ng-cloak" ng-src="{{_me.pic}}"/>{{ accountName }} <span ng-if="_badgeAlerts.size()>0" class="badge">{{_badgeAlerts._size}}</span></span><b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/settings">Account</a></li>
-                        <li ng-show="isLoggedIn()" ng-class="{active: isActive('/logout')}"><a href="" ng-click="logout()">Logout</a></li>
+                        <li ng-class="{active: isActive('/user/'+myId)}"><a href="/user/view/{{myId}}">Profile</a></li>
+                        <li ng-class="{active: isActive('/settings')}"><a href="/settings">Account</a></li>
+                        <li ng-class="{active: isActive('/logout')}"><a href="" ng-click="logout()">Logout</a></li>
                     </ul>
                 </li>
                 <li ng-show="isLoggedIn()">

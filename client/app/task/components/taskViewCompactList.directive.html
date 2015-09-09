@@ -1,21 +1,17 @@
-<div class="row ng-cloak" ng-if="_me._id && task.tasker.id==_me._id">
-    <div class="col-md-12">
-        <p ng-if="!task.tasker.confirmed" class="lead text-info">{{task.ownerName}} has chosen you to help. Do you accept?
-            <button ng-if="!task.tasker.confirmed" class="btn btn-success" ng-click="taskerConfirmTask(task,true);">Accept</button>
-            <button ng-if="!task.tasker.confirmed" class="btn btn-error" ng-click="taskerConfirmTask(task,false);">Reject</button>
-        </p>
-    </div>
-</div>
-<div class="row" ng-click="_goToPath('/tasq/view/'+task._id)">
-    <div class="col-md-12 col-sm-12 col-xs-12">
-        <div style="float:left;margin-right:10px;">
-            <img src="{{task.ownerPic}}" style="height:50px;width:50px;" />
+<div class="row" style="cursor:pointer;" ng-click="_goToPath('/tasq/view/'+task._id)">
+    <div class="" style="float:left;padding-left:5px;">
+        <div>
+            <img src="{{task.ownerPic}}" class="img-circle" style="height:50px;width:50px;" />
         </div>
+    </div>
+    <div class="col-md-10 col-sm-10 col-xs-10">
         <div>
             <strong id="owner_name">{{task.ownerName}}</strong>&nbsp;&middot;&nbsp;<span am-time-ago="task.created"></span>&nbsp;&middot;&nbsp;<span id="payout" ng-if="task.payout">${{task.payout}}</span><span ng-if="!task.payout">free</span>
         </div>
-        <div>{{task.name}}</div>
-        <div><a href="/tasq/view/{{task._id}}">{{task.status}}</a></div>
+        <div>{{task.name}}{{task.name}}{{task.name}}</div>
+        <div ng-if="!task.tasker.name"><a href="/tasq/view/{{task._id}}">tasq is open</a></div>
+        <div ng-if="task.tasker.name && task.tasker.confirmed"><a href="" ng-click="_goToPath('/user/view/'+task.tasker.id,$event);">tasq in progress by {{task.tasker.name}}</a></div>
+        <div ng-if="task.tasker.name && !task.tasker.confirmed"><a href="" ng-click="_goToPath('/user/view/'+task.tasker.id,$event);">tasker chosen</a></div>
     </div>
 </div>
 <!-- if i am the tasker i will see this -->

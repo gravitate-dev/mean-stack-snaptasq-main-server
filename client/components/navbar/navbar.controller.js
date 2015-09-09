@@ -6,6 +6,7 @@ angular.module('snaptasqApp')
         $scope.menuAdmin = [];
         $scope.menu = [];
         $scope.accountName = "";
+        $scope.myId = "";
 
 
         //This has to be listening forever.
@@ -18,6 +19,7 @@ angular.module('snaptasqApp')
                 if (newVal.$promise) {
                     newVal.$promise.then(function(me) {
                         $scope._me = me;
+                        $scope.myId = me._id;
                         if (!angular.isUndefined($scope._me.name)) {
                             var temp = $scope._me.name.split(' ')[0];
                             if (temp.length > 9) {

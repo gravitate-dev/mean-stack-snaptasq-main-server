@@ -1,16 +1,4 @@
 <div class="container" ng-controller="TaskGlobalCtrl">
-    <!-- <div id="actionButtons">
-        <div class="row bot-buffer">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <p style="float:left; padding-right:20px;">Show</p>
-                <div class="btn-group">
-                    <label class="btn btn-primary" ng-model="viewingLists" btn-radio="'all'">All</label>
-                    <label class="btn btn-primary" ng-model="viewingLists" btn-radio="'applied'">Applied</label>
-                    <label class="btn btn-primary" ng-model="viewingLists" btn-radio="'mine'">Mine</label>
-                </div>
-            </div>
-        </div>
-    </div> -->
     <div class="top-buffer">
         <div class="row">
             <!-- this is for the mobile -->
@@ -49,16 +37,6 @@
                 </div>
             </div>
 
-            <div class="col-md-6 col-sm-6 hidden-xs" ng-show="viewingLists=='all' || viewingLists=='applied'">
-                <div class="tasq-list-header">applied tasqs</div>
-                <a href="/community/friends">
-                    <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;apply to more tasqs</div>
-                </a>
-                <div class="well" style="background-color:white;margin:0px;" ng-if="otherTasks.length==0">no tasqs</div>
-                <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in otherTasks | searchTaskFilter:filter">
-                    <div class="task-view-compact-list" task="task"></div>
-                </div>
-            </div>
             <div class="col-md-6 col-sm-6 hidden-xs" ng-show="viewingLists=='all' || viewingLists=='mine'">
                 <div class="tasq-list-header">my tasqs</div>
                 <a href="/tasq/create">
@@ -70,7 +48,16 @@
                         <div class="task-view-compact-list" task="task"></div>
                     </div>
                 </div>
-
+            </div>
+            <div class="col-md-6 col-sm-6 hidden-xs" ng-show="viewingLists=='all' || viewingLists=='applied'">
+                <div class="tasq-list-header">applied tasqs</div>
+                <a href="/community/friends">
+                    <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;apply to more tasqs</div>
+                </a>
+                <div class="well" style="background-color:white;margin:0px;" ng-if="otherTasks.length==0">no tasqs</div>
+                <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in otherTasks | searchTaskFilter:filter">
+                    <div class="task-view-compact-list" task="task"></div>
+                </div>
             </div>
         </div>
     </div>

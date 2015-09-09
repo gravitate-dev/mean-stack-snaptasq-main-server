@@ -1,8 +1,12 @@
 <div class="container top-buffer">
     <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
-            {{group.name}}
-            <div class="top-buffer">
+            <span class="name">{{group.name}}</span>
+            <button class="btn btn-success pull-right">Join Community</button>
+            <div ng-if="allowed==false" class="top-buffer text-center well">
+                only group members can see tasqs
+            </div>
+            <div ng-if="allowed" class="top-buffer">
                 <div ng-if="tasks.length==0" class="well top-buffer">
                     <div class="task-view-compact-list-empty"></div>
                 </div>

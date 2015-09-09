@@ -38,7 +38,7 @@ var app = angular.module('snaptasqApp', ['infinite-scroll', 'angucomplete-alt' /
             // This is my FB app id for plunker demo app
             appId: '764169247036130'
         });
-        /*moment.locale('en', {
+        moment.locale('en', {
             relativeTime: {
                 future: "in %s",
                 past: "%s ago",
@@ -46,7 +46,7 @@ var app = angular.module('snaptasqApp', ['infinite-scroll', 'angucomplete-alt' /
                 m: "1m",
                 mm: "%dm",
                 h: "1h",
-                hh: "%h",
+                hh: "%dh",
                 d: "1d",
                 dd: "%dd",
                 M: "1m",
@@ -54,7 +54,7 @@ var app = angular.module('snaptasqApp', ['infinite-scroll', 'angucomplete-alt' /
                 y: "1y",
                 yy: "%dy"
             }
-        });*/
+        });
     })
     .factory('Page', function() {
         var title = 'snaptasq';
@@ -158,7 +158,7 @@ var app = angular.module('snaptasqApp', ['infinite-scroll', 'angucomplete-alt' /
                                 $location.path('/communities/permission');
                             }
                         });
-                    }*/
+            }*/
                 });
             }
             if (next.adminRequired && !next.authenticate) {
@@ -185,11 +185,15 @@ var app = angular.module('snaptasqApp', ['infinite-scroll', 'angucomplete-alt' /
 app.controller('GlobalCtrl', function GlobalCtrl($scope, BadgeAlerts, localStorageService, $q, $templateCache, $interval, notifications, $http, $anchorScroll, Auth, User, $location, $rootScope) {
     $rootScope.title = "snaptasq";
     $scope.scrollTop = function() {
-        $('html, body').animate({
-            scrollTop: 0
-        }, 'slow');
-    }
-    $scope._goToPath = function(url) {
+            $('html, body').animate({
+                scrollTop: 0
+            }, 'slow');
+        }
+        /* if given $event it will consume the event */
+    $scope._goToPath = function(url, $event) {
+        if (!angular.isUndefined($event)) {
+            $event.stopPropagation();
+        }
         $location.path(url);
     }
     $scope.$on('$routeChangeStart', function(next, current) {
@@ -229,7 +233,7 @@ app.controller('GlobalCtrl', function GlobalCtrl($scope, BadgeAlerts, localStora
         });
 
     })(jQuery, ResponsiveBootstrapToolkit);
-    */
+*/
     $scope.isViewCompact = function() {
             if ($scope.viewport == "xs" || $scope.viewport == "sm")
                 return true;
