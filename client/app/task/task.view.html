@@ -1,26 +1,35 @@
 <div class="container top-buffer" ng-controller="TaskGlobalCtrl">
-    <div class="row">
-        <div class="col-md-7 col-sm-12 col-xs-12" ng-class="{'col-md-12':!task.location}">
+    <div class="well" style="background-color:white">
+        <div class="row ng-cloak" ng-if="_me._id && task.tasker.id==_me._id">
+            <div class="col-md-12">
+                <p ng-if="!task.tasker.confirmed" class="lead text-info">{{task.ownerName}} has chosen you to help. Do you accept?
+                    <button ng-if="!task.tasker.confirmed" class="btn btn-success" ng-click="taskerConfirmTask(task,true);">Accept</button>
+                    <button ng-if="!task.tasker.confirmed" class="btn btn-error" ng-click="taskerConfirmTask(task,false);">Reject</button>
+                </p>
+            </div>
+        </div>
 
-            <div class="row ng-cloak" ng-if="_me._id && task.tasker.id==_me._id">
-                <div class="col-md-12">
-                    <p ng-if="!task.tasker.confirmed" class="lead text-info">{{task.ownerName}} has chosen you to help. Do you accept?
-                        <button ng-if="!task.tasker.confirmed" class="btn btn-success" ng-click="taskerConfirmTask(task,true);">Accept</button>
-                        <button ng-if="!task.tasker.confirmed" class="btn btn-error" ng-click="taskerConfirmTask(task,false);">Reject</button>
-                    </p>
+
+        <div class="row" id="currentTasker" ng-if="task.tasker.id">
+            <div class="col-md-12">
+                <div>
+                    <img ng-if="task.tasker.pic" src="{{task.tasker.pic}}" style="height:50px;width:50px;margin-right:5px;" /><a ng-if="task.tasker.fbId" href="http://www.facebook.com/{{task.tasker.fbId}}">{{task.tasker.name}}</a><span ng-if="!task.tasker.fbId">{{task.tasker.name}} (<strong>Current <span ng-if="task.tasker.confirmed">active </span>                    Tasker</strong>)</span>
                 </div>
             </div>
-
-
-            <div class="row" id="currentTasker" ng-if="task.tasker.id">
-                <div class="col-md-12">
-                    <div>
-                        <img ng-if="task.tasker.pic" src="{{task.tasker.pic}}" style="height:50px;width:50px;margin-right:5px;" /><a ng-if="task.tasker.fbId" href="http://www.facebook.com/{{task.tasker.fbId}}">{{task.tasker.name}}</a><span ng-if="!task.tasker.fbId">{{task.tasker.name}} (<strong>Current <span ng-if="task.tasker.confirmed">active </span>                        Tasker</strong>)</span>
-                    </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+                <div style="float:left;margin-right:10px;">
+                    <img src="{{task.ownerPic}}" style="height:50px;width:50px;" />
+                </div>
+                <div>
+                    <strong>{{task.ownerName}}</strong>
+                </div>
+                <div>{{task.created | date:'MMM d, y h:mm a'}}&nbsp;<span class="badge badge-info">{{task.status | capslock}}</span>
                 </div>
             </div>
-            <div class="row" id="buttonControls">
-                <div class="col-md-12">
+            <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                <div class="pull-lg-right pull-md-right pull-sm-right">
                     <button ng-if="task.applicants.length==0" ng:disabled="true" ng-click="showApplicants(task)" class="btn btn-info" style="height:46px;">No Applicants Yet</button>
                     <button ng-if="task.applicants.length!=0" ng-click="showApplicants(task)" class="btn btn-info" style="height:46px;">View <span ng-if="task.applicants.length>0">{{task.applicants.length}}</span> Applicants</button>
                     <span ng-if="task.ownerId!=_me._id">
@@ -29,81 +38,69 @@
                     </span>
                     <!-- task owner buttons -->
                     <span ng-if="task.ownerId==_me._id">
-                        <button ng-click="" class="btn btn-primary" style="height:46px;">Communities</button>
-                        <a href="/tasq/update/{{task._id}}"><button class="btn btn-warning" style="height:46px;">Edit Task</button></a>
-                        <button ng-click="deleteTask(task)" class="btn btn-danger" style="height:46px;">Delete Task</button>
+                        <a href="/tasq/update/{{task._id}}"><button class="btn btn-warning" style="height:46px;">EDIT</button></a>
+                        <button ng-click="deleteTask(task)" class="btn btn-danger" style="height:46px;">DELETE</button>
                     </span>
                 </div>
             </div>
-            <div class="row top-buffer">
-                <div class="col-md-12">
-                    <!--share stuff -->
-                    <!-- Facebook Share Button -->
-                    <a class="btnz share facebook" ng-click="_share('fb','Help '+task.ownerName+' with ' + task.name,task.description)" href="#"><i class="fa fa-facebook"></i> Share</a>
-
-                    <!-- Googple Plus Share Button -->
-                    <!-- <a class="btnz share gplus" href="#"><i class="fa fa-google-plus"></i> Share</a> -->
-                    <a href="#" ng-click="_share('google',task.name,task.description)"><img src="https://www.gstatic.com/images/icons/gplus-64.png" style="height:46px;" alt="Share on Google+" /></a>
-                    <!-- Twitter Share Button -->
-                    <a class="btnz share twitter" href="https://twitter.com/intent/tweet?text={{'Help '+task.ownerName+' with '+task.name+' link: '+currentUrl}}&hashtags=snaptasq"><i class="fa fa-twitter"></i> Tweet</a>
-                    <!-- Stumbleupon Share Button -->
-                    <!-- <a class="btnz share stumbleupon" href="#"><i class="fa fa-stumbleupon"></i> Stumble</a> -->
-
-                    <!-- Pinterest Share Button -->
-                    <a href="#" class="btnz share pinterest" ng-click="_share('pintrest','Help '+task.ownerName+' with '+task.name+' link: '+currentUrl,task.description)"><i class="fa fa-pinterest"></i> Pin it</a>
-
-                    <!-- LinkedIn Share Button -->
-                    <!-- <a class="btnz share linkedin" href="#"><i class="fa fa-linkedin"></i> LinkedIn</a> -->
-
-                    <!-- Buffer Share Button -->
-                    <a href="https://bufferapp.com/add" class="buffer-add-button" data-count="horizontal">Buffer</a>
-                    <script type="text/javascript" src="https://static.bufferapp.com/js/button.js"></script>
-                </div>
-            </div>
-            <div class="row top-buffer">
-                <div class="col-md-12">
-                    <div>
-                        <div style="float:left;margin-right:10px;">
-                            <img src="{{task.ownerPic}}" style="height:50px;width:50px;" />
-                        </div>
-                        <div>
-                            <strong>{{task.ownerName}}</strong>&nbsp;<span>{{task.created | date:'MMM d, y h:mm a'}}</span>&nbsp;<span class="badge badge-info">{{task.status | capslock}}</span>
-                        </div>
-                        <div style="font-size:1.5em;"><a href="/tasq/view/{{task._id}}">{{task.name}}</a></div>
-                    </div>
-                    <div class="pull-right">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    {{task.description}}
-                </div>
-            </div>
-            <div class="row" ng-if="task.ownerId==_me._id && task.applicants.length==0">
-                <div class="col-md-12 lead">No one has applied yet. Try sharing your task via the share buttons.</div>
-            </div>
-
         </div>
-        <!--./col-md-7-->
-        <div ng-if="task.location" class="col-md-5 col-sm-12 col-xs-12" style="padding:50px;">
-            <div ng-if="task.location" class="row" id="googleMaps">
-                <div ng-if="!_isMobile" class="col-md-12">
-                    <div ui-gmap-google-map center='task.locationCopy.geo.center' zoom='15'>
-                        <div ui-gmap-marker coords="task.location.geo.center" options="marker.options" idkey="0"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <div style="font-size:1.5em;">{{task.name}}</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {{task.description}}
+            </div>
+        </div>
+        <div class="row" ng-if="task.ownerId==_me._id && task.applicants.length==0">
+            <div class="col-md-12 lead">No one has applied yet. Try sharing your task via the share buttons.</div>
+        </div>
+        <div class="row">
+            <div ng-if="task.location" class="col-md-12 col-sm-12 col-xs-12" style="padding-right:30px;padding-left:30px;">
+                <div ng-if="task.location" class="row" id="googleMaps">
+                    <div ng-if="!_isMobile" class="col-md-12">
+                        <div ui-gmap-google-map options="{'scrollwheel': false}" center='task.locationCopy.geo.center' zoom='15'>
+                            <div ui-gmap-marker coords="task.location.geo.center" options="marker.options" idkey="0"></div>
+                        </div>
                     </div>
-                </div>
-                <div ng-if="_isMobile" class="col-sm-6 col-md-6">
-                    <div ui-gmap-google-map center='task.locationCopy.geo.center' zoom='15'>
-                        <div ui-gmap-marker coords="task.location.geo.center" options="marker.options" idkey="0"></div>
+                    <div ng-if="_isMobile" class="col-sm-6 col-md-6">
+                        <div ui-gmap-google-map options="{'scrollwheel': false}" center='task.locationCopy.geo.center' zoom='15'>
+                            <div ui-gmap-marker coords="task.location.geo.center" options="marker.options" idkey="0"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-            <div onrender="rendered()" class="fb-comments" data-href="{{_hostName}}/tasq/view/{{task._id}}#{{task._id}}" data-numposts="3" data-colorscheme="light"></div>
+        <div class="row">
+            <!--share stuff -->
+            <!-- Facebook Share Button -->
+            <!--btnz share facebook-->
+            <a class="col-md-3 col-sm-3 col-xs-3 btn" style="background-color:#3b5998;color:white" ng-click="_share('fb','Help '+task.ownerName+' with ' + task.name,task.description)" href="#"><i class="fa fa-facebook"></i> Share</a>
+
+            <!-- Googple Plus Share Button -->
+            <!-- <a class="btnz share gplus" href="#"><i class="fa fa-google-plus"></i> Share</a> -->
+            <a href="#" class="col-md-3 col-sm-3 col-xs-3 btn" style="background-color:#cc2127;color:white" ng-click="_share('google',task.name,task.description)"><i class="fa fa-google-plus"></i> Share</a>
+            <!-- Twitter Share Button -->
+            <!--btnz share twitter-->
+            <a class="col-md-3 col-sm-3 col-xs-3 btn" style="background-color:#55acee;color:white" href="https://twitter.com/intent/tweet?text={{'Help '+task.ownerName+' with '+task.name+' link: '+currentUrl}}&hashtags=snaptasq"><i class="fa fa-twitter"></i> Tweet</a>
+            <!-- Stumbleupon Share Button -->
+            <!-- <a class="btnz share stumbleupon" href="#"><i class="fa fa-stumbleupon"></i> Stumble</a> -->
+
+            <!-- Pinterest Share Button -->
+            <!-- btnz share pinterest -->
+            <a href="#" class="col-md-3 col-sm-3 col-xs-3 btn" style="background-color:#fcd11a;color:white" ng-click="_share('pintrest','Help '+task.ownerName+' with '+task.name+' link: '+currentUrl,task.description)"><i class="fa fa-share-alt"></i> snap</a>
+
+
+
+            <!-- LinkedIn Share Button -->
+            <!-- <a class="btnz share linkedin" href="#"><i class="fa fa-linkedin"></i> LinkedIn</a> -->
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div onrender="rendered()" class="well fb-comments" data-href="{{_hostName}}/tasq/view/{{task._id}}#{{task._id}}" data-numposts="3" data-colorscheme="light"></div>
+            </div>
         </div>
     </div>
 </div>

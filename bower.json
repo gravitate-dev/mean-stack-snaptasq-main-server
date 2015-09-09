@@ -37,7 +37,8 @@
     "ng-notifications-bar": "~0.0.15",
     "ngAutocomplete": "~1.0.0",
     "ngInfiniteScroll": "~1.2.1",
-    "responsive-toolkit": "~2.5.0"
+    "responsive-toolkit": "~2.5.0",
+    "rrssb": "~1.8.5"
   },
   "devDependencies": {
     "angular-mocks": ">=1.2.*",
