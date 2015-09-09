@@ -94,33 +94,33 @@ angular.module('snaptasqApp')
         $scope.allowed = undefined;
         $scope.tasks = [];
         $scope.filter = {};
+        $scope.isMember = undefined;
         //getMyFriendsTasks
 
 
         $scope.init = function() {
-            /**
-             * First check if the group is public
-             **/
-            Community.isGroupOpen($scope.groupId, function(isOpen) {
-                if (!isOpen) {
-                    /**
-                     * If the group is not public, then see if i am a member
-                     **/
-                    Community.amIMember($scope.groupId, function(isAllowed) {
-                        $scope.allowed = isAllowed;
-                        if (isAllowed) {
+
+            //check to see if i am a member
+            //if not check if the group is open
+            Community.amIMember($scope.groupId, function(isMember) {
+                $scope.isMember = isMember;
+                if (isMember) {
+                    $scope.allowed = true;
+                    $scope.loadGroupDetails($scope.groupId);
+                } else {
+                    Community.isGroupOpen($scope.groupId, function(isOpen) {
+                        if (isOpen) {
+                            $scope.allowed = true;
                             $scope.loadGroupDetails($scope.groupId);
                         } else {
+                            $scope.allowed = false;
                             Community.getById($scope.groupId, function(item) {
                                 $scope.group = item;
                             });
                         }
-
                     });
-                } else {
-                    $scope.allowed = true;
-                    $scope.loadGroupDetails($scope.groupId);
                 }
+
             });
         }
 
@@ -149,13 +149,19 @@ angular.module('snaptasqApp')
         }
     })
     .controller('CommunityFriendCtrl', function($scope, Community, Task, Auth, $routeParams, Notification, notifications) {
+        $scope.group = {
+            name: "my friends on snaptasq"
+        };
+        $scope.allowed = true;
         $scope.tasks = [];
         $scope.filter = {};
+        $scope.isMember = true;
         Task.getMyFriendsTasks(function(data) {
             if (angular.isUndefined(data)) {
                 console.error("No tasks found");
             } else {
                 $scope.tasks = data;
             }
+            console.log(data);
         });
     });

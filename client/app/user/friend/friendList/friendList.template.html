@@ -1,5 +1,5 @@
 <div class="panel panel-default">
-    <div class="panel-heading c-list">
+    <div class="panel-heading c-list" ng-if="options.title==true">
         <span class="title">my friends</span>
         <ul class="pull-right c-controls" style="padding-left:0px;">
             <li><a href="/users/find" data-toggle="tooltip" data-placement="top" title="Add Friend"><i class="fa fa-plus"></i></a></li>
@@ -16,7 +16,6 @@
             </div>
         </div>
     </div>
-
     <ul class="list-group" id="contact-list">
         <li class="list-group-item ng-cloak" ng-if="items.length==0">
             <div class="col-xs-12 col-sm-12">

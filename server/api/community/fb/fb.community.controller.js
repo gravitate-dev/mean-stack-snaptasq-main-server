@@ -22,10 +22,11 @@ exports.processJoinUrl = function(req, res) {
                 if (possibleGroup == null) {
                     //if no community
                     _getGroupData(req, res, groupId, function(groupData) {
+                        var link = groupData.link || "https://www.facebook.com/groups/" + groupId;
                         var model = {
                             identifier: groupData.id,
                             name: groupData.name,
-                            url: groupData.link,
+                            url: link,
                             description: groupData.description,
                             source: "facebook"
                         };
