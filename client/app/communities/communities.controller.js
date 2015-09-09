@@ -148,10 +148,15 @@ angular.module('snaptasqApp')
             })
         }
     })
-    .controller('CommunityFriendCtrl', function($scope, Community, Task, Auth, $routeParams, Notification, notifications) {
-        $scope.group = {
-            name: "my friends on snaptasq"
-        };
+    .controller('CommunityFriendCtrl', function($scope, _me, Community, Task, Auth, $routeParams, Notification, notifications) {
+        $scope.group = {};
+        _me.$promise.then(function(me) {
+            $scope.group = {
+                name: "my friends on snaptasq",
+                users: me.friends
+            };
+        });
+
         $scope.allowed = true;
         $scope.tasks = [];
         $scope.filter = {};
@@ -162,6 +167,5 @@ angular.module('snaptasqApp')
             } else {
                 $scope.tasks = data;
             }
-            console.log(data);
         });
     });
