@@ -1,11 +1,11 @@
 <div class="container top-buffer">
     <p class="lead"><a href="/messages"><i class="fa fa-back"></i>&nbsp;back to inbox</a></p>
-    <div class="row" ng-if="messages[0].type=='friendRequest' && notFriendsYet(messages[0].from.id)">
+    <div class="row" ng-if="thread.type=='friendRequest' && notFriendsYet(thread.ownerIds)">
         <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="row">{{message.from.name}} would like to be your friend on snaptasq.</div>
             <div class="row">
-                <button ng-click="acceptFriend(messages[0].from.id,messages[0]._id);" class="btn btn-success">Accept</button>
-                <button ng-click="rejectFriend(messages[0].from.id);" class="btn btn-secondary">Reject</button>
+                <button ng-click="acceptFriend(message.from.id,message._id);" class="btn btn-success">Accept</button>
+                <button ng-click="rejectFriend(message.from.id);" class="btn btn-secondary">Reject</button>
             </div>
         </div>
     </div>

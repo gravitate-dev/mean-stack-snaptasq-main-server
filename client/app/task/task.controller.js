@@ -174,19 +174,19 @@ angular.module('snaptasqApp')
         });
 
         Task.getMyTasks(function(data) {
-            $scope.myTasks = [];
             _.each(data, function(task) {
                 task.locationCopy = _.clone(task.location, true);
                 $scope.myTasks.push(task);
             });
         });
         Task.getMyAppliedTasks(function(data) {
-            $scope.otherTasks = [];
             _.each(data, function(task) {
                 task.locationCopy = _.clone(task.location, true);
                 $scope.otherTasks.push(task);
             });
         });
+
+        $scope.loadMoreTasqs = function() {}
     })
     .controller('TaskEditCtrl', function($scope, $window, Modal, notifications, $routeParams, Task, Notification, $rootScope, TaskMarshaler, Auth, $location) {
         $scope._noFooter();

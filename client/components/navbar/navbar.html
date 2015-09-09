@@ -40,10 +40,12 @@
                         </a>
                     </div>
                 </li>
-                <li ng-show="isLoggedIn()" ng-class="{active: isActive('/settings')}">
-                    <a href="/settings">
-                        <span><img style="height:20px;padding-right:5px;" ng-if="_me.pic" class="ng-cloak" ng-src="{{_me.pic}}"/>{{ accountName }} <span ng-if="_badgeAlerts.size()>0" class="badge">{{_badgeAlerts._size}}</span></span>
-                    </a>
+                <li class="dropdown hide-when-collapsed-navbar" ng-class="{active: isActive('/settings')}" ng-if="isLoggedIn()">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"><span><img style="height:20px;padding-right:5px;" ng-if="_me.pic" class="ng-cloak" ng-src="{{_me.pic}}"/>{{ accountName }} <span ng-if="_badgeAlerts.size()>0" class="badge">{{_badgeAlerts._size}}</span></span><b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/settings">Account</a></li>
+                        <li ng-show="isLoggedIn()" ng-class="{active: isActive('/logout')}"><a href="" ng-click="logout()">Logout</a></li>
+                    </ul>
                 </li>
                 <li ng-show="isLoggedIn()">
                     <div class="show-only-when-collapsed-navbar">
@@ -53,7 +55,6 @@
                         <div ng-include src="'components/navbar/notifications.html'"></div>
                     </div>
                 </li>
-                <li ng-show="isLoggedIn()" ng-class="{active: isActive('/logout')}"><a href="" ng-click="logout()">Logout</a></li>
             </ul>
         </div>
     </div>

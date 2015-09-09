@@ -1,7 +1,7 @@
 'use strict';
 angular.module('snaptasqApp').controller('SettingsCtrl', function($scope, _me, Task, $window, $location, $timeout, Modal, User, Auth, notifications, Notification) {
     $scope.errors = {};
-    $scope._bgcolorSnapYellow();
+    $scope._bgcolorGrey();
     $scope._noFooter();
     $scope.userCanFbConnect = false;
 

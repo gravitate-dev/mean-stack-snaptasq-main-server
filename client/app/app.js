@@ -1,5 +1,5 @@
 'use strict';
-var app = angular.module('snaptasqApp', ['angucomplete-alt' /*,'bcherny/formatAsCurrency'*/ , 'slick', 'angularMoment', 'LocalStorageModule', 'seo', 'FBAngular', 'ezfb', 'djds4rce.angular-socialshare', 'ngDisqus', 'ui-notification', 'pasvaz.bindonce', 'uiGmapgoogle-maps', 'ngAutocomplete', 'commentBox', 'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', /*'btford.socket-io',*/ 'ui.bootstrap', 'ngAnimate', 'ngNotificationsBar', 'vcRecaptcha'])
+var app = angular.module('snaptasqApp', ['infinite-scroll', 'angucomplete-alt' /*,'bcherny/formatAsCurrency'*/ , 'slick', 'angularMoment', 'LocalStorageModule', 'seo', 'FBAngular', 'ezfb', 'djds4rce.angular-socialshare', 'ngDisqus', 'ui-notification', 'pasvaz.bindonce', 'uiGmapgoogle-maps', 'ngAutocomplete', 'commentBox', 'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', /*'btford.socket-io',*/ 'ui.bootstrap', 'ngAnimate', 'ngNotificationsBar', 'vcRecaptcha'])
     .config(function($routeProvider) {
         $routeProvider.otherwise({
             redirectTo: '/'
@@ -31,40 +31,6 @@ var app = angular.module('snaptasqApp', ['angucomplete-alt' /*,'bcherny/formatAs
         $locationProvider.html5Mode(true).hashPrefix('!');
         $httpProvider.interceptors.push('authInterceptor');
         notificationsConfigProvider.setAcceptHTML(true);
-
-        /**
-         * SEO Interceptor that waits .7 seconds until no more requests then it will render
-        *
-        var $http,
-                interceptor = ['$q', '$injector', function ($q, $injector) {
-                    var error;
-                    function success(response) {
-                        $http = $http || $injector.get('$http');
-                        var $timeout = $injector.get('$timeout');
-                        var $rootScope = $injector.get('$rootScope');
-                        if($http.pendingRequests.length < 1) {
-                            $timeout(function(){
-                                if($http.pendingRequests.length < 1){
-                                    $rootScope.htmlReady();
-                                }
-                            }, 700);//an 0.7 seconds safety interval, if there are no requests for 0.7 seconds, it means that the app is through rendering
-                        }
-                        return response;
-                    }
-
-                    function error(response) {
-                        $http = $http || $injector.get('$http');
-
-                        return $q.reject(response);
-                    }
-
-                    return function (promise) {
-                        return promise.then(success, error);
-                    }
-                }];
-
-            $httpProvider.interceptors.push(interceptor);
-            */
 
     }).run(function($FB, ezfb) {
         //$FB.init('764169247036130');

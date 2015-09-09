@@ -77,7 +77,7 @@
         <!-- the ng view is inside a wrapper because this styles the bg color -->
         <div id="ngViewMain"  ng-view="" style="flex:1;background:{{_bgcolor}}">
         </div>
-    <div ng-show="_showFooter" ng-include="'components/footer/footer.html'" ></div>
+    <div ng-show="_showFooter" style="margin-bottom:-25px;" ng-include="'components/footer/footer.html'" ></div>
 
 
 
@@ -185,6 +185,7 @@ if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
     <script src="bower_components/isotope/js/isotope.js"></script>
     <script src="bower_components/ng-notifications-bar/dist/ngNotificationsBar.min.js"></script>
     <script src="bower_components/ngAutocomplete/src/ngAutocomplete.js"></script>
+    <script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
     <script src="bower_components/responsive-toolkit/dist/bootstrap-toolkit.js"></script>
     <!-- endbower -->
     <!-- <script src="socket.io-client/socket.io.js"></script> -->

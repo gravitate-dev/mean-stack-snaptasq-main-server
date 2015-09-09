@@ -2,8 +2,7 @@
 
 angular.module('snaptasqApp')
     .controller('RewardsCtrl', function($scope, $window, $interval, $location, $timeout, User, notifications, Notification) {
-        $scope._bgcolorSnapYellow();
-        $scope._noFooter();
+        $scope._bgcolorGrey();
         $scope.errors = {};
         $scope.betaCode = "";
 

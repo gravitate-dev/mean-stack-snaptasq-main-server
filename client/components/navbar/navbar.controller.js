@@ -6,36 +6,29 @@ angular.module('snaptasqApp')
         $scope.menuAdmin = [];
         $scope.menu = [];
         $scope.accountName = "";
-        // User.get(function(me) {
-        //     $scope._me = me;
-        //     $scope.isUserBetaLocked = me.requiresBeta;
-        //     $scope.reloadMenu();
 
-        // });
 
-        $scope.$watch(function() {
-            return Auth.isBetaUnlocked()
-        }, function(newVal, oldVal) {
-
-            //$scope.reloadMenu();
-        });
-
+        //This has to be listening forever.
+        //Otherwise switching accounts will make the navbar WIERD.
+        //it will still have the old _me data if i dont have this here
         $scope.$watch(function() {
             return Auth.getCurrentUser()
         }, function(newVal, oldVal) {
             if (typeof newVal !== 'undefined') {
-                $scope._me = newVal;
-                if (!angular.isUndefined($scope._me.name)) {
-                    var temp = $scope._me.name.split(' ')[0];
-                    if (temp.length > 9) {
-                        $scope.accountName = "Account"
-                    } else {
-                        $scope.accountName = temp;
-                    }
-                } else {
-                    $scope.accountName = "";
+                if (newVal.$promise) {
+                    newVal.$promise.then(function(me) {
+                        $scope._me = me;
+                        if (!angular.isUndefined($scope._me.name)) {
+                            var temp = $scope._me.name.split(' ')[0];
+                            if (temp.length > 9) {
+                                $scope.accountName = "Account"
+                            } else {
+                                $scope.accountName = temp;
+                            }
+                        }
+                        $scope.reloadMenu();
+                    });
                 }
-                $scope.reloadMenu();
             }
         });
 
@@ -54,11 +47,6 @@ angular.module('snaptasqApp')
                             'link': '/communities',
                             reqLogin: true
                         });
-                        $scope.menu.push({
-                            'title': 'Inbox',
-                            'link': '/messages',
-                            reqLogin: true
-                        });
                     } else {
                         $scope.menu.push({
                             'title': 'Request Beta',
@@ -69,6 +57,11 @@ angular.module('snaptasqApp')
                             'title': 'Enter Beta Code',
                             'link': '/beta',
                             reqLogin: true
+                        });
+                        $scope.menu.push({
+                            'title': 'Rewards',
+                            'link': '/rewards',
+                            reqLogin: true,
                         });
                     }
                     if (Auth.isAdmin()) {
@@ -89,12 +82,6 @@ angular.module('snaptasqApp')
                             reqLogin: true
                         });
                     }
-                    $scope.menu.push({
-                        'title': 'Rewards',
-                        'link': '/rewards',
-                        reqLogin: true,
-                        reqBeta: false
-                    });
                 } else {
                     $scope.menu = [{
                         'title': 'Request Beta',
@@ -121,7 +108,7 @@ angular.module('snaptasqApp')
                 $scope.notifications = notifications;
             });
         }, 5000);
-        */
+*/
         Notify.get(function(notifications) {
             //console.log(notifications);
             $scope.notifications = notifications;
