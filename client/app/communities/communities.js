@@ -21,7 +21,6 @@ angular.module('snaptasqApp')
             .when('/community/view/:id', {
                 templateUrl: 'app/communities/community.html',
                 controller: 'CommunityCtrl',
-                authenticate: true,
             })
             .when('/community/friends', {
                 templateUrl: 'app/communities/community.html',

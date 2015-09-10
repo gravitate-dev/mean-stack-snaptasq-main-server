@@ -1,17 +1,54 @@
 <div class="container top-buffer">
-    <p ng-if="userDoesntExist">this user can not be found</p>
-    <div class="visible-xs col-xs-12">
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div tabset>
-                    <section tab select="">
-                        <div tab-heading>
-                            <i class="fa fa-user"></i>&nbsp;profile
-                        </div>
-                        <div class="list-group" style="background:white;margin:0px;">
-                            <a href="/tasq/create">
-                                <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;poke user</div>
-                            </a>
+    <p ng-if="userDoesntExist==true">this user can not be found</p>
+    <section ng-if="userDoesntExist==false">
+        <div class="visible-xs col-xs-12">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div tabset>
+                        <section tab select="">
+                            <div tab-heading>
+                                <i class="fa fa-user"></i>&nbsp;profile
+                            </div>
+                            <div class="list-group" style="background:white;margin:0px;">
+                                <a href="/tasq/create">
+                                    <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;poke user</div>
+                                </a>
+                                <div style="float:left;margin-right:10px;">
+                                    <img src="{{user.pic}}" class="img-circle" style="height:50px;width:50px;" />
+                                </div>
+                                <div ng-if="user.link">
+                                    <a href="{{user.link}}"><strong>{{user.name}}</strong></a>
+                                </div>
+                                <div ng-if="!user.link">
+                                    <strong>{{user.name}}</strong>
+                                </div>
+                                <button ng-if="isStranger==true" ng-click="addFriend(user);" class="btn btn-success">add friend</button>
+                                <button ng-if="isStranger==false" ng-click="addFriend(user);" class="btn btn-warning">unfriend</button>
+                            </div>
+                        </section>
+                        <section tab select="">
+                            <div tab-heading>
+                                <i class="fa fa-inbox"></i>&nbsp;communities
+                            </div>
+                            <div friendcommunitylist="friendCommunities" list-title="false" list-filter="communityFilter"></div>
+                        </section>
+                        <section tab select="">
+                            <div tab-heading>
+                                <i class="fa fa-inbox"></i>&nbsp;tasqs
+                            </div>
+                            <div friendmytaskslist="friendTasks" list-title="false" list-filter="tasksFilter"></div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="rowtop-buffer bot-buffer2 hidden-xs">
+            <div class="col-md-6 col-sm-6">
+                <div class="well" style="background-color:white;margin:0px;">
+                    <div class="row" ng-if="user.name">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
                             <div style="float:left;margin-right:10px;">
                                 <img src="{{user.pic}}" class="img-circle" style="height:50px;width:50px;" />
                             </div>
@@ -21,150 +58,32 @@
                             <div ng-if="!user.link">
                                 <strong>{{user.name}}</strong>
                             </div>
-                            <button ng-if="isStranger==true" ng-click="addFriend(user);" class="btn btn-success">add friend</button>
-                            <button ng-if="isStranger==false" ng-click="addFriend(user);" class="btn btn-warning">unfriend</button>
-                        </div>
-                    </section>
-                    <section tab select="">
-                        <div tab-heading>
-                            <i class="fa fa-inbox"></i>&nbsp;communities
-                        </div>
-                        <div class="list-group">
-                            <a href="/tasq/create">
-                                <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;invite to a community</div>
-                            </a>
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="input-group c-search">
-                                        <input type="text" class="form-control" ng-model="communityFilter" id="contact-list-search">
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-default" type="button"><span class="fa fa-search text-muted"></span></button>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="well text-center" style="background-color:white;margin:0px;" ng-if="(friendCommunities | filter:{'name':communityFilter}).length==0">no communities</div>
-                            <ul class="list-group" id="communities-list">
-                                <li class="list-group-item" ng-repeat="item in friendCommunities | filter:{'name':communityFilter}" ng-click="_goToPath('/community/view/'+item.id)">
-                                    <div class="col-xs-12 col-sm-3">
-                                        <img src="{{item.pic}}" alt="{{item.name}}" style="max-width:64px;" class="img-responsive img-circle" />
-                                    </div>
-                                    <div class="col-xs-12 col-sm-9">
-                                        <span class="name">{{item.name}}</span>
-                                        <br/>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </li>
-
-                            </ul>
-                        </div>
-                    </section>
-                    <section tab select="">
-                        <div tab-heading>
-                            <i class="fa fa-inbox"></i>&nbsp;tasqs
-                        </div>
-                        <div class="list-group">
-                            <a href="/tasq/create">
-                                <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;share your tasq</div>
-                            </a>
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="input-group c-search">
-                                        <input type="text" class="form-control" ng-model="tasksFilter.text" id="applied-list-search">
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-default" type="button"><span class="fa fa-search text-muted"></span></button>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="well text-center" style="background-color:white;margin:0px;" ng-if="friendTasks.length==0">no tasqs</div>
-                            <div infinite-scroll="loadMoreTasqs()">
-                                <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in friendTasks | searchTaskFilter:tasksFilter | orderBy:'-updated'">
-                                    <div class="task-view-compact-list" task="task"></div>
+                            <div class="pull-right">
+                                <button ng-if="isStranger==true" ng-click="addFriend(user);" class="btn btn-success">add friend</button>
+                                <div class="btn-group" dropdown ng-if="isStranger==false">
+                                    <button id="split-button" type="submit" class="btn btn-primary btn-lg" dropdown-toggle>
+                                        Action <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#">send poke</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="#">unfriend</a></li>
+                                        <li><a href="#">block</a></li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
-                    </section>
+                    </div>
                 </div>
+                <div friendcommunitylist="friendCommunities" list-title="true" list-filter="communityFilter"></div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div ng-if="isStranger==true">
+                    <div class="tasq-list-header">{{user.name | lowercase}}'s tasqs</div>
+                    <div class="well" style="background-color:white;margin:0px;">tasqs only shown to friends</div>
+                </div>
+                <div ng-if="isStranger==false" friendmytaskslist="friendTasks" list-title="true" list-filter="tasksFilter"></div>
             </div>
         </div>
-    </div>
-
-
-    <div class="rowtop-buffer bot-buffer2 hidden-xs">
-        <div class="col-md-6 col-sm-6">
-            <div class="well" style="background-color:white;margin:0px;">
-                <div class="row" ng-if="user.name">
-                    <div class="col-md-12 col-sm-12 col-xs-12">
-                        <div style="float:left;margin-right:10px;">
-                            <img src="{{user.pic}}" class="img-circle" style="height:50px;width:50px;" />
-                        </div>
-                        <div ng-if="user.link">
-                            <a href="{{user.link}}"><strong>{{user.name}}</strong></a>
-                        </div>
-                        <div ng-if="!user.link">
-                            <strong>{{user.name}}</strong>
-                        </div>
-                        <div class="pull-right">
-                            <button ng-if="isStranger==true" ng-click="addFriend(user);" class="btn btn-success">add friend</button>
-                            <div class="btn-group" dropdown ng-if="isStranger==false">
-                                <button id="split-button" type="submit" class="btn btn-primary btn-lg" dropdown-toggle>
-                                    Action <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">send poke</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="#">unfriend</a></li>
-                                    <li><a href="#">block</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="tasq-list-header">{{user.name | lowercase}}'s communities</div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="input-group c-search">
-                        <input type="text" class="form-control" ng-model="communityFilter" id="contact-list-search">
-                        <span class="input-group-btn">
-                        <button class="btn btn-default" type="button"><span class="fa fa-search text-muted"></span></button>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="well text-center" style="background-color:white;margin:0px;" ng-if="(friendCommunities | filter:{'name':communityFilter}).length==0">no communities</div>
-            <ul class="list-group" id="communities-list">
-                <li class="list-group-item" ng-repeat="item in friendCommunities | filter:{'name':communityFilter}" ng-click="_goToPath('/community/view/'+item.id)">
-                    <div class="col-xs-12 col-sm-3">
-                        <img src="{{item.pic}}" alt="{{item.name}}" style="max-width:64px;" class="img-responsive img-circle" />
-                    </div>
-                    <div class="col-xs-12 col-sm-9">
-                        <span class="name">{{item.name}}</span>
-                        <br/>
-                    </div>
-                    <div class="clearfix"></div>
-                </li>
-
-            </ul>
-        </div>
-        <div class="col-md-6 col-sm-6">
-            <div class="tasq-list-header">{{user.name | lowercase}}'s tasqs</div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="input-group c-search">
-                        <input type="text" class="form-control" ng-model="tasksFilter.text" id="applied-list-search">
-                        <span class="input-group-btn">
-                        <button class="btn btn-default" type="button"><span class="fa fa-search text-muted"></span></button>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div ng-if="isStranger==true" class="well" style="background-color:white;margin:0px;">tasqs only shown to friends</div>
-            <div ng-if="isStranger==false && (friendTasks | searchTaskFilter:tasksFilter).length==0" class="well" style="background-color:white;margin:0px;" ng-if="">no tasqs</div>
-            <div ng-if="isStranger==false" class="well" style="background-color:white;margin:0px;" ng-repeat="task in friendTasks | searchTaskFilter:tasksFilter">
-                <div class="task-view-compact-list" task="task"></div>
-            </div>
-        </div>
-    </div>
+    </section>
 </div>

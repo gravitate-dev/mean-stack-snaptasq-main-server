@@ -165,6 +165,7 @@ angular.module('snaptasqApp')
 
                 $http.get('/api/communities/' + id + '/amIMember').then(function(response) {
                     deferred.resolve(response);
+                    console.log(response);
                     return cb(true);
                 }, function(fail) {
                     deferred.reject(fail);

@@ -196,6 +196,20 @@ app.controller('GlobalCtrl', function GlobalCtrl($scope, BadgeAlerts, localStora
             }
         })
     }, 10);
+    var tawkCounter = 0;
+    var tawkListener = $interval(function() {
+        //add class to tawkTo
+        tawkCounter++;
+        if (tawkCounter > 1000) {
+            console.error("Tawk to not found.")
+            $interval.cancel(tawkListener);
+        }
+        var tawk = $("#tawkchat-iframe-container");
+        if (tawk.length != 0) {
+            $("#tawkchat-iframe-container").addClass('hidden-xs');
+            $interval.cancel(tawkListener);
+        }
+    }, 10)
     $rootScope.title = "snaptasq";
     $scope.scrollTop = function() {
             $('html, body').animate({

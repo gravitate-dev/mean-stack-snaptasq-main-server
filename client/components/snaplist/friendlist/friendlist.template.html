@@ -11,10 +11,10 @@
             <div class="clearfix"></div>
         </li>
         <li class="list-group-item" ng-repeat="item in items | filter:{'name':searchFilter.text}" ng-click="_goToPath('/user/view/'+item.id)">
-            <div class="pull-left">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
                 <img ng-src="{{item.pic}}" alt="{{item.name}}" class="img-circle" style="height:50px;width:50px;" />
             </div>
-            <div class="col-xs-9 col-sm-9">
+            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <span class="name">{{item.name}}</span>
             </div>
             <div class="clearfix"></div>
