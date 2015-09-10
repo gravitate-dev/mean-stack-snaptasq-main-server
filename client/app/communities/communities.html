@@ -1,23 +1,77 @@
 <div class="container top-buffer">
-    <div class="row">
-        <div class="col-md-4 col-sm-4  col-xs-12">
-            <div friend-list="_me.friends" options="{title:true}"></div>
+    <div class="row visible-xs">
+        <div tabset>
+            <section tab select="">
+                <div tab-heading>
+                    <i class="fa fa-user"></i>&nbsp;friends
+                </div>
+                <div friend-list="_me.friends" options="{title:false}" filter="sharedFilter"></div>
+            </section>
+            <section tab select="">
+                <div tab-heading>
+                    <i class="fa fa-users"></i>&nbsp;communities
+                </div>
+                <div class="panel panel-default">
+                    <a href="/communities/find">
+                        <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;join new community</div>
+                    </a>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="input-group c-search">
+                                <input type="text" class="form-control" ng-model="communityFilter" id="contact-list-search">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button"><span class="fa fa-search text-muted"></span></button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ul class="list-group" id="communities-list">
+                        <li class="list-group-item" ng-click="_goToPath('/community/friends')">
+                            <div class="pull-left">
+                                <img src="assets/logos/snaptasq.png" style="max-width:64px;" alt="my friends" class="img-responsive img-circle" />
+                            </div>
+                            <div class="col-sm-9">
+                                <span class="name">my friend's tasqs</span>
+                                <br/>
+                            </div>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="list-group-item" ng-repeat="item in communities | filter:{'name':communityFilter}" ng-click="_goToPath('/community/view/'+item.id)">
+                            <div class="col-xs-12 col-sm-3">
+                                <img src="{{item.pic}}" alt="{{item.name}}" style="max-width:64px;" class="img-responsive img-circle" />
+                            </div>
+                            <div class="col-xs-12 col-sm-9">
+                                <span class="name">{{item.name}}</span>
+                                <br/>
+                            </div>
+                            <div class="clearfix"></div>
+                        </li>
+
+                    </ul>
+                </div>
+            </section>
         </div>
-        <div class="col-md-8 col-sm-8  col-xs-12">
+    </div>
+    <div class="row hidden-xs">
+        <div class="col-md-4 col-sm-4 col-xs-12">
+            <div friend-list="_me.friends" options="{title:true}" filter="sharedFilter"></div>
+        </div>
+        <div class="col-md-8 col-sm-8 col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading c-list">
                     <span class="title">my communities</span>
-                    <ul class="pull-right c-controls" style="padding-left:0px;">
-                        <li><a href="/communities/join" data-toggle="tooltip" data-placement="top" title="Add Community"><i class="fa fa-plus"></i></a></li>
-                    </ul>
                 </div>
 
+                <a href="/communities/find">
+                    <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;join new community</div>
+                </a>
                 <div class="row">
                     <div class="col-xs-12">
                         <div class="input-group c-search">
                             <input type="text" class="form-control" ng-model="communityFilter" id="contact-list-search">
                             <span class="input-group-btn">
-                                <button class="btn btn-default" type="button"><span class="fa fa-search text-muted"></span></button>
+                                    <button class="btn btn-default" type="button"><span class="fa fa-search text-muted"></span></button>
                             </span>
                         </div>
                     </div>

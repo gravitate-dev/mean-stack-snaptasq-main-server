@@ -1,8 +1,12 @@
 'use strict';
 angular.module('snaptasqApp')
-    .controller('CommunityJoinCtrl', function($scope, Auth, Community, Notification, FbCommunity, $timeout, $location) {
+    .controller('CommunityJoinCtrl', function($scope, Auth, notifications, Community, Notification, FbCommunity, $timeout, $location) {
         $scope.freezeInput = false;
+        $scope.noResults = false;
         $scope.searchResults = [];
+        $scope.$watch("searchCommunity", function(newValue) {
+            $scope.noResults = false;
+        });
         $scope.$watch("searchCommunity", _.debounce(function(newvalue) {
             // This code will be invoked after 1 second from the last time 'id' has changed.
             $scope.$apply(function() {
@@ -11,12 +15,15 @@ angular.module('snaptasqApp')
                     return;
                 }
                 if ($scope.isurl_fb(newvalue) && !$scope._me.isConnectedWithFb) {
-                    console.error("you must first connect with facebook to join a facebook community");
+                    Notification.error("");
+                    notifications.showError({
+                        message: "you must first connect with facebook to join a facebook community. Go to your account to connect."
+                    });
                     return;
                 }
                 $scope.searchForCommunities(newvalue);
             })
-        }, 1000));
+        }, 500));
 
         $scope.isurl_fb = function(url) {
             if (angular.isUndefined(url)) {
@@ -32,9 +39,11 @@ angular.module('snaptasqApp')
                 $scope.joinFacebookUrl(name);
             } else {
                 Community.searchByName(name, function(users) {
-                    if (angular.isUndefined(users)) {
+                    if (angular.isUndefined(users) || _.isEmpty(users)) {
+                        $scope.noResults = true;
                         $scope.searchResults = [];
                     } else {
+                        $scope.noResults = false;
                         $scope.searchResults = users;
                     }
                 });
@@ -72,6 +81,8 @@ angular.module('snaptasqApp')
         //$scope._bgcolorSnapYellow();
         $scope._bgcolorGrey();
         $scope._noFooter();
+        $scope.communityFilter = "";
+        $scope.sharedFilter = "";
         _me.$promise.then(function(me) {
             $scope.communities = me.groups;
         });

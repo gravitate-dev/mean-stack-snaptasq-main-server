@@ -163,6 +163,7 @@ function createNewUserWithFacebook(user, req, accessToken, refreshToken, profile
     try {
         user.fb.username = profile.displayName || profile.username;
         user.fb.json = profile._json;
+        user.link = profile._json.link;
         user.fb.id = profile.id;
         user.fb.accessToken = accessToken;
         user.fb.refreshToken = refreshToken;
@@ -188,6 +189,7 @@ function linkFacebookAccountToExistingUser(user, req, accessToken, refreshToken,
     user.fb.email = profile.emails[0].value;
     user.fb.username = profile.displayName || profile.username;
     user.fb.json = profile._json;
+    user.link = profile._json.link;
     user.fb.id = profile.id;
     user.fb.accessToken = accessToken;
     user.fb.refreshToken = refreshToken;

@@ -1,11 +1,13 @@
 'use strict';
 
 angular.module('snaptasqApp')
-    .controller('FriendCtrl', function($scope, $location, User, Task, Community, _me, $routeParams) {
+    .controller('FriendCtrl', function($scope, $location, User, Task, UserMessage, Notification, Community, _me, $routeParams) {
         $scope._bgcolorGrey();
         $scope._noFooter();
         $scope.id = $routeParams.id;
         $scope.user = {};
+        $scope.filter = {};
+        $scope.tasksFilter = {};
         $scope.userDoesntExist = false;
         $scope.friendCommunities = [];
         $scope.friendTasks = [];
@@ -44,10 +46,20 @@ angular.module('snaptasqApp')
             }
         });
 
+
+        $scope.addFriend = function(friend) {
+            UserMessage.makeFriendRequest(friend._id, function(success) {
+                Notification.success("Friend request sent to " + friend.name);
+            }, function(fail) {
+                Notification.warning("Friend request already sent to " + friend.name);
+            })
+        }
+
     })
     .controller('FriendsCtrl', function($scope, $location, User, UserMessage, _me, Notification) {
         $scope._bgcolorGrey();
         $scope._noFooter();
+        $scope.filter = {};
         $scope.freezeInput = false;
         $scope.searching = false;
         $scope.searchResults = [];
@@ -59,26 +71,21 @@ angular.module('snaptasqApp')
                     if (!hasPermission) {
                         $location.path('/communities/permission');
                     } else {
-                        console.log("You have given friends permission");
+                        //console.log("You have given friends permission");
                     }
                 });
             } else {
                 $scope.connectedWithFacebook = false;
             }
         });
-        $scope.sendFriendRequest = function($event, id) {
-            $event.stopPropagation();
-            UserMessage.makeFriendRequest(id, function(success) {
-                Notification.success("Friend request sent to their inbox");
-            }, function(fail) {
-                //check if friends
-                if ($scope.notFriendsYet(id)) {
-                    Notification.error("Friend request already sent.");
-                } else {
-                    Notification.success("You are already friends");
-                }
 
-            });
+        $scope.addFriend = function($event, friend) {
+            $event.stopPropagation();
+            UserMessage.makeFriendRequest(friend._id, function(success) {
+                Notification.success("Friend request sent to " + friend.name);
+            }, function(fail) {
+                Notification.warning("Friend request already sent to " + friend.name);
+            })
         }
 
         $scope.notFriendsYet = function(otherPersonsId) {

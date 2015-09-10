@@ -63,6 +63,7 @@ var UserSchema = new Schema({
         type: String,
         default: 'user'
     },
+    link: String, //this will be set with fb comes in
     myTasks: [Schema.Types.ObjectId],
     otherTasks: [Schema.Types.ObjectId],
     groups: [{

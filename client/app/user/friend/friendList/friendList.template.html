@@ -1,11 +1,10 @@
 <div class="panel panel-default">
     <div class="panel-heading c-list" ng-if="options.title==true">
         <span class="title">my friends</span>
-        <ul class="pull-right c-controls" style="padding-left:0px;">
-            <li><a href="/users/find" data-toggle="tooltip" data-placement="top" title="Add Friend"><i class="fa fa-plus"></i></a></li>
-        </ul>
     </div>
-
+    <a href="/users/find">
+        <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;add more friends</div>
+    </a>
     <div class="row">
         <div class="col-xs-12">
             <div class="input-group c-search">
@@ -17,7 +16,7 @@
         </div>
     </div>
     <ul class="list-group" id="contact-list">
-        <li class="list-group-item ng-cloak" ng-if="items.length==0">
+        <li class="list-group-item ng-cloak" ng-if="(items | filter:{'name':friendFilter}).length==0">
             <div class="col-xs-12 col-sm-12">
                 <span class="name">no friends yet</span>
                 <br/>

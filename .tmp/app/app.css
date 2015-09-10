@@ -7144,6 +7144,17 @@ button.close {
 .fa-fonticons:before {
   content: ""; }
 
+.row-centered {
+  text-align: center; }
+
+.col-centered {
+  display: inline-block;
+  float: none;
+  /* reset the text-align */
+  text-align: left;
+  /* inline-block space fix */
+  margin-right: -4px; }
+
 .fb-comments, .fb-comments span, .fb-comments.fb_iframe_widget span iframe {
   width: 100% !important; }
 

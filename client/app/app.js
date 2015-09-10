@@ -182,7 +182,19 @@ var app = angular.module('snaptasqApp', ['infinite-scroll', 'angucomplete-alt' /
         })
     });
 
-app.controller('GlobalCtrl', function GlobalCtrl($scope, BadgeAlerts, localStorageService, $q, $templateCache, $interval, notifications, $http, $anchorScroll, Auth, User, $location, $rootScope) {
+app.controller('GlobalCtrl', function GlobalCtrl($scope, BadgeAlerts, localStorageService, $q, $templateCache, $interval, notifications, $http, $anchorScroll, Auth, User, $location, $rootScope, $timeout) {
+    $timeout(function() {
+        /* CLOSE NAVBAR ON CLICK */
+        /* Javascript queueing */
+        $('#navbar-main .nav a').on('click', function() {
+            //check if navbar-toggle is visible
+            if ($('.navbar-toggle').css('display') == "none") {
+                return;
+            } else {
+                $('.navbar-toggle').click() //bootstrap 3.x by Richard
+            }
+        })
+    }, 10);
     $rootScope.title = "snaptasq";
     $scope.scrollTop = function() {
             $('html, body').animate({

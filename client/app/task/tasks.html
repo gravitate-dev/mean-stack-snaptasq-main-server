@@ -1,20 +1,30 @@
 <div class="container" ng-controller="TaskGlobalCtrl">
     <div class="top-buffer">
-        <div class="row">
+        <div class="row visible-xs">
             <!-- this is for the mobile -->
-            <div class="visible-xs col-xs-12">
+            <div class="col-xs-12">
                 <div tabset>
                     <section tab select="">
                         <div tab-heading>
                             <i class="fa fa-inbox"></i>&nbsp;My Tasqs
                         </div>
-                        <div class="list-group">
+                        <div class="panel panel-default">
                             <a href="/tasq/create">
                                 <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;create new tasq</div>
                             </a>
-                            <div class="well" style="background-color:white;margin:0px;" ng-if="myTasks.length==0">no tasqs</div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="input-group c-search">
+                                        <input type="text" class="form-control" ng-model="mineFilter.text" id="contact-list-search">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button"><span class="fa fa-search text-muted"></span></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="well text-center" style="background-color:white;margin:0px;" ng-if="(myTasks | searchTaskFilter:mineFilter).length==0">no tasqs</div>
                             <div infinite-scroll="loadMoreTasqs()">
-                                <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in myTasks | searchTaskFilter:filter | orderBy:'-updated'">
+                                <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in myTasks | searchTaskFilter:mineFilter | orderBy:'-updated'">
                                     <div class="task-view-compact-list" task="task"></div>
                                 </div>
                             </div>
@@ -24,38 +34,69 @@
                         <div tab-heading>
                             <i class="fa fa-user"></i>&nbsp;Applied Tasqs
                         </div>
-                        <div class="list-group">
+                        <div class="panel panel-default">
                             <a href="/community/friends">
                                 <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;apply to more tasqs</div>
                             </a>
-                            <div class="well" style="background-color:white;margin:0px;" ng-if="otherTasks.length==0">no tasqs</div>
-                            <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in otherTasks | searchTaskFilter:filter">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="input-group c-search">
+                                        <input type="text" class="form-control" ng-model="appliedFilter.text" id="applied-list-search">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button"><span class="fa fa-search text-muted"></span></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="well text-center" style="background-color:white;margin:0px;" ng-if="(otherTasks | searchTaskFilter:appliedFilter).length==0">no tasqs</div>
+                            <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in otherTasks | searchTaskFilter:appliedFilter">
                                 <div class="task-view-compact-list" task="task"></div>
                             </div>
                         </div>
                     </section>
                 </div>
             </div>
-
-            <div class="col-md-6 col-sm-6 hidden-xs" ng-show="viewingLists=='all' || viewingLists=='mine'">
-                <div class="tasq-list-header">my tasqs</div>
+        </div>
+        <div class="row hidden-xs">
+            <div class="col-md-6 col-sm-6" ng-show="viewingLists=='all' || viewingLists=='mine'">
+                <div class="panel-heading c-list"><span class="title" style="color:black;">my tasqs</span></div>
                 <a href="/tasq/create">
                     <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;create new tasq</div>
                 </a>
-                <div class="well" style="background-color:white;margin:0px;" ng-if="myTasks.length==0">no tasqs</div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="input-group c-search">
+                            <input type="text" class="form-control" ng-model="mineFilter.text" id="applied-list-search">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button"><span class="fa fa-search text-muted"></span></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="well text-center" style="background-color:white;margin:0px;" ng-if="(myTasks | searchTaskFilter:mineFilter).length==0">no tasqs</div>
                 <div infinite-scroll="loadMoreTasqs()">
-                    <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in myTasks | searchTaskFilter:filter | orderBy:'-updated'">
+                    <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in myTasks | searchTaskFilter:mineFilter | orderBy:'-updated'">
                         <div class="task-view-compact-list" task="task"></div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-sm-6 hidden-xs" ng-show="viewingLists=='all' || viewingLists=='applied'">
-                <div class="tasq-list-header">applied tasqs</div>
+            <div class="col-md-6 col-sm-6" ng-show="viewingLists=='all' || viewingLists=='applied'">
+                <div class="panel-heading c-list"><span class="title" style="color:black;">applied tasqs</span></div>
                 <a href="/community/friends">
                     <div class="btn btn-primary text-center" style='width:100%;padding-top:7px;padding-bottom:7px;'><i class="fa fa-plus"></i>&nbsp;&nbsp;apply to more tasqs</div>
                 </a>
-                <div class="well" style="background-color:white;margin:0px;" ng-if="otherTasks.length==0">no tasqs</div>
-                <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in otherTasks | searchTaskFilter:filter">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="input-group c-search">
+                            <input type="text" class="form-control" ng-model="appliedFilter.text" id="applied-list-search">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button"><span class="fa fa-search text-muted"></span></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="well text-center" style="background-color:white;margin:0px;" ng-if="(otherTasks | searchTaskFilter:appliedFilter).length==0">no tasqs</div>
+                <div class="well" style="background-color:white;margin:0px;" ng-repeat="task in otherTasks | searchTaskFilter:appliedFilter">
                     <div class="task-view-compact-list" task="task"></div>
                 </div>
             </div>

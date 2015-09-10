@@ -1,18 +1,21 @@
 <div class="container top-buffer">
     <div class="col-md-12 col-sm-12  col-xs-12">
-        <p>Add by link. Example: https://www.facebook.com/groups/findyournextopportunity/</p>
-        <p>Add by name. Example: Albert</p>
         <div class="panel panel-default">
             <div class="panel-heading c-list" style="padding:10px;">
-                <span class="title" style="display:inline;float:left;">find community</span>
-                <span class="input-group c-search" style="">
-                <input ng:disabled="freezeInput" type="text" autofocus="autofocus" class="form-control" ng-model="searchCommunity" id="contact-list-search" placeholder="url or name">
-                <span class="input-group-btn">
+                <span class="title" style="display:inline;float:left;min-height:60px;">find community</span>
+                <p><small>Add by link. Example: https://www.facebook.com/groups/findyournextopportunity/ or by name. Example: Albert</small></p>
+                <div class="clearfix"></div>
+                <div class="input-group c-search" style="">
+                    <input ng:disabled="freezeInput" type="text" autofocus="autofocus" class="form-control" ng-model="searchCommunity" id="contact-list-search" placeholder="url or name">
+                    <span class="input-group-btn">
                     <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search text-muted"></span></button>
-                </span>
-                </span>
+                    </span>
+                </div>
             </div>
             <ul class="list-group" id="contact-list">
+                <li class="list-group-item text-center" ng-if="noResults">
+                    no results
+                </li>
                 <li class="list-group-item" ng-repeat="item in searchResults">
                     <a href="/community/view/{{item._id}}">
                         <div style="width:50px;float:left;">

@@ -4,7 +4,8 @@ angular.module('snaptasqApp').directive('friendList', function($parse, $location
         // Replace the div with our template
         replace: false,
         scope: {
-            items: "=friendList"
+            items: "=friendList",
+            friendFilter: "=filter"
         },
         templateUrl: 'app/user/friend/friendList/friendList.template.html',
         controller: function($scope) {
