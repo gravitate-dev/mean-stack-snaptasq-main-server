@@ -164,8 +164,8 @@ angular.module('snaptasqApp')
         //console.log(_me);
         $scope.errors = {};
         $scope.filter = {};
-        $scope.appliedFilter = {};
-        $scope.mineFilter = {};
+        $scope.otherFilter = {};
+        $scope.myTaskFilter = {};
         $scope.myTasks = [];
         $scope.otherTasks = [];
 

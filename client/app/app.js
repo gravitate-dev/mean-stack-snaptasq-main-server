@@ -186,7 +186,8 @@ app.controller('GlobalCtrl', function GlobalCtrl($scope, BadgeAlerts, localStora
     $timeout(function() {
         /* CLOSE NAVBAR ON CLICK */
         /* Javascript queueing */
-        $('#navbar-main .nav a').on('click', function() {
+        $('#navbar-main .nav').on('click', function() {
+            console.log("WHAT");
             //check if navbar-toggle is visible
             if ($('.navbar-toggle').css('display') == "none") {
                 return;

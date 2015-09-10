@@ -81,8 +81,8 @@ angular.module('snaptasqApp')
         //$scope._bgcolorSnapYellow();
         $scope._bgcolorGrey();
         $scope._noFooter();
-        $scope.communityFilter = "";
-        $scope.sharedFilter = "";
+        $scope.communityFilter = {};
+        $scope.friendlistFilter = {};
         _me.$promise.then(function(me) {
             $scope.communities = me.groups;
         });
@@ -104,6 +104,8 @@ angular.module('snaptasqApp')
         $scope.groupId = $routeParams.id;
         $scope.allowed = undefined;
         $scope.tasks = [];
+        $scope.taskFilter = {};
+        $scope.userFilter = {};
         $scope.filter = {};
         $scope.isMember = undefined;
         //getMyFriendsTasks
