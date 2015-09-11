@@ -108,12 +108,12 @@ angular.module('snaptasqApp')
 
             //check to see if i am a member
             //if not check if the group is open
-            Community.amIMember($scope.groupId, function(isMember) {
+            Community.amIMember($scope.id, function(isMember) {
                 $scope.isMember = isMember;
                 if (isMember) {
                     $scope.allowed = true;
                 } else {
-                    Community.isGroupOpen($scope.groupId, function(isOpen) {
+                    Community.isGroupOpen($scope.id, function(isOpen) {
                         $scope.allowed = isOpen;
                     });
                 }

@@ -124,18 +124,16 @@ exports.create = function(req, res) {
 // Returns true if the current user is a member
 exports.amIMember = function(req, res) {
         var id = req.param('id');
-        console.log(req.user);
         var currentUserId = req.session.userId;
         if (id == undefined) return res.send(400, "Missing parameter id");
         if (currentUserId == undefined) return res.send(401, "Not logged in");
-        console.log(currentUserId);
         User.findOne({
             _id: currentUserId
         }, function(err, usr) {
             if (err) return res.send(500, err);
             if (!usr) return res.send(401, "Please login again");
             for (var i = 0; i < usr.groups.length; i++) {
-                if (usr.groups[i].id.equals(id)) {
+                if (usr.groups[i].id == id) {
                     return res.send(200);
                 }
             }

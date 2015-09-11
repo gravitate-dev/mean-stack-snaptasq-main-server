@@ -11,21 +11,7 @@
             <div class="clearfix"></div>
         </li>
         <li class="list-group-item" style="cursor:pointer;word-break: break-word;" ng-repeat="item in items | filter:{'name':searchFilter.text}" ng-click="_goToPath('/tasq/view/'+item._id)">
-            <div class="" style="float:left;padding-left:5px;">
-                <div>
-                    <img ng-src="{{item.ownerPic}}" class="img-circle" style="height:50px;width:50px;" />
-                </div>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10">
-                <div>
-                    <strong id="owner_name">{{item.ownerName}}</strong>&nbsp;&middot;&nbsp;<span am-time-ago="item.created"></span>&nbsp;&middot;&nbsp;<span id="payout" ng-if="item.payout">${{item.payout}}</span><span ng-if="!item.payout">free</span>
-                </div>
-                <div>{{item.name}}{{item.name}}{{item.name}}</div>
-                <div ng-if="!item.tasker.name"><a href="/tasq/view/{{item._id}}">tasq is open</a></div>
-                <div ng-if="item.tasker.name && item.tasker.confirmed"><a href="" ng-click="_goToPath('/user/view/'+item.tasker.id,$event);">tasq in progress by {{item.tasker.name}}</a></div>
-                <div ng-if="item.tasker.name && !item.tasker.confirmed"><a href="" ng-click="_goToPath('/user/view/'+item.tasker.id,$event);">tasker chosen</a></div>
-            </div>
-            <div class="clearfix"></div>
+            <div snaplist-results-task="item"></div>
         </li>
     </ul>
 </div>

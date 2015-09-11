@@ -7,6 +7,24 @@ angular.module('snaptasqApp').directive('snaplistResults', function() {
         controller: function($scope) {},
         link: function(scope, element, attrs) {}
     };
+}).directive('snaplistResultsTask', function($location) {
+    return {
+        restrict: 'ACE',
+        replace: false,
+        scope: {
+            item: "=snaplistResultsTask"
+        },
+        templateUrl: 'components/snaplist/base/results/task.results.template.html',
+        controller: function($scope) {
+            $scope._goToPath = function(url, $event) {
+                if (!angular.isUndefined($event)) {
+                    $event.stopPropagation();
+                }
+                $location.path(url);
+            }
+        },
+        link: function(scope, element, attrs) {}
+    };
 }).directive('snaplistSearch', function() {
     return {
         restrict: 'ACE',
