@@ -2,9 +2,11 @@
 
 angular.module('snaptasqApp')
     .controller('AdminUsersCtrl', function($scope, $http, Auth, User) {
-
+        $scope.users = [];
         // Use the User $resource to fetch all users
-        $scope.users = User.query();
+        User.getAllUsers(function(users) {
+            $scope.users = users;
+        });
 
         $scope.delete = function(user) {
             User.remove({

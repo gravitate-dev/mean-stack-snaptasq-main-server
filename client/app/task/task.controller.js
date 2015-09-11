@@ -157,38 +157,11 @@ angular.module('snaptasqApp')
     })
     .controller('TasksCtrl', function($scope, _me, Page, notifications, Notification, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
         $scope._bgcolorGrey();
-        //$scope._bgcolorSnapYellow();
         $scope._noFooter();
         $scope.currentUrl = $location.absUrl();
         $scope._me = _me;
-        //console.log(_me);
-        $scope.errors = {};
-        $scope.filter = {};
         $scope.otherFilter = {};
         $scope.myTaskFilter = {};
-        $scope.myTasks = [];
-        $scope.otherTasks = [];
-
-        $scope.viewingLists = 'all';
-
-        Task.countResponsibleTasks(function(count) {
-            $rootScope.$broadcast('count.responsible', count);
-        });
-
-        Task.getMyTasks(function(data) {
-            _.each(data, function(task) {
-                task.locationCopy = _.clone(task.location, true);
-                $scope.myTasks.push(task);
-            });
-        });
-        Task.getMyAppliedTasks(function(data) {
-            _.each(data, function(task) {
-                task.locationCopy = _.clone(task.location, true);
-                $scope.otherTasks.push(task);
-            });
-        });
-
-        $scope.loadMoreTasqs = function() {}
     })
     .controller('TaskEditCtrl', function($scope, $window, Modal, notifications, $routeParams, Task, Notification, $rootScope, TaskMarshaler, Auth, $location) {
         $scope._noFooter();

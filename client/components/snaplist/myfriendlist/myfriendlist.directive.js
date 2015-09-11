@@ -1,19 +1,17 @@
-angular.module('snaptasqApp').directive('friendcommunitylist', function($parse, $location, Community) {
+angular.module('snaptasqApp').directive('myfriendlist', function($parse, $location, User) {
     return {
         restrict: 'ACE',
         // Replace the div with our template
         replace: false,
         scope: {
-            id: "=friendcommunitylist",
             searchFilter: "=filter",
             listTitle: "=listTitle"
         },
-        templateUrl: 'components/snaplist/friendcommunitylist/friendcommunitylist.template.html',
+        templateUrl: 'components/snaplist/myfriendlist/myfriendlist.template.html',
         controller: function($scope) {
             $scope.items = [];
-            console.log($scope.id);
-            Community.getUserCommunties($scope.id, function(data) {
-                $scope.items = data;
+            User.get(function(data) {
+                $scope.items = data.friends;
             });
             $scope._goToPath = function(url, $event) {
                 if (!angular.isUndefined($event)) {

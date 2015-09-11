@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('snaptasqApp')
-    .factory('User', function($resource, $http) {
+    .factory('User', function($resource, $http, $q, $cacheFactory) {
+        var cacheMe = $cacheFactory('User');
         var Usr = $resource('/api/users/:id/:controller', {
             id: '@_id'
         }, {
@@ -49,6 +50,7 @@ angular.module('snaptasqApp')
             },
             get: {
                 method: 'GET',
+                cache: cacheMe,
                 params: {
                     id: 'me'
                 }
@@ -83,6 +85,16 @@ angular.module('snaptasqApp')
                     return cb(undefined);
                 });
             },
+            /** You must have admin privlege for this **/
+            getAllUsers: function(cb) {
+                var cb = cb || angular.noop;
+                $http.get('/api/users/').success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    console.error(err);
+                    return cb(undefined);
+                });
+            },
             /**
              * Given a friend request I can accept a friend
              * If they are not my friends and they requested me
@@ -106,7 +118,10 @@ angular.module('snaptasqApp')
                     }
                 });
             },
-            get: Usr.get,
+            removeCache: function() {
+                cacheMe.removeAll();
+            },
+            get: Usr.get, //this guy is cached
             applyBetaCode: Usr.applyBetaCode,
             changePassword: Usr.changePassword,
             resetChangePassword: Usr.resetChangePassword,

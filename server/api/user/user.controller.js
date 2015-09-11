@@ -174,42 +174,16 @@ exports.hasFbPermission = function(req, res) {
                 }
             }
             return res.send(500, "Facebook permission not there");
-            /*_.each(response.data,function(item){
-                
-                    if (item.permission==permission){
-                        hasPermission=true;
-                    }
-                    //user.fb.permissions.push(item.permission)
-                }
-            });
-            if (hasPermission)
-                    
-                else
-                    return res.status(403,"Permission not granted");*/
-            /*
-            user.save(function(err) {
-                if (err) {
-                    return res.send(500,"Failed to save user to db");
-                }
-                //success here
-                if (hasPermission)
-                    return res.status(200,"Facebook permission exists");
-                else
-                    return res.status(403,"Permission not granted");
-            });
-*/
         });
     });
 };
 exports.applyBetaCode = function(req, res, next) {
-    if (!req.session.userId) {
+    var currentUserId = req.session.userId;
+    if (currentUserId == undefined) {
         return res.send(401); //they need to relogin
     }
-    //if (req.param('id')!=req.session.userId){
-    //  return res.send(500);
-    //}
     User.findOne({
-        _id: req.session.userId
+        _id: currentUserId
     }, function(err, user) {
         if (err) validationError(res, err);
         if (!user) return res.status(500).json({
@@ -346,14 +320,15 @@ exports.destroy = function(req, res) {
  * related to me.
  */
 exports.deleteMyAccount = function(req, res) {
-    if (!req.session.userId) {
+    var currentUserId = req.session.userId;
+    if (currentUserId == undefined) {
         return res.send(500, "Missing session userId");
     }
-    if (req.param('id') != req.session.userId) {
+    if (req.param('id') != currentUserId) {
         return res.send(500, "The id that was sent did not match the userId");
     }
 
-    User.findByIdAndRemove(req.session.userId, function(err, user) {
+    User.findByIdAndRemove(currentUserId, function(err, user) {
         if (err) return res.send(500, err);
         //destroy session then ok
         req.session.destroy();

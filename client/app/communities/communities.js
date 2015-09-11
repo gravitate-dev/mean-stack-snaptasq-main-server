@@ -23,7 +23,7 @@ angular.module('snaptasqApp')
                 controller: 'CommunityCtrl',
             })
             .when('/community/friends', {
-                templateUrl: 'app/communities/community.html',
+                templateUrl: 'app/communities/friend.community.html',
                 controller: 'CommunityFriendCtrl',
                 authenticate: true,
             });

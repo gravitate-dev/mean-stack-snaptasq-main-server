@@ -25,15 +25,18 @@ exports.getMyAppliedTasks = function(req, res) {
         if (!user || err) return handleError(res, err);
         if (!user.otherTasks) return handleError(res, err);
         Task.find({
-            '_id': {
-                $in: user.otherTasks
-            }
-        }, function(err, tasks) {
-            if (err) {
-                return handleError(res, err);
-            }
-            return res.json(200, tasks);
-        });
+                '_id': {
+                    $in: user.otherTasks
+                }
+            }, '-__v')
+            .sort({
+                'updated': -1
+            })
+            .limit(30)
+            .exec(function(err, tasks) {
+                if (err) return handleError(res, err);
+                return res.json(200, tasks);
+            });
     });
 }
 
@@ -53,39 +56,51 @@ exports.countResponsibleTasks = function(req, res) {
 exports.getTasksResponsible = function(req, res) {
     var currentUserId = req.session.userId;
     Task.find({
-        'tasker.id': currentUserId
-    }, function(err, tasks) {
-        if (err) {
-            return handleError(res, err);
-        }
-        return res.json(200, tasks);
-    });
+            'tasker.id': currentUserId
+        }, '-__v')
+        .sort({
+            'updated': -1
+        })
+        .limit(30)
+        .exec(function(err, tasks) {
+            if (err) return handleError(res, err);
+            return res.json(200, tasks);
+        });
 }
 
 exports.getMyTasks = function(req, res) {
     var currentUserId = req.session.userId;
     Task.find({
-        'ownerId': currentUserId
-    }, '-__v', function(err, tasks) {
-        if (err) {
-            return handleError(res, err);
-        }
-        return res.json(200, tasks);
-    });
-}
-
-exports.getFriendsTasks = function(req, res) {
-        //TODO check if they are friends
-        var currentUserId = req.session.userId;
-        var friendId = req.param('id');
-        Task.find({
-            'ownerId': friendId
-        }, '-__v', function(err, tasks) {
-            if (err) {
-                return handleError(res, err);
-            }
+            'ownerId': currentUserId
+        }, '-__v')
+        .sort({
+            'updated': -1
+        })
+        .limit(30)
+        .exec(function(err, tasks) {
+            if (err) return handleError(res, err);
             return res.json(200, tasks);
         });
+}
+
+/**
+This gets another users tasks not Really a friend
+**/
+exports.getUsersTasksByUserId = function(req, res) {
+        //TODO check if they are friends
+        var currentUserId = req.session.userId;
+        var id = req.param('id');
+        Task.find({
+                'ownerId': id
+            }, '-__v')
+            .sort({
+                'updated': -1
+            })
+            .limit(30)
+            .exec(function(err, tasks) {
+                if (err) return handleError(res, err);
+                return res.json(200, tasks);
+            });
     }
     // Get a single task
 exports.show = function(req, res) {
@@ -244,7 +259,7 @@ exports.applyToTask = function(req, res) {
  * @param applicantId: User id who should be the tasker
 
  * @pre: checked by isTaskOwner for null task, and task ownership
-**/
+ **/
 exports.setTasker = function(req, res) {
     Task.findById(req.params.id, function(err, task) {
         var didApplicantApplyToTask = false;
@@ -456,16 +471,20 @@ exports.getMyFriendsTasks = function(req, res) {
         if (err) return next(err);
         if (!user) return res.send(401);
         var myFriendsIds = _.pluck(user.friends, "id");
+
         Task.find({
-            'ownerId': {
-                $in: myFriendsIds
-            }
-        }, '-__v', function(err, tasks) {
-            if (err) {
-                return handleError(res, err);
-            }
-            return res.json(200, tasks);
-        });
+                'ownerId': {
+                    $in: myFriendsIds
+                }
+            }, '-__v')
+            .sort({
+                'updated': -1
+            })
+            .limit(30)
+            .exec(function(err, tasks) {
+                if (err) return handleError(res, err);
+                return res.json(200, tasks);
+            });
         //from me i want to get all my tasks owned by my friends
     });
 }

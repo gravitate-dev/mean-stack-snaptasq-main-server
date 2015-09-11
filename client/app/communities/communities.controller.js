@@ -77,15 +77,12 @@ angular.module('snaptasqApp')
                 Notification.error(e);
             }
         }
-    }).controller('CommunitiesCtrl', function($scope, _me, Community, $http, $window, Auth, $location) {
-        //$scope._bgcolorSnapYellow();
+    }).controller('CommunitiesCtrl', function($scope, _me, Community, $http, $window, Auth, User, $location) {
+        User.removeCache();
         $scope._bgcolorGrey();
         $scope._noFooter();
         $scope.communityFilter = {};
         $scope.friendlistFilter = {};
-        _me.$promise.then(function(me) {
-            $scope.communities = me.groups;
-        });
         /*
         Auth.hasFacebookPermission('user_friends',function(hasPermission){
             console.log(hasPermission);
@@ -101,16 +98,12 @@ angular.module('snaptasqApp')
             $window.location.href = '/auth/facebook/reauth';
         };
     }).controller('CommunityCtrl', function($scope, Community, _me, Task, Auth, $routeParams, Notification, notifications) {
-        $scope.groupId = $routeParams.id;
+        $scope.id = $routeParams.id;
         $scope.allowed = undefined;
-        $scope.tasks = [];
         $scope.taskFilter = {};
         $scope.userFilter = {};
         $scope.filter = {};
         $scope.isMember = undefined;
-        //getMyFriendsTasks
-
-
         $scope.init = function() {
 
             //check to see if i am a member
@@ -119,18 +112,9 @@ angular.module('snaptasqApp')
                 $scope.isMember = isMember;
                 if (isMember) {
                     $scope.allowed = true;
-                    $scope.loadGroupDetails($scope.groupId);
                 } else {
                     Community.isGroupOpen($scope.groupId, function(isOpen) {
-                        if (isOpen) {
-                            $scope.allowed = true;
-                            $scope.loadGroupDetails($scope.groupId);
-                        } else {
-                            $scope.allowed = false;
-                            Community.getById($scope.groupId, function(item) {
-                                $scope.group = item;
-                            });
-                        }
+                        $scope.allowed = isOpen;
                     });
                 }
 
@@ -138,14 +122,6 @@ angular.module('snaptasqApp')
         }
 
         $scope.init();
-        $scope.loadGroupDetails = function(groupId) {
-            Community.getById(groupId, function(item) {
-                $scope.group = item;
-            });
-            Community.getTasksForGroupId(groupId, function(item) {
-                $scope.tasks = item;
-            });
-        };
 
         $scope.requestJoin = function(challenge, creds) {
             Community.requestJoin($scope.groupId, $scope._me._id, challenge.id, creds, function(success) {
@@ -161,24 +137,19 @@ angular.module('snaptasqApp')
             })
         }
     })
-    .controller('CommunityFriendCtrl', function($scope, _me, Community, Task, Auth, $routeParams, Notification, notifications) {
+    .controller('CommunityFriendCtrl', function($scope, _me, Community, Task, Auth, User, $routeParams, Notification, notifications) {
+        //cant cache this as i get my friends!
+        User.removeCache();
         $scope.group = {};
         _me.$promise.then(function(me) {
             $scope.group = {
                 name: "my friends on snaptasq",
-                users: me.friends
+                users: me.friends,
+                description: "These are your friends on snaptasq. Tasqs are automatically shared here to others"
             };
         });
 
         $scope.allowed = true;
-        $scope.tasks = [];
         $scope.filter = {};
         $scope.isMember = true;
-        Task.getMyFriendsTasks(function(data) {
-            if (angular.isUndefined(data)) {
-                console.error("No tasks found");
-            } else {
-                $scope.tasks = data;
-            }
-        });
     });

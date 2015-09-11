@@ -8,9 +8,10 @@ angular.module('snaptasqApp')
         $scope.user = {};
         $scope.filter = {};
         $scope.tasksFilter = {};
-        $scope.userDoesntExist = false;
+        $scope.userDoesntExist = undefined;
         $scope.friendCommunities = [];
         $scope.friendTasks = [];
+        $scope.isStranger == undefined;
         _me.$promise.then(function(me) {
             if ($scope.id == me._id) {
                 $scope.isStranger = false;
@@ -42,6 +43,7 @@ angular.module('snaptasqApp')
                 $scope.user = {};
                 $scope.userDoesntExist = true;
             } else {
+                $scope.userDoesntExist = false;
                 $scope.user = user;
             }
         });

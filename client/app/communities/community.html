@@ -3,7 +3,10 @@
         <div class="col-md-12 col-sm-12 col-xs-12">
             <img ng-if="group.pic" style="width:100%;max-height:200px;background-size:cover;" class="ng-scope" ng-src="{{group.pic}}">
             <div class="panel panel-default">
-                <div snaplist-title="group.name" class="text-center"></div>
+                <a href="{{group.url}}" ng-if="group.url">
+                    <div snaplist-title="group.name" class="text-center"></div>
+                </a>
+                <div ng-if="!group.url" snaplist-title="group.name" class="text-center"></div>
                 <div ng-if="isMember==false">
                     <div snaplist-button="{href:'/communities/find',text:'join this community',icon:'fa fa-plus'}"></div>
                     <p>only group members can see tasqs.</p>
@@ -22,13 +25,13 @@
                                 <div tab-heading>
                                     <i class="fa fa-inbox"></i>&nbsp;Tasqs
                                 </div>
-                                <div communitytaskslist="tasks" list-title="false" list-filter="taskFilter"></div>
+                                <div communitytaskslist="id" list-title="false" list-filter="taskFilter"></div>
                             </section>
                             <section tab select="">
                                 <div tab-heading>
                                     <i class="fa fa-user"></i>&nbsp;Members
                                 </div>
-                                <div communityuserslist="group.users" list-title="false" list-filter="userFilter"></div>
+                                <div communityuserslist="id" list-title="false" list-filter="userFilter"></div>
                             </section>
                             <section tab select="">
                                 <div tab-heading>

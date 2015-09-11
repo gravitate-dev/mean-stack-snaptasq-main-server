@@ -30,13 +30,13 @@
                             <div tab-heading>
                                 <i class="fa fa-inbox"></i>&nbsp;communities
                             </div>
-                            <div friendcommunitylist="friendCommunities" list-title="false" list-filter="communityFilter"></div>
+                            <div friendcommunitylist="id" list-title="false" list-filter="communityFilter"></div>
                         </section>
                         <section tab select="">
                             <div tab-heading>
                                 <i class="fa fa-inbox"></i>&nbsp;tasqs
                             </div>
-                            <div friendmytaskslist="friendTasks" list-title="false" list-filter="tasksFilter"></div>
+                            <div friendtaskslist="id" list-title="false" list-filter="tasksFilter"></div>
                         </section>
                     </div>
                 </div>
@@ -75,14 +75,14 @@
                         </div>
                     </div>
                 </div>
-                <div friendcommunitylist="friendCommunities" list-title="true" list-filter="communityFilter"></div>
+                <div friendcommunitylist="id" list-title="true" list-filter="communityFilter"></div>
             </div>
             <div class="col-md-6 col-sm-6">
                 <div ng-if="isStranger==true">
                     <div class="tasq-list-header">{{user.name | lowercase}}'s tasqs</div>
                     <div class="well" style="background-color:white;margin:0px;">tasqs only shown to friends</div>
                 </div>
-                <div ng-if="isStranger==false" friendmytaskslist="friendTasks" list-title="true" list-filter="tasksFilter"></div>
+                <div ng-if="isStranger==false" friendtaskslist="id" list-title="true" list-filter="tasksFilter"></div>
             </div>
         </div>
     </section>

@@ -1,15 +1,18 @@
-angular.module('snaptasqApp').directive('communitylist', function($parse, $location) {
+angular.module('snaptasqApp').directive('communityfriendtaskslist', function($parse, $location, Task) {
     return {
         restrict: 'ACE',
         // Replace the div with our template
         replace: false,
         scope: {
-            items: "=communitylist",
             searchFilter: "=filter",
             listTitle: "=listTitle"
         },
-        templateUrl: 'components/snaplist/communitylist/communitylist.template.html',
+        templateUrl: 'components/snaplist/communityfriendtaskslist/communityfriendtaskslist.template.html',
         controller: function($scope) {
+            $scope.items = [];
+            Task.getMyFriendsTasks(function(tasks) {
+                $scope.items = tasks;
+            });
             $scope._goToPath = function(url, $event) {
                 if (!angular.isUndefined($event)) {
                     $event.stopPropagation();
