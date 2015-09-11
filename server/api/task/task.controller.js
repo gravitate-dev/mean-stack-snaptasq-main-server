@@ -30,7 +30,7 @@ exports.getMyAppliedTasks = function(req, res) {
                 }
             }, '-__v')
             .sort({
-                'updated': -1
+                'created': -1
             })
             .limit(30)
             .exec(function(err, tasks) {
@@ -59,7 +59,7 @@ exports.getTasksResponsible = function(req, res) {
             'tasker.id': currentUserId
         }, '-__v')
         .sort({
-            'updated': -1
+            'created': -1
         })
         .limit(30)
         .exec(function(err, tasks) {
@@ -74,7 +74,7 @@ exports.getMyTasks = function(req, res) {
             'ownerId': currentUserId
         }, '-__v')
         .sort({
-            'updated': -1
+            'created': -1
         })
         .limit(30)
         .exec(function(err, tasks) {
@@ -94,7 +94,7 @@ exports.getUsersTasksByUserId = function(req, res) {
                 'ownerId': id
             }, '-__v')
             .sort({
-                'updated': -1
+                'created': -1
             })
             .limit(30)
             .exec(function(err, tasks) {
@@ -478,7 +478,7 @@ exports.getMyFriendsTasks = function(req, res) {
                 }
             }, '-__v')
             .sort({
-                'updated': -1
+                'created': -1
             })
             .limit(30)
             .exec(function(err, tasks) {
