@@ -76,7 +76,7 @@ exports.getMyTasks = function(req, res) {
         .sort({
             'updated': -1
         })
-        .limit(2)
+        .limit(30)
         .exec(function(err, tasks) {
             if (err) return handleError(res, err);
             return res.json(200, tasks);
