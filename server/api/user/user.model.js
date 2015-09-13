@@ -5,6 +5,21 @@ var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var authTypes = ['facebook'];
 var config = require('../../config/environment');
+
+var friendSchema = new Schema({
+    id: Schema.Types.ObjectId,
+    name: String,
+    pic: {
+        type: String,
+        default: "assets/logos/no_avatar.gif"
+    },
+    externalId: String, //this is like their fbID
+    source: {
+        type: String,
+        default: "snaptasq"
+    } //soource is where you got the friend, it can be facebook, snaptasq, twitter, etc
+});
+
 var UserSchema = new Schema({
     name: {
         type: String,
@@ -64,14 +79,13 @@ var UserSchema = new Schema({
         default: 'user'
     },
     link: String, //this will be set with fb comes in
-    myTasks: [Schema.Types.ObjectId],
-    otherTasks: [Schema.Types.ObjectId],
     groups: [{
         id: Schema.Types.ObjectId,
         name: String,
         pic: String,
         source: String
     }],
+    otherTasks: [Schema.Types.ObjectId],
     friends: [friendSchema],
     hashedPassword: String,
     provider: String,
@@ -83,19 +97,7 @@ var UserSchema = new Schema({
 });
 
 
-var friendSchema = new Schema({
-    id: Schema.Types.ObjectId,
-    name: String,
-    pic: {
-        type: String,
-        default: "assets/logos/no_avatar.gif"
-    },
-    externalId: String, //this is like their fbID
-    source: {
-        type: String,
-        default: "snaptasq"
-    } //soource is where you got the friend, it can be facebook, snaptasq, twitter, etc
-});
+
 /**
  * Virtuals
  */

@@ -100,9 +100,12 @@ angular.module('snaptasqApp')
     }).controller('CommunityCtrl', function($scope, Community, _me, Task, Auth, $routeParams, Notification, notifications) {
         $scope.id = $routeParams.id;
         $scope.allowed = undefined;
-        $scope.taskFilter = {};
-        $scope.userFilter = {};
-        $scope.filter = {};
+        $scope.taskFilter = {
+            text: undefined
+        };
+        $scope.userFilter = {
+            text: undefined
+        };
         $scope.isMember = undefined;
         $scope.init = function() {
 
@@ -150,6 +153,11 @@ angular.module('snaptasqApp')
         });
 
         $scope.allowed = true;
-        $scope.filter = {};
+        $scope.taskFilter = {
+            text: undefined
+        };
+        $scope.userFilter = {
+            text: undefined
+        };
         $scope.isMember = true;
     });

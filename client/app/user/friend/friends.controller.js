@@ -6,8 +6,12 @@ angular.module('snaptasqApp')
         $scope._noFooter();
         $scope.id = $routeParams.id;
         $scope.user = {};
-        $scope.filter = {};
-        $scope.tasksFilter = {};
+        $scope.communityFilter = {
+            text: undefined
+        };
+        $scope.tasksFilter = {
+            text: undefined
+        };
         $scope.userDoesntExist = undefined;
         $scope.friendCommunities = [];
         $scope.friendTasks = [];

@@ -10,6 +10,10 @@ angular.module('snaptasqApp').directive('mycommunitylist', function($parse, $loc
         templateUrl: 'components/snaplist/mycommunitylist/mycommunitylist.template.html',
         controller: function($scope) {
             $scope.items = [];
+            $scope.limitCount = 25;
+            $scope.showMore = function() {
+                $scope.limitCount += 25;
+            }
             User.get(function(d) {
                 Community.getUserCommunties(d._id, function(data) {
                     $scope.items = data;

@@ -5,6 +5,10 @@ var User = require('../user/user.model');
 var Emailer = require('../email/email.controller');
 var config = require('../../config/environment');
 var Notify = require('../notify/notify.controller');
+var moment = require('moment');
+var RateLimiter = require('limiter').RateLimiter;
+var limiterSetTasker = new RateLimiter(1, 'hour', true);
+
 // Get list of tasks
 exports.index = function(req, res) {
     Task.find({}, '-__v', function(err, tasks) {
@@ -24,15 +28,16 @@ exports.getMyAppliedTasks = function(req, res) {
     }, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, user) { // don't ever give out the password or salt
         if (!user || err) return handleError(res, err);
         if (!user.otherTasks) return handleError(res, err);
-        Task.find({
-                '_id': {
-                    $in: user.otherTasks
-                }
-            }, '-__v')
+        var query = {};
+        if (req.dsl) query = req.dsl;
+        query['_id'] = {
+            $in: user.otherTasks
+        };
+        Task.find(query, '-__v')
             .sort({
                 'created': -1
             })
-            .limit(30)
+            .limit(10)
             .exec(function(err, tasks) {
                 if (err) return handleError(res, err);
                 return res.json(200, tasks);
@@ -42,12 +47,13 @@ exports.getMyAppliedTasks = function(req, res) {
 
 exports.countResponsibleTasks = function(req, res) {
     var currentUserId = req.session.userId;
-    Task.count({
-        'tasker.id': currentUserId,
-        'status': {
-            $ne: "completed"
-        }
-    }, function(err, count) {
+    var query = {};
+    if (req.dsl) query = req.dsl;
+    query['tasker.id'] = currentUserId;
+    query['status'] = {
+        $ne: "completed"
+    };
+    Task.count(query, function(err, count) {
         if (err) return handleError(res, err);
         return res.status(200).send("" + count);
     });
@@ -55,13 +61,14 @@ exports.countResponsibleTasks = function(req, res) {
 
 exports.getTasksResponsible = function(req, res) {
     var currentUserId = req.session.userId;
-    Task.find({
-            'tasker.id': currentUserId
-        }, '-__v')
+    var query = {};
+    if (req.dsl) query = req.dsl;
+    query['tasker.id'] = currentUserId;
+    Task.find(query, '-__v')
         .sort({
             'created': -1
         })
-        .limit(30)
+        .limit(10)
         .exec(function(err, tasks) {
             if (err) return handleError(res, err);
             return res.json(200, tasks);
@@ -70,13 +77,15 @@ exports.getTasksResponsible = function(req, res) {
 
 exports.getMyTasks = function(req, res) {
     var currentUserId = req.session.userId;
-    Task.find({
-            'ownerId': currentUserId
-        }, '-__v')
+
+    var query = {};
+    if (req.dsl) query = req.dsl;
+    query.ownerId = currentUserId;
+    Task.find(query, '-__v')
         .sort({
             'created': -1
         })
-        .limit(30)
+        .limit(10)
         .exec(function(err, tasks) {
             if (err) return handleError(res, err);
             return res.json(200, tasks);
@@ -87,20 +96,47 @@ exports.getMyTasks = function(req, res) {
 This gets another users tasks not Really a friend
 **/
 exports.getUsersTasksByUserId = function(req, res) {
-        //TODO check if they are friends
-        var currentUserId = req.session.userId;
-        var id = req.param('id');
-        Task.find({
-                'ownerId': id
-            }, '-__v')
-            .sort({
-                'created': -1
-            })
-            .limit(30)
-            .exec(function(err, tasks) {
-                if (err) return handleError(res, err);
-                return res.json(200, tasks);
-            });
+    //TODO check if they are friends
+    var currentUserId = req.session.userId;
+    var id = req.param('id');
+    if (id == undefined) return res.send(400, "Missing parameter id");
+    var query = {};
+    if (req.dsl) query = req.dsl;
+    query.ownerId = id;
+    Task.find(query, '-__v')
+        .sort({
+            'created': -1
+        })
+        .limit(10)
+        .exec(function(err, tasks) {
+            if (err) return handleError(res, err);
+            return res.json(200, tasks);
+        });
+}
+
+exports.getMyFriendsTasks = function(req, res) {
+        User.findOne({
+            _id: req.session.userId
+        }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) { // don't ever give out the password or salt
+            if (err) return next(err);
+            if (!user) return res.send(401);
+            var myFriendsIds = _.pluck(user.friends, "id");
+            var query = {};
+            if (req.dsl) query = req.dsl;
+            query.ownerId = {
+                $in: myFriendsIds
+            };
+            Task.find(query, '-__v')
+                .sort({
+                    'created': -1
+                })
+                .limit(10)
+                .exec(function(err, tasks) {
+                    if (err) return handleError(res, err);
+                    return res.json(200, tasks);
+                });
+            //from me i want to get all my tasks owned by my friends
+        });
     }
     // Get a single task
 exports.show = function(req, res) {
@@ -118,6 +154,7 @@ exports.show = function(req, res) {
 exports.create = function(req, res) {
     var newTask = new Task(req.body);
     var currentUserId = req.session.userId;
+    if (currentUserId == undefined) return res.send(400, "Please login first. Missing userId");
     newTask.ownerId = currentUserId;
     User.findOne({
         _id: currentUserId
@@ -132,18 +169,11 @@ exports.create = function(req, res) {
             if (err) {
                 return handleError(res, err);
             }
-            user.myTasks.push(task._id);
-            user.save(function(err) {
-                if (err) {
-                    console.log(err);
-                    return handleError(res, err);
-                }
-                Notify.put(user._id, "MYTASK_CREATED", {
-                    task: task.name,
-                    name: user.name
-                }, '/tasq/view/' + task._id.toString());
-                return res.json(201, task);
-            });
+            Notify.put(user._id, "MYTASK_CREATED", {
+                task: task.name,
+                name: user.name
+            }, '/tasq/view/' + task._id.toString());
+            return res.json(201, task);
         });
     });
 };
@@ -261,9 +291,13 @@ exports.applyToTask = function(req, res) {
  * @pre: checked by isTaskOwner for null task, and task ownership
  **/
 exports.setTasker = function(req, res) {
-    Task.findById(req.params.id, function(err, task) {
+    var taskId = req.param('id');
+    if (taskId == undefined) return res.send(400, "Missing parameter id. For the TaskID");
+    var chosenApplicantId = req.param('applicantId');
+    //Not checking for undefined because i allow undefined, when the tasker is set to none.
+
+    Task.findById(taskId, function(err, task) {
         var didApplicantApplyToTask = false;
-        var chosenApplicantId = req.param('applicantId');
         if (chosenApplicantId != undefined) {
             _.each(task.applicants, function(item) {
                 if (item.id.equals(chosenApplicantId))
@@ -272,11 +306,38 @@ exports.setTasker = function(req, res) {
             if (!didApplicantApplyToTask) {
                 return res.status(500).send("This person is not applying for your task");
             }
-        }
-        if (chosenApplicantId == undefined) {
+            User.findOne({
+                _id: chosenApplicantId
+            }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) { // don't ever give out the password or salt
+                if (err) return res.status(500).json(err);
+                if (!user) return res.send(404, "User does not exist");
+                task.tasker = {
+                    id: user._id,
+                    name: user.name,
+                    pic: user.pic,
+                    fbId: user.fb.id
+                };
+                if (user.fb && user.fb.id)
+                    task.tasker.fbId = user.fb.id;
+                task.status = "in progress";
+                task.save(function(err) {
+                    if (err) {
+                        return handleError(res, err);
+                    }
+                    //https://snaptasq.com/task/view/55c82438ede999467491c629
+                    //TODO write a wrapper for emailer
+                    limiterSetTasker.removeTokens(1, function(err, remainingRequests) {
+                        if (remainingRequests > 0) {
+                            var taskUri = config.host.url + "tasq/view/" + task._id;
+                            Emailer.sendRequestTaskerHelp(null, null, user.email, taskUri, task.name, task.ownerName, task.ownerPic);
+                        }
+                        return res.json(200, task);
+                    });
+                });
+            });
+        } else {
             task.tasker = {
-                id: chosenApplicantId,
-                confirmed: false
+                id: chosenApplicantId
             };
             task.status = "open";
             task.save(function(err) {
@@ -285,41 +346,7 @@ exports.setTasker = function(req, res) {
                 }
                 return res.status(200).json(task);
             });
-        } else {
-
-            User.findOne({
-                _id: chosenApplicantId
-            }, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, user) { // don't ever give out the password or salt
-                if (err) return res.status(500).json(err);
-                if (!user) return res.json(401);
-                if (user.fb && user.fb.id)
-                    task.tasker = {
-                        id: user._id,
-                        name: user.name,
-                        pic: user.pic,
-                        fbId: user.fb.id,
-                        confirmed: false
-                    };
-                else
-                    task.tasker = {
-                        id: user._id,
-                        name: user.name,
-                        pic: user.pic,
-                        confirmed: false
-                    };
-                task.status = "chosen";
-                task.save(function(err) {
-                    if (err) {
-                        return handleError(res, err);
-                    }
-                    //https://snaptasq.com/task/view/55c82438ede999467491c629
-                    var taskUri = config.host.url + "task/view/" + task._id;
-                    Emailer.sendRequestTaskerHelp(null, null, user.email, taskUri, task.name, task.ownerName, task.ownerPic);
-                    return res.json(200, task);
-                });
-            });
         }
-
     });
 };
 
@@ -462,29 +489,4 @@ exports.destroy = function(req, res) {
 
 function handleError(res, err) {
     return res.send(500, err);
-}
-
-exports.getMyFriendsTasks = function(req, res) {
-    User.findOne({
-        _id: req.session.userId
-    }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) { // don't ever give out the password or salt
-        if (err) return next(err);
-        if (!user) return res.send(401);
-        var myFriendsIds = _.pluck(user.friends, "id");
-
-        Task.find({
-                'ownerId': {
-                    $in: myFriendsIds
-                }
-            }, '-__v')
-            .sort({
-                'created': -1
-            })
-            .limit(30)
-            .exec(function(err, tasks) {
-                if (err) return handleError(res, err);
-                return res.json(200, tasks);
-            });
-        //from me i want to get all my tasks owned by my friends
-    });
 }

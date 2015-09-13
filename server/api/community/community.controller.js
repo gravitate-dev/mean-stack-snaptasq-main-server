@@ -367,9 +367,13 @@ function _addUserToComm(req, res, comm, user) {
 
 exports.getTasks = function(req, res) {
     var groupId = req.param('id');
-    Task.find({
-        'communitiesIn.id': groupId
-    }, function(err, tasks) {
+    if (groupId == undefined) return res.send(400, "Missing parameter id. The Group ID");
+
+    var query = {};
+    if (req.dsl) query = req.dsl;
+    query['communitiesIn.id'] = groupId;
+
+    Task.find(query, function(err, tasks) {
         if (err) {
             return handleError(res, err);
         }

@@ -11,10 +11,7 @@ var express = require('express'),
     mongoose = require('mongoose'),
     config = require('./config/environment'),
     recaptcha = require('./config/recaptcha'),
-    _ = require('lodash'),
-    seo = require('mean-seo');
-
-
+    _ = require('lodash');
 
 
 // Connect to database

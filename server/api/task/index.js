@@ -3,17 +3,18 @@
 var express = require('express');
 var controller = require('./task.controller');
 var auth = require('../../auth/auth.service');
+var dsl = require('../../components/dsl');
 var router = express.Router();
 
 router.get('/', controller.index);
-router.get('/me', auth.isAuthenticated(), controller.getMyTasks);
-router.get('/meResponsible', auth.isAuthenticated(), controller.getTasksResponsible);
-router.get('/meApplied', auth.isAuthenticated(), controller.getMyAppliedTasks);
-router.get('/meFriends', auth.isAuthenticated(), controller.getMyFriendsTasks);
+router.get('/me', auth.isAuthenticated(), dsl.processSearch, controller.getMyTasks); // dsl
+router.get('/meResponsible', auth.isAuthenticated(), dsl.processSearch, controller.getTasksResponsible);
+router.get('/meApplied', auth.isAuthenticated(), dsl.processSearch, controller.getMyAppliedTasks);
+router.get('/meFriends', auth.isAuthenticated(), dsl.processSearch, controller.getMyFriendsTasks);
 
-router.get('/countResponsible', auth.isAuthenticated(), controller.countResponsibleTasks);
+router.get('/countResponsible', auth.isAuthenticated(), dsl.processSearch, controller.countResponsibleTasks);
 
-router.get('/friends/:id', controller.getUsersTasksByUserId);
+router.get('/friends/:id', dsl.processSearch, controller.getUsersTasksByUserId); //dsl
 router.get('/:id', controller.show);
 router.post('/', auth.isAuthenticated(), controller.create);
 router.post('/:id', auth.isAuthenticated(), controller.update);

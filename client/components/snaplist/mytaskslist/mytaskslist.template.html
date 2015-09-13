@@ -2,7 +2,7 @@
     <div ng-if="listTitle" snaplist-title="'my tasqs'"></div>
     <div snaplist-button="{href:'/tasq/create',text:'create new tasq',icon:'fa fa-plus'}"></div>
     <div snaplist-search="searchFilter.text"></div>
-    <ul class="list-group" id="contact-list" infinite-scroll='loadMore()' infinite-scroll-distance='2'>
+    <ul class="list-group" infinite-scroll='loadMore()' infinite-scroll-distance='2'>
         <li class="list-group-item ng-cloak" ng-if="(items | filter:{'name':searchFilter.text}).length==0">
             <div class="col-xs-12 col-sm-12">
                 <span class="name">no tasqs</span>
@@ -10,9 +10,6 @@
             </div>
             <div class="clearfix"></div>
         </li>
-        <!-- <li class="list-group-item" ng-repeat='image in images'>
-           <img ng-src='http://placehold.it/225x250&text={{image}}'> 
-        </li> -->
         <li class="list-group-item" style="cursor:pointer;word-break: break-word;" ng-repeat="item in items | filter:{'name':searchFilter.text}" ng-click="_goToPath('/tasq/view/'+item._id)">
             <div snaplist-results-task="item"></div>
         </li>

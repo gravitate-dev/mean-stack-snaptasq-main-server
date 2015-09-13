@@ -2,7 +2,7 @@
     <div ng-if="listTitle" snaplist-title="'tasqs'"></div>
     <div snaplist-button="{href:'/tasq/create',text:'share a tasq',icon:'fa fa-plus'}"></div>
     <div snaplist-search="searchFilter.text"></div>
-    <ul class="list-group" id="contact-list">
+    <ul class="list-group" infinite-scroll='loadMore()' infinite-scroll-distance='2'>
         <li class="list-group-item ng-cloak" ng-if="(items | filter:{'name':searchFilter.text}).length==0">
             <div class="col-xs-12 col-sm-12">
                 <span class="name">no tasqs</span>

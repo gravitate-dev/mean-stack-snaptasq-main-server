@@ -14,6 +14,10 @@ angular.module('snaptasqApp').directive('communityuserslist', function($parse, $
             Community.getById($scope.id, function(group) {
                 $scope.items = group.users;
             });
+            $scope.limitCount = 25;
+            $scope.showMore = function() {
+                $scope.limitCount += 25;
+            }
             $scope._goToPath = function(url, $event) {
                 if (!angular.isUndefined($event)) {
                     $event.stopPropagation();

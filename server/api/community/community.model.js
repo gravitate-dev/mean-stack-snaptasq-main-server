@@ -4,6 +4,27 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var uuid = require('uuid');
 var config = require('../../config/environment');
+
+var ChallengeSchema = new Schema({
+    id: {
+        type: String,
+        default: function() {
+            return uuid.v4()
+        }
+    },
+    type: {
+        type: String,
+        default: "open"
+    }, // open,email,areacode,code, fburl, fburl requires a url to be inputted
+    answers: [{
+        type: String,
+        default: ""
+    }], //this can be suffix or area code
+    prompt: { //this is optional
+        type: String
+    },
+});
+
 var CommunitySchema = new Schema({
     name: String,
     users: [{
@@ -46,26 +67,6 @@ var CommunitySchema = new Schema({
         type: Date,
         default: Date.now
     }
-});
-
-var ChallengeSchema = new Schema({
-    id: {
-        type: String,
-        default: function() {
-            return uuid.v4()
-        }
-    },
-    type: {
-        type: String,
-        default: "open"
-    }, // open,email,areacode,code, fburl, fburl requires a url to be inputted
-    answers: [{
-        type: String,
-        default: ""
-    }], //this can be suffix or area code
-    prompt: { //this is optional
-        type: String
-    },
 });
 
 CommunitySchema.pre('save', function(next) {

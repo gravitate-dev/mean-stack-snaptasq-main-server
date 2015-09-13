@@ -11,10 +11,13 @@ angular.module('snaptasqApp').directive('friendcommunitylist', function($parse, 
         templateUrl: 'components/snaplist/friendcommunitylist/friendcommunitylist.template.html',
         controller: function($scope) {
             $scope.items = [];
-            console.log($scope.id);
             Community.getUserCommunties($scope.id, function(data) {
                 $scope.items = data;
             });
+            $scope.limitCount = 25;
+            $scope.showMore = function() {
+                $scope.limitCount += 25;
+            }
             $scope._goToPath = function(url, $event) {
                 if (!angular.isUndefined($event)) {
                     $event.stopPropagation();

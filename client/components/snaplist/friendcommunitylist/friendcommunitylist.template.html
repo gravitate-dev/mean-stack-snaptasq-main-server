@@ -2,17 +2,17 @@
     <div ng-if="listTitle" snaplist-title="'communities'"></div>
     <div snaplist-button="{href:'/communities/find',text:'invite friend to community',icon:'fa fa-plus'}"></div>
     <div snaplist-search="searchFilter.text"></div>
-    <ul class="list-group" id="communities-list">
+    <ul class="list-group" infinite-scroll='showMore()' infinite-scroll-distance='2'>
         <!-- default group my friends will always be shown -->
         <li class="list-group-item ng-cloak" ng-if="(items | filter:{'name':searchFilter.text}).length==0">
             <div class="col-xs-12 col-sm-12">
-                <span class="name">user has no communities yet</span>
+                <span class="name">no communities</span>
                 <br/>
             </div>
             <div class="clearfix"></div>
         </li>
         <!-- then the normal items -->
-        <li class="list-group-item" ng-repeat="item in items | filter:{'name':searchFilter.text}" ng-click="_goToPath('/community/view/'+item.id)">
+        <li class="list-group-item" ng-repeat="item in items | filter:{'name':searchFilter.text} | limitTo:limitCount" ng-click="_goToPath('/community/view/'+item.id)">
             <div class="col-md-3 col-sm-3 col-xs-3">
                 <img ng-src="{{item.pic}}" alt="{{item.name}}" style="max-width:64px;" class="img-responsive img-circle" />
             </div>

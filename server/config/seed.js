@@ -15,6 +15,7 @@ var config = require('./environment');
 var uuid = require('uuid');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var _ = require('lodash');
 
 Community.find({}).remove(function() {
     Community.create({
@@ -89,8 +90,6 @@ User.find({}).remove(function() {
         requiresBeta: true,
         friends: [],
         groups: [],
-        otherTasks: [],
-        myTasks: [],
         role: 'user',
         verification: {
             code: '4656a75b-f0fc-4f19-8abf-cb07b651969f',
@@ -133,9 +132,67 @@ User.find({}).remove(function() {
         email: 'test@test.com',
         password: 'test',
         friends: [],
-        groups: [],
-        otherTasks: [],
-        myTasks: [],
+        groups: [{
+            name: "Fake Group 1",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, {
+            name: "Fake Group 2",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, {
+            name: "Fake Group 3",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, {
+            name: "Fake Group 4",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, {
+            name: "Fake Group 5",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, {
+            name: "Fake Group 6",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, {
+            name: "Fake Group 7",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, {
+            name: "Fake Group 8",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, {
+            name: "Fake Group 9",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, {
+            name: "Fake Group 10",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, {
+            name: "Fake Group 11",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, {
+            name: "Fake Group 12",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, {
+            name: "Fake Group 13",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, {
+            name: "Fake Group 14",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, {
+            name: "Fake Group 15",
+            pic: "http://lorempixel.com/260/260/",
+            source: "snaptasq"
+        }, ],
         role: 'user',
         verification: {
             status: true
@@ -162,12 +219,136 @@ User.find({}).remove(function() {
                     pic: toUser.pic,
                     source: "snaptasq"
                 };
-                fromUser.friends.push(friendShipToTest);
-                toUser.friends.push(friendShipToAdmin);
-                fromUser.save();
-                toUser.save();
+                var tasks = [];
+                tasks.push(generateTasq("Test Tasq 1", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 2", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 3", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 4", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 5", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 6", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 7", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 8", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 9", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Test 1", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Test 2", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Test 3", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Test 4", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Test 5", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Test 6", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Test 7", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Test 8", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Test 9", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Another Test 1", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Another Test 2", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Another Test 3", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Another Test 4", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Another Test 5", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Another Test 6", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Another Test 7", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Another Test 8", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Another Another Test 9", toUser, fromUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 1", fromUser, toUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 2", fromUser, toUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 3", fromUser, toUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 4", fromUser, toUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 5", fromUser, toUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 6", fromUser, toUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 7", fromUser, toUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 8", fromUser, toUser, "in progress"));
+                tasks.push(generateTasq("Test Tasq 9", fromUser, toUser, "in progress"));
 
+
+                tasks.push(generateTasq("Unpicked Test Tasq 1", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 2", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 3", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 4", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 5", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 6", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 7", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 8", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 9", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Test 1", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Test 2", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Test 3", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Test 4", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Test 5", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Test 6", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Test 7", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Test 8", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Test 9", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Another Test 1", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Another Test 2", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Another Test 3", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Another Test 4", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Another Test 5", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Another Test 6", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Another Test 7", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Another Test 8", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Another Another Test 9", toUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 1", fromUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 2", fromUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 3", fromUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 4", fromUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 5", fromUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 6", fromUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 7", fromUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 8", fromUser, undefined, "open"));
+                tasks.push(generateTasq("Unpicked Test Tasq 9", fromUser, undefined, "open"));
+
+
+                Task.create(tasks, function() {
+                    console.log("created all");
+                    //now i need to find the tasks that have admin as the tasker
+                    Task.find({
+                        'applicants.id': fromUser._id
+                    }, function(err, tsks) {
+                        var ids = _.pluck(tsks, '_id');
+                        fromUser.otherTasks = ids;
+                        fromUser.friends.push(friendShipToTest);
+                        fromUser.save();
+                    });
+                    Task.find({
+                        'applicants.id': toUser._id
+                    }, function(err, tsks) {
+                        var ids = _.pluck(tsks, '_id');
+                        toUser.otherTasks = ids;
+                        toUser.friends.push(friendShipToAdmin);
+                        toUser.save();
+                    });
+                });
             });
         })
     })
 });
+var secondsOffset = 0;
+
+function generateTasq(name, owner, tasker, status) {
+    secondsOffset++;
+    var timeMade = new Date();
+    timeMade.setMinutes(timeMade.getMinutes() - 5);
+    timeMade.setSeconds(timeMade.getSeconds() + secondsOffset);
+    var tasq = {
+        name: name,
+        description: "Test Tasq",
+        created: timeMade,
+        updated: timeMade,
+        status: status || "open",
+        payout: 0,
+        communitiesIn: [],
+        applicants: [],
+    };
+
+    if (owner != undefined) {
+        tasq.ownerId = owner._id;
+        tasq.ownerName = owner.name;
+        tasq.ownerPic = owner.pic;
+    }
+    if (tasker != undefined) {
+        tasq.applicants = [{
+            id: tasker._id,
+            name: tasker.name,
+            pic: tasker.pic,
+        }];
+    }
+    return tasq;
+}

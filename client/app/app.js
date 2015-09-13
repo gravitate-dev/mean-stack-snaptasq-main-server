@@ -23,8 +23,10 @@ var app = angular.module('snaptasqApp', ['infinite-scroll', 'angucomplete-alt' /
             };
             return originalWhen.call($routeProvider, path, route);
         };
-
-    })
+        /* THROTTLE MILISECONDS IS FOR THE NG INIFNITE SCROLL, if pages are tripping over themselves raise this!
+         * Default is 250
+         */
+    }).value('THROTTLE_MILLISECONDS', 500)
     .config(function($locationProvider, $httpProvider, $animateProvider, notificationsConfigProvider) {
         //To fix carousel with ngAnimate
         $animateProvider.classNameFilter(/carousel/);
@@ -438,6 +440,9 @@ app.directive('blurCurrency', function($filter) {
     function link(scope, el, attrs, ngModelCtrl) {
 
         function formatter(value) {
+            if (angular.isUndefined(value)) {
+                return undefined;
+            }
             value = parseFloat(value.toString().replace(/[^0-9_-]/g, ''));
             var formattedValue = $filter('currency')(value);
             el.val(formattedValue);

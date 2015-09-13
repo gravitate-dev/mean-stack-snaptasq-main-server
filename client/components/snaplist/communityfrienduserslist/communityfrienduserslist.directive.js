@@ -10,6 +10,10 @@ angular.module('snaptasqApp').directive('communityfrienduserslist', function($pa
         templateUrl: 'components/snaplist/communityfrienduserslist/communityfrienduserslist.template.html',
         controller: function($scope) {
             $scope.items = [];
+            $scope.limitCount = 25;
+            $scope.showMore = function() {
+                $scope.limitCount += 25;
+            }
             User.get(function(data) {
                 $scope.items = data.friends;
             });

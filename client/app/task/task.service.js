@@ -121,29 +121,35 @@ angular.module('snaptasqApp')
                 });
                 return deferred.promise;
             },
-            getMyFriendsTasks: function(cb) {
+            getMyFriendsTasks: function(cb, opts) {
                 var cb = cb || angular.noop;
+                var opts = opts || {};
                 var deferred = $q.defer();
-                $http.get('/api/tasks/meFriends').success(function(data) {
+                $http.get('/api/tasks/meFriends', {
+                    params: opts
+                }).success(function(data) {
                     return cb(data);
                 }).error(function(err) {
                     return cb(undefined);
                 });
                 return deferred.promise;
             },
-            getMyAppliedTasks: function(cb) {
+            getMyAppliedTasks: function(cb, opts) {
                 var cb = cb || angular.noop;
+                var opts = opts || {};
                 var deferred = $q.defer();
-                Tsk.getMyAppliedTasks({}, {}, function(data) {
+                Tsk.getMyAppliedTasks(opts, {}, function(data) {
                     deferred.resolve(data);
                     return cb(data);
                 });
                 return deferred.promise;
             },
-            getMyTasks: function(cb) {
+            getMyTasks: function(cb, opts) {
+                //opts can be the age of the tasq to search from
                 var cb = cb || angular.noop;
+                var opts = opts || {};
                 var deferred = $q.defer();
-                Tsk.getMyTasks({}, {}, function(data) {
+                Tsk.getMyTasks(opts, {}, function(data) {
                     deferred.resolve(data);
                     return cb(data);
                 });
@@ -180,10 +186,11 @@ angular.module('snaptasqApp')
             /**
              * This will return all tasks where the user is the chosen tasker
              **/
-            getTasksResponsible: function(cb) {
+            getTasksResponsible: function(cb, opts) {
                 var cb = cb || angular.noop;
+                var opts = opts || {};
                 var deferred = $q.defer();
-                Tsk.getTasksResponsible({}, {}, function(data) {
+                Tsk.getTasksResponsible(opts, {}, function(data) {
                     deferred.resolve(data);
                     return cb(data);
                 });
@@ -239,12 +246,12 @@ angular.module('snaptasqApp')
                 });
                 return deferred.promise;
             },
-            getFriendTasks: function(friendId, cb) {
+            getFriendTasks: function(friendId, cb, opts) {
                 var cb = cb || angular.noop;
+                var opts = opts || {};
                 var deferred = $q.defer();
-                $http({
-                    method: "GET",
-                    url: '/api/tasks/friends/' + friendId
+                $http.get('/api/tasks/friends/' + friendId, {
+                    params: opts
                 }).then(function(response) {
                     deferred.resolve(response.data);
                     return cb(response.data);

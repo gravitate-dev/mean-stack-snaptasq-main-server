@@ -161,7 +161,9 @@ angular.module('snaptasqApp')
         $scope.currentUrl = $location.absUrl();
         $scope._me = _me;
         $scope.otherFilter = {};
-        $scope.myTaskFilter = {};
+        $scope.myTaskFilter = {
+            text: ""
+        };
     })
     .controller('TaskEditCtrl', function($scope, $window, Modal, notifications, $routeParams, Task, Notification, $rootScope, TaskMarshaler, Auth, $location) {
         $scope._noFooter();

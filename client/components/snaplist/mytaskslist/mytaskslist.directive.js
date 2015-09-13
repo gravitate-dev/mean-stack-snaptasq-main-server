@@ -1,4 +1,4 @@
-angular.module('snaptasqApp').directive('mytaskslist', function($parse, Task, $location) {
+angular.module('snaptasqApp').directive('mytaskslist', function($parse, Task, $location, SnapListResultManager) {
     return {
         restrict: 'ACE',
         // Replace the div with our template
@@ -10,16 +10,28 @@ angular.module('snaptasqApp').directive('mytaskslist', function($parse, Task, $l
         templateUrl: 'components/snaplist/mytaskslist/mytaskslist.template.html',
         controller: function($scope) {
             $scope.items = [];
-            //$scope.images = [1, 2, 3, 4, 5, 6, 7, 8];
-            Task.getMyTasks(function(data) {
-                $scope.items = data;
-            });
-            $scope.loadMore = function() {
-                /*  console.log("LOAD MOAR");
-                  var last = $scope.images[$scope.images.length - 1];
-                  for(var i = 1; i <= 8; i++) {
-                    $scope.images.push(last + i);
-                }*/
+            var manager = SnapListResultManager.getInstance();
+            // searchfilterTEXT must be undefined when initialized
+            $scope.searchFilter.text = undefined;
+            $scope.$watch('searchFilter.text', _.debounce(function(newvalue) {
+                if (angular.isUndefined(newvalue)) return;
+                $scope.$apply(function() {
+                    manager.reachedEnd = false;
+                    manager.newSearch = true;
+                });
+            }, 500));
+            $scope.getOpts = function() {
+                var opts = {};
+                if (!angular.isUndefined($scope.searchFilter)) {
+                    var searchQuery = $scope.searchFilter.text;
+                    if (!angular.isUndefined(searchQuery) && !_.isEmpty(searchQuery)) {
+                        opts.name = searchQuery;
+                    }
+                }
+                if ($scope.items.length > 0) {
+                    opts.age = $scope.items[$scope.items.length - 1].created;
+                }
+                return opts;
             }
             $scope._goToPath = function(url, $event) {
                 if (!angular.isUndefined($event)) {
@@ -27,6 +39,16 @@ angular.module('snaptasqApp').directive('mytaskslist', function($parse, Task, $l
                 }
                 $location.path(url);
             }
+            $scope.loadMore = function() {
+                if (manager.canLoadMore()) {
+                    manager.isLoadingMore = true;
+                    var opts = $scope.getOpts();
+                    Task.getMyTasks(function(data) {
+                        $scope.items = manager.handleResults(data);
+                    }, opts);
+                }
+            };
+            $scope.loadMore();
         },
         link: function($scope, $element, $attributes) {
             $scope.options = $scope.$eval($attributes.options);

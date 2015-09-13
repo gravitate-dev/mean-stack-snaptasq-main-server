@@ -123,12 +123,12 @@ angular.module('snaptasqApp')
                 });
                 return deferred.promise;
             },
-            getTasksForGroupId: function(id, cb) {
+            getTasksForGroupId: function(id, cb, opts) {
                 var cb = cb || angular.noop;
                 var deferred = $q.defer();
-                Comm.getTasks({
-                    id: id
-                }, {}, function(data) {
+                var opts = opts || {};
+                opts.id = id;
+                Comm.getTasks(opts, {}, function(data) {
                     deferred.resolve(data);
                     return cb(data);
                 });

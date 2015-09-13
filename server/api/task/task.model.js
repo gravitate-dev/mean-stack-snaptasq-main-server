@@ -24,10 +24,6 @@ var TaskSchema = new Schema({
             default: config.host.url + "assets/logos/no_avatar.gif"
         },
         fbId: String,
-        confirmed: {
-            type: Boolean,
-            default: false
-        }
     },
     created: {
         type: Date,
@@ -97,4 +93,5 @@ TaskSchema.pre('save', function(next) {
     next();
 });
 
+//TaskSchema.plugin(autoIncrement.plugin, 'Task');
 module.exports = mongoose.model('Task', TaskSchema);

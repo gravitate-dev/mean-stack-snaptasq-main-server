@@ -9,7 +9,6 @@
     </div>
     <div>{{item.name}}</div>
     <div ng-if="!item.tasker.name"><a href="/tasq/view/{{item._id}}">tasq is open</a></div>
-    <div ng-if="item.tasker.name && item.tasker.confirmed"><a href="" ng-click="_goToPath('/user/view/'+item.tasker.id,$event);">tasq in progress by {{item.tasker.name}}</a></div>
-    <div ng-if="item.tasker.name && !item.tasker.confirmed"><a href="" ng-click="_goToPath('/user/view/'+item.tasker.id,$event);">tasker chosen</a></div>
+    <div ng-if="item.tasker.name"><a href="" ng-click="_goToPath('/user/view/'+item.tasker.id,$event);">tasq in progress by {{item.tasker.name}}</a></div>
 </div>
 <div class="clearfix"></div>
