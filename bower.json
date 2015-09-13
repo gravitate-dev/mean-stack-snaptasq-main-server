@@ -36,8 +36,7 @@
     "masonry": "~3.3.0",
     "ng-notifications-bar": "~0.0.15",
     "ngAutocomplete": "~1.0.0",
-    "ngInfiniteScroll": "~1.2.1",
-    "responsive-bootstrap-toolkit": "responsive-toolkit#~2.5.0"
+    "ngInfiniteScroll": "~1.2.1"
   },
   "devDependencies": {
     "angular-mocks": ">=1.2.*",

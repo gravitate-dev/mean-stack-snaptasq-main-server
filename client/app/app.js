@@ -247,24 +247,7 @@ app.controller('GlobalCtrl', function GlobalCtrl($scope, BadgeAlerts, localStora
 
     $scope._needsBetaCode = function() {}
 
-    $scope.viewport = '';
-    // hook for viewport
-    /*
-    (function($, viewport) {
-        // Execute code each time window size changes
-        $(window).resize(
-            viewport.changed(function() {
-                $scope.viewport = viewport.current();
-            }));
-        $(document).ready(function() {
-            $scope.viewport = viewport.current();
-        });
-
-    })(jQuery, ResponsiveBootstrapToolkit);
-*/
     $scope.isViewCompact = function() {
-            if ($scope.viewport == "xs" || $scope.viewport == "sm")
-                return true;
             if ($scope._isMobile)
                 return true;
             return false;
