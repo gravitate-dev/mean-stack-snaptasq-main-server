@@ -47,6 +47,8 @@
     <link rel="stylesheet" href="bower_components/slick-carousel/slick/slick.css" />
     <link rel="stylesheet" href="bower_components/slick-carousel/slick/slick-theme.css" />
     <link rel="stylesheet" href="bower_components/angular-ui-notification/dist/angular-ui-notification.min.css" />
+    <link rel="stylesheet" href="bower_components/font-awesome-animation/dist/font-awesome-animation.css" />
+    <link rel="stylesheet" href="bower_components/font-awesome-animation/dist/font-awesome-animation.min.css" />
     <link rel="stylesheet" href="bower_components/ng-notifications-bar/dist/ngNotificationsBar.min.css" />
     <!-- endbower -->
     <!-- endbuild -->
@@ -186,7 +188,6 @@ if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
     <script src="bower_components/ng-notifications-bar/dist/ngNotificationsBar.min.js"></script>
     <script src="bower_components/ngAutocomplete/src/ngAutocomplete.js"></script>
     <script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
-    <script src="bower_components/responsive-bootstrap-toolkit/dist/bootstrap-toolkit.js"></script>
     <!-- endbower -->
     <!-- <script src="socket.io-client/socket.io.js"></script> -->
     <script src="assets/js/angular-isotope-patched/dist/angular-isotope.js"></script>
@@ -225,6 +226,9 @@ if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
     <script src="app/debug/debug.js"></script>
     <script src="app/main/main.controller.js"></script>
     <script src="app/main/main.js"></script>
+    <script src="app/notifications/notifications.controller.js"></script>
+    <script src="app/notifications/notifications.js"></script>
+    <script src="app/notifications/notify.service.js"></script>
     <script src="app/pricePoints/pricePoints.controller.js"></script>
     <script src="app/pricePoints/pricePoints.js"></script>
     <script src="app/requestBeta/requestbeta.controller.js"></script>
@@ -243,17 +247,16 @@ if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
     <script src="components/mongoose-error/mongoose-error.directive.js"></script>
     <script src="components/navbar/navbar.controller.js"></script>
     <script src="components/ng-disqus/ng-disqus.directive.js"></script>
-    <script src="components/notify/notify.service.js"></script>
-    <script src="components/snaplist/communityfriendtaskslist/communityfriendtaskslist.directive.js"></script>
-    <script src="components/snaplist/communityfrienduserslist/communityfrienduserslist.directive.js"></script>
-    <script src="components/snaplist/communitytaskslist/communitytaskslist.directive.js"></script>
-    <script src="components/snaplist/communityuserslist/communityuserslist.directive.js"></script>
-    <script src="components/snaplist/friendcommunitylist/friendcommunitylist.directive.js"></script>
-    <script src="components/snaplist/friendtaskslist/friendtaskslist.directive.js"></script>
-    <script src="components/snaplist/myappliedtaskslist/myappliedtaskslist.directive.js"></script>
-    <script src="components/snaplist/mycommunitylist/mycommunitylist.directive.js"></script>
-    <script src="components/snaplist/myfriendlist/myfriendlist.directive.js"></script>
-    <script src="components/snaplist/mytaskslist/mytaskslist.directive.js"></script>
+    <script src="components/snaplist/community/communityfriendtaskslist/communityfriendtaskslist.directive.js"></script>
+    <script src="components/snaplist/community/communityfrienduserslist/communityfrienduserslist.directive.js"></script>
+    <script src="components/snaplist/community/communitytaskslist/communitytaskslist.directive.js"></script>
+    <script src="components/snaplist/community/communityuserslist/communityuserslist.directive.js"></script>
+    <script src="components/snaplist/friend/friendcommunitylist/friendcommunitylist.directive.js"></script>
+    <script src="components/snaplist/friend/friendtaskslist/friendtaskslist.directive.js"></script>
+    <script src="components/snaplist/me/myappliedtaskslist/myappliedtaskslist.directive.js"></script>
+    <script src="components/snaplist/me/mycommunitylist/mycommunitylist.directive.js"></script>
+    <script src="components/snaplist/me/myfriendlist/myfriendlist.directive.js"></script>
+    <script src="components/snaplist/me/mytaskslist/mytaskslist.directive.js"></script>
     <script src="components/snaplist/snaplist.directive.js"></script>
     <script src="components/socket/socket.service.js"></script>
     <!-- endinjector -->

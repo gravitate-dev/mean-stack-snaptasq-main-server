@@ -51,9 +51,6 @@ exports.create = function(req, res, next) {
         req.session.userId = user._id;
         req.session.save();
         //(toId,code,params,link,cb)
-        Notify.put(user._id, "ACCOUNT_CREATE_NEW", {
-            name: user.name
-        }, undefined);
         User.findById(user._id, function(err, user) {
             if (err || user == null) {
                 return res.status(500).json({
@@ -195,14 +192,147 @@ exports.applyBetaCode = function(req, res, next) {
         user.requiresBeta = false;
         user.save(function(err) {
             if (err) return validationError(res, err);
-            Notify.put(user._id, "BETA_CODE_REGISTER_SUCCESS", {
-                name: user.name
-            }, undefined);
             return next();
         });
     });
 }
 
+
+/**
+ * Can be triggered by either user.
+ * This will unfriend both sides.
+ * This will NOT block the users
+ **/
+exports.removeFriendship = function(req, res) {
+        var currentUserId = req.session.userId;
+        var friendId = req.param('id');
+        if (friendId == undefined) return res.send(400, "Missing parameter, id. The friends user id");
+        if (currentUserId == undefined) {
+            return res.send(401, "Please login first"); //they need to relogin
+        }
+        User.findById(currentUserId, function(err, user) {
+            if (err) validationError(res, err);
+            if (!user) return res.send(401, "Please login first");
+            if (!_isFriendsAlready(user, friendId)) {
+                return res.send(500, "You are already not friends");
+            }
+            _removeFriends(req, res, friendId, currentUserId, function(wasSuccess) {
+                if (wasSuccess)
+                    return res.send(200, "You are no longer friends.");
+                else
+                    return res.send(500, "An error occured.");
+            });
+        });
+    }
+    /** 
+     * This function is called by both users
+     * Once for a request, Will you be my friend?
+     * Once for a user saying Yes, i will be your friend.
+     **/
+exports.requestFriendship = function(req, res) {
+    var currentUserId = req.session.userId;
+    var friendId = req.param('id');
+    if (friendId == undefined) return res.send(400, "Missing parameter, id. The friends user id");
+    if (currentUserId == undefined) {
+        return res.send(401, "Please login first"); //they need to relogin
+    }
+    User.findOne({
+        _id: currentUserId
+    }, function(err, user) {
+        if (err) validationError(res, err);
+        if (!user) return res.send(401, "Please login first");
+        if (_isFriendsAlready(user, friendId)) {
+            return res.send(200, "You are already friends");
+        }
+
+        //check the callers canFriends. If they can friend then make a friendship
+        var isCompletingFriendship = false;
+        for (var i = 0; i < user.canFriend.length; i++) {
+            if (user.canFriend[i].equals(friendId)) {
+                isCompletingFriendship = true;
+                break;
+            }
+        }
+        if (isCompletingFriendship) {
+            _makeFriends(req, res, friendId, currentUserId, function(wasSuccess) {
+                if (wasSuccess) {
+                    User.findById(friendId, function(err, frnd) {
+                        if (err) return validationError(res, err);
+                        if (!frnd) return res.send(404, "Friend not found.");
+
+                        // Notify friend, that i have am your friend
+                        Notify.put({
+                            forOne: friendId,
+                            forMany: [],
+                            hrefId: user._id,
+                            code: Notify.CODES.friend.friendshipCreated,
+                            params: {
+                                name: user.name
+                            }
+                        });
+
+                        // Notify me, that i have a new friend
+                        Notify.put({
+                            forOne: user._id,
+                            forMany: [],
+                            hrefId: frnd._id,
+                            code: Notify.CODES.friend.friendshipCreated,
+                            params: {
+                                name: frnd.name
+                            }
+                        });
+                        return res.send(200, "You are now friends.");
+                    });
+                    // Notify friend, that i am your friend
+
+                } else
+                    return res.send(500, "An error occured.");
+            });
+        } else {
+            //send a friend request to the other user
+            //check to make sure Friend already hasnt  received a request
+            User.findById(friendId, function(err, frnd) {
+                if (err) {
+                    return validationError(res, err);
+                }
+                if (!frnd) return res.send(404, "User does not exist anymore");
+
+                // check for duplicate friend requests
+                for (var i = 0; i < frnd.canFriend.length; i++) {
+                    if (frnd.canFriend[i].equals(user._id)) {
+                        return res.send(500, "You have already sent a friend request to this person");
+                    }
+                }
+
+                // if no duplicates then proceed
+
+                var addCurrentUserId = {
+                    $addToSet: {
+                        canFriend: user._id
+                    }
+                };
+                User.findByIdAndUpdate(friendId, addCurrentUserId, function(err, friend) {
+                    if (err) {
+                        return validationError(res, err);
+                    }
+                    Notify.put({
+                        forOne: friend._id,
+                        forMany: [],
+                        hrefId: user._id,
+                        code: Notify.CODES.friend.newFriendRequest,
+                        params: {
+                            name: user.name
+                        }
+                    });
+                    return res.send(200, "Friend request has been sent");
+                });
+
+            });
+
+        }
+    });
+
+}
 
 function _friendObjectFromUser(friend) {
     return {
@@ -228,6 +358,8 @@ function _isFriendsAlready(user, friendId) {
 }
 
 function _makeFriends(req, res, idOther, idMe, cb) {
+    if (idMe == undefined) return res.send(400, "Me id, can not be undefined in _makeFriends");
+    if (idOther == undefined) return res.send(400, "Other id, can not be undefined in _makeFriends");
     //this can only be called by addFriendToMe
     if (idMe != req.session.userId) {
         return res.send(403, "Only you can add friends to yourself");
@@ -255,32 +387,70 @@ function _makeFriends(req, res, idOther, idMe, cb) {
             if (needToSaveOther) {
                 console.error("Suspicious one sided friendship");
             }
-            //most likely friend system was hacked if one sided friendship
-            //or perhaps they already added you with some other way
+
+            // lets remove the canFriend too
+            me.canFriend = _.filter(me.canFriend, function(item) {
+                return !item.equals(idOther);
+            });
+            other.canFriend = _.filter(other.canFriend, function(item) {
+                return !item.equals(idMe);
+            });
             me.save(function(err) {
                 if (err) return validationError(res, err);
                 other.save(function(err) {
                     if (err) return validationError(res, err);
-                    //i should also remove the friendrequest because it was already accepted!
                     return cb(true);
                 });
             });
         });
     });
 }
-exports.addFriendToMe = function(req, res) {
-    var fromUserId = req.param('id');
-    var messageId = req.param('messageId');
-    if (messageId == undefined) return res.send(400, "Missing parameter messageId.");
-    if (fromUserId == undefined) return res.send(400, "Missing parameter id");
-    var toUserId = req.session.userId;
-    //first check to see if the friendRequestUserMessageId Exists
-    //this MAY consume if bad validation
-    UserMessageCtrl.isValidFriendRequest(req, res, messageId, fromUserId, toUserId, function(isValid) {
-        // @consumes. This consumes the request
-        _makeFriends(req, res, fromUserId, toUserId, function(wasSuccess) {
-            UserMessageCtrl.deleteThreadIdInternalFromMessageId(req, res, messageId, function(isMsgDeleted) {
-                return res.send(200, "You are now friends");
+
+
+/**
+ * This will unfriend each other
+ **/
+function _removeFriends(req, res, idOther, idMe, cb) {
+    if (idMe == undefined) return res.send(400, "Me id, can not be undefined in _makeFriends");
+    if (idOther == undefined) return res.send(400, "Other id, can not be undefined in _makeFriends");
+    //this can only be called by addFriendToMe
+    if (idMe != req.session.userId) {
+        return res.send(403, "Only you can remove your own friends");
+    }
+    User.findOne({
+        _id: idOther
+    }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, other) { // don't ever give out the password or salt
+        if (err) return res.send(500, err);
+        //if the other peson doesnt exist it should be fine to unfriend anyways
+
+        User.findOne({
+            _id: idMe
+        }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, me) { // don't ever give out the password or salt
+            if (err) return res.send(500, err);
+            if (!me) return res.send(404, "Your account no longer exists"); //strange but logical
+            // lets remove the canFriend too
+            me.canFriend = _.filter(me.canFriend, function(item) {
+                return !item.equals(idOther);
+            });
+            me.friends = _.filter(me.friends, function(item) {
+                return !item.id.equals(idOther);
+            });
+            me.save(function(err) {
+                if (err) return validationError(res, err);
+                if (other) {
+                    other.canFriend = _.filter(other.canFriend, function(item) {
+                        return !item.equals(idMe);
+                    });
+                    other.friends = _.filter(other.friends, function(item) {
+                        return !item.id.equals(idMe);
+                    });
+                    other.save(function(err) {
+                        if (err) return validationError(res, err);
+                        return cb(true);
+                    });
+                } else {
+                    return cb(true);
+                }
             });
         });
     });
@@ -350,7 +520,6 @@ exports.changePassword = function(req, res, next) {
             user.forgotPassCode = uuid.v4();
             user.save(function(err) {
                 if (err) return validationError(res, err);
-                //notify.put(req,"Your password has been changed","success");
                 res.send(200);
             });
         } else {
@@ -391,7 +560,6 @@ exports.resetChangePassword = function(req, res, next) {
             user.forgotPassCode = uuid.v4();
             user.save(function(err) {
                 if (err) return validationError(res, err);
-                //notify.put(req,"Your password has been changed","success");
                 return res.send(200);
             });
         }
@@ -428,7 +596,6 @@ exports.sendVerificationEmail = function(req, res, next) {
  * This way they can change their password
  */
 exports.sendForgotPasswordEmail = function(req, res, next) {
-    //notify.put(req,"You just tried forgot password","success");
     User.findOne({
         "email": req.param('email')
     }, function(err, user) {
@@ -566,7 +733,6 @@ exports.authCallback = function(req, res, next) {
 };
 
 function shutdown(req, res) {
-    //notify.myself(req,"Please login again","warn"); 
     req.session.destroy();
     return res.redirect('/login');
 }

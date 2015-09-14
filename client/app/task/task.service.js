@@ -79,6 +79,34 @@ angular.module('snaptasqApp')
             }
         });
         return {
+            startTask: function(id, cb, cberror) {
+                var cb = cb || angular.noop;
+                var cberror = cberror || angular.noop;
+
+                $http.post('/api/tasks/' + id + '/startTask').success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    if (cberror) {
+                        return cberror(err);
+                    } else {
+                        return cb(undefined);
+                    }
+                });
+            },
+            finishTask: function(id, cb, cberror) {
+                var cb = cb || angular.noop;
+                var cberror = cberror || angular.noop;
+
+                $http.post('/api/tasks/' + id + '/finishTask').success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    if (cberror) {
+                        return cberror(err);
+                    } else {
+                        return cb(undefined);
+                    }
+                });
+            },
             delete: function(id, cb) {
                 var cb = cb || angular.noop;
                 var deferred = $q.defer();

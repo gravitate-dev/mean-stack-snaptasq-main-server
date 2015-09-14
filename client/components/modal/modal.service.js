@@ -76,6 +76,51 @@ angular.module('snaptasqApp')
                             del.apply(event, args);
                         });
                     };
+                },
+
+                /**
+                 * Create a function to open a finishTask confirmation modal (ex. ng-click='myModalFn(name, arg1, arg2...)')
+                 * @param  {Function} cb  - callback, ran when start is confirmed
+                 * @return {Function}     - the function to open the modal (ex. myModalFn)
+                 */
+                finishTask: function(cb) {
+                    cb = cb || angular.noop;
+
+                    /**
+                     * Open a finishTask confirmation modal
+                     * @param  {String} name   - name or info to show on modal
+                     * @param  {All}           - any additional args are passed staight to cb callback
+                     */
+                    return function() {
+                        var args = Array.prototype.slice.call(arguments),
+                            task = args.shift(),
+                            myModal;
+
+                        myModal = openModal({
+                            modal: {
+                                dismissable: true,
+                                title: 'Confirm Delete',
+                                html: '<p>Do you want to mark this tasq for ' + task.ownerName + ' as completed?</p><p>If you would like to stop helping out for this tasq. Click on unapply to tasq instead.</p>',
+                                buttons: [{
+                                    classes: 'btn-success',
+                                    text: 'Mark as completed',
+                                    click: function(e) {
+                                        myModal.close(e);
+                                    }
+                                }, {
+                                    classes: 'btn-default',
+                                    text: 'Cancel',
+                                    click: function(e) {
+                                        myModal.dismiss(e);
+                                    }
+                                }]
+                            }
+                        }, 'modal-success');
+
+                        myModal.result.then(function(event) {
+                            cb.apply(event, args);
+                        });
+                    };
                 }
             },
             /* Signup modals */

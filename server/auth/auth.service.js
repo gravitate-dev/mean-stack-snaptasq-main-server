@@ -59,7 +59,7 @@ function signToken(id) {
     return jwt.sign({
         _id: id
     }, config.secrets.session, {
-        expiresInMinutes: 60 * 5
+        expiresInMinutes: 60 * 10
     });
 }
 
@@ -67,6 +67,7 @@ function signToken(id) {
  * Set token cookie directly for oAuth strategies
  */
 function setTokenCookie(req, res) {
+    //only called for oauth
     if (!req.user) return res.json(404, {
         message: 'Something went wrong, please try again.'
     });

@@ -1,11 +1,54 @@
 'use strict';
 angular.module('snaptasqApp')
-    .controller('TaskGlobalCtrl', function($scope, Page, Notification, notifications, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
+    .controller('TaskGlobalCtrl', function($scope, $route, Notification, notifications, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
+
+        /**
+         * _me is not needed, because i pass this in as a parameter from the view
+         **/
 
         $scope.connect = function() {
             $window.location.href = '/auth/facebook';
         };
 
+
+        $scope.canStartTask = function(task, me) {
+            if (angular.isUndefined(me)) {
+                return false;
+            }
+            if (task.ownerId == me._id)
+                return false;
+
+            // if its started then i cant start it again
+            if (!angular.isUndefined(task.startTime))
+                return false;
+            //check to see if i am in the task.applicants
+            if (!angular.isUndefined(task.tasker) && !angular.isUndefined(task.tasker.id)) {
+                if (task.tasker.id == me._id) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        $scope.canFinishTask = function(task, me) {
+            if (angular.isUndefined(me)) {
+                return false;
+            }
+            if (task.ownerId == me._id)
+                return false;
+
+            // if its started then i cant start it again
+            if (!angular.isUndefined(task.endTime))
+                return false;
+            if (angular.isUndefined(task.startTime))
+                return false;
+            //check to see if i am in the task.applicants
+            if (!angular.isUndefined(task.tasker) && !angular.isUndefined(task.tasker.id)) {
+                if (task.tasker.id == me._id) {
+                    return true;
+                }
+            }
+            return false;
+        }
         $scope.canApplyToTask = function(task, me) {
             if (angular.isUndefined(me)) {
                 return true;
@@ -23,28 +66,34 @@ angular.module('snaptasqApp')
         }
 
         $scope.canUnapplyToTask = function(task, me) {
-            if (angular.isUndefined(me)) {
-                return false;
-            }
-            if (task.ownerId == me._id)
-                return false;
-            //check to see if i am in the task.applicants
-            var result = false;
-            _.each(task.applicants, function(item) {
-                if (item.id == me._id) {
-                    result = true;
+                if (angular.isUndefined(me)) {
+                    return false;
                 }
-            });
-            return result;
+                if (task.ownerId == me._id)
+                    return false;
 
-        }
+                if (task.status == "completed")
+                    return false;
+                //check to see if i am in the task.applicants
+                var result = false;
+                _.each(task.applicants, function(item) {
+                    if (item.id == me._id) {
+                        result = true;
+                    }
+                });
+                return result;
+
+            }
+            /**
+             * Unapply is also used to quit a task
+             **/
         $scope.unapplyToTask = function(task) {
             Task.unapplyToTask({
                 id: task._id
             }, {}, function(data) {
                 Notification.success({
                     message: "You are no longer a helper for this task.",
-                    replace: true
+                    replaceMessage: true
                 });
                 task.applicants = data.applicants;
                 task.tasker = data.tasker;
@@ -63,42 +112,60 @@ angular.module('snaptasqApp')
 
         };
         $scope.applyToTask = function(task) {
-                if (!Auth.isLoggedIn()) {
-                    $scope.connect();
-                    //Notification.warning({message: "Task Saved. Please signup or login to publish your task."});
-                    //$location.path("/login");
-                } else {
-                    Task.applyToTask({
-                        id: task._id
-                    }, {}, function(data) {
-                        Notification.success({
-                            message: "You have applied to help for this task.",
-                            replace: true
-                        });
-                        task.applicants = data.applicants;
-                        task.tasker = data.tasker;
+            if (!Auth.isLoggedIn()) {
+                $scope.connect();
+            } else {
+                Task.applyToTask({
+                    id: task._id
+                }, {}, function(data) {
+                    Notification.success({
+                        message: "You have applied to help for this task.",
+                        replaceMessage: true
                     });
-                }
+                    $scope.task = data;
+                    //task.applicants = data.applicants;
+                    //task.tasker = data.tasker;
+                });
             }
-            /**
-             * A chosen tasker will confirm they will do the task
-             * They will call this to set the tasker to confirm:true
-             * Task status is closed
-             **/
-        $scope.taskerConfirmTask = function(task, isAccepted) {
-            Task.confirmTasker(task._id, isAccepted, function(data) {
-                if (isAccepted == false) {
-                    $scope.$emit("removeTaskById", task._id);
-                    Notification.success({
-                        message: "You are no longer a helper for this task."
-                    });
-                } else {
-                    Notification.success({
-                        message: "You can now help them"
-                    });
-                }
-                angular.copy(data, task);
+        };
+
+        $scope.startTask = function(task) {
+            Task.startTask(task._id, function(success) {
+                Notification.success({
+                    message: "You have started this tasq. To stop, click unapply.",
+                    replaceMessage: true
+                });
+
+                $scope.task = success;
+            }, function(fail) {
+                Notification.error({
+                    message: fail,
+                    replaceMessage: true
+                });
+                $timeout(function() {
+                    $window.location.reload();
+                }, 2000)
             });
+        }
+
+        $scope.finishTask = function(task) {
+            Modal.confirm.finishTask(function(data) {
+                Task.finishTask(task._id, function(success) {
+                    Notification.success({
+                        message: "You have successfully completed the tasq.",
+                        replaceMessage: true
+                    });
+                    $scope.task = success;
+                }, function(fail) {
+                    Notification.error({
+                        message: fail,
+                        replaceMessage: true
+                    });
+                    $timeout(function() {
+                        $window.location.reload();
+                    }, 2000)
+                });
+            })(task);
         }
         $scope.showApplicants = function(task) {
             Modal.view.applicants(function(data) {})(task);
@@ -120,11 +187,14 @@ angular.module('snaptasqApp')
             mode: "list"
         };
     })
-    .controller('TaskCtrl', function($scope, _me, Page, notifications, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
+    .controller('TaskCtrl', function($scope, _me, notifications, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
         $scope._bgcolorGrey();
         $scope._noFooter();
         $scope.currentUrl = $location.absUrl();
-        $scope._me = _me;
+        _me.$promise.then(function(me) {
+            $scope._me = _me;
+        });
+
         $scope.action = $routeParams.action;
         $scope.id = $routeParams.id;
         $scope.errors = {};
@@ -137,8 +207,6 @@ angular.module('snaptasqApp')
                 $scope.task.locationCopy = _.clone(data.location, true);
 
                 // change seo before we call ready
-                //PageSeo.setTitle("Help out "+$scope.task.ownerName+ " with " + $scope.task.name);
-                //PageSeo.setDescription($scope.task.description);
 
             }, function(err) {
                 notifications.showError({
@@ -155,7 +223,7 @@ angular.module('snaptasqApp')
         $scope.loadTaskData();
 
     })
-    .controller('TasksCtrl', function($scope, _me, Page, notifications, Notification, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
+    .controller('TasksCtrl', function($scope, _me, notifications, Notification, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
         $scope._bgcolorGrey();
         $scope._noFooter();
         $scope.currentUrl = $location.absUrl();

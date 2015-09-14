@@ -35,8 +35,17 @@ var TaskSchema = new Schema({
     },
     status: {
         type: String,
-        default: "open"
+        default: "open" //open, in progress, completed
     },
+    startTime: {
+        type: Date
+    },
+    endTime: {
+        type: Date
+    },
+    totalTime: {
+        type: Number
+    }, //this is in minutes
     payout: {
         type: Number,
         default: 0

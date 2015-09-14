@@ -1,5 +1,7 @@
 'use strict';
 
+
+//TODO: a user can hold a friend request forever, make the friend request expire???? maybe that creates more issues....
 var express = require('express');
 var controller = require('./user.controller');
 var config = require('../../config/environment');
@@ -24,7 +26,8 @@ router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
 router.get('/:id', auth.isAuthenticated(), controller.show);
 router.post('/', recaptcha.check, controller.create);
 router.post('/applyBetaCode', auth.isAuthenticated(), beta.isValidCode, controller.applyBetaCode, beta.redeem);
-router.post('/addFriend', auth.isAuthenticated(), controller.addFriendToMe);
+router.post('/:id/requestFriendship', auth.isAuthenticated(), controller.requestFriendship);
+router.post('/:id/removeFriendship', auth.isAuthenticated(), controller.removeFriendship);
 
 
 

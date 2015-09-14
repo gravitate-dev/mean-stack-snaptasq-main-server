@@ -22,8 +22,13 @@
                                 <div ng-if="!user.link">
                                     <strong>{{user.name}}</strong>
                                 </div>
-                                <button ng-if="isStranger==true" ng-click="addFriend(user);" class="btn btn-success">add friend</button>
-                                <button ng-if="isStranger==false" ng-click="addFriend(user);" class="btn btn-warning">unfriend</button>
+                                <div ng-if="isStranger==true && _me._id!=user._id">
+                                    <button ng-if="!isFriendRequestingMe && hasFriendRequestAlreadySent==true" class="btn btn-success" ng:disabled="true">friend request sent</button>
+                                    <button ng-if="!isFriendRequestingMe && hasFriendRequestAlreadySent==false" ng-click="addFriend(user);" class="btn btn-success">add friend</button>
+                                    <button ng-if="isFriendRequestingMe" ng-click="addFriend(user);" class="btn btn-success">accept friend request</button>
+                                </div>
+
+                                <button ng-if="isStranger==false" ng-click="unFriend(user);" class="btn btn-warning">unfriend</button>
                             </div>
                         </section>
                         <section tab select="">
@@ -57,15 +62,19 @@
                                 <strong>{{user.name}}</strong>
                             </div>
                             <div class="pull-right">
-                                <button ng-if="isStranger==true" ng-click="addFriend(user);" class="btn btn-success">add friend</button>
-                                <div class="btn-group" dropdown ng-if="isStranger==false">
+                                <div ng-if="isStranger==true && _me._id!=user._id">
+                                    <button ng-if="!isFriendRequestingMe && hasFriendRequestAlreadySent==true" class="btn btn-success" ng:disabled="true">friend request sent</button>
+                                    <button ng-if="!isFriendRequestingMe && hasFriendRequestAlreadySent==false" ng-click="addFriend(user);" class="btn btn-success">add friend</button>
+                                    <button ng-if="isFriendRequestingMe" ng-click="addFriend(user);" class="btn btn-success">accept friend request</button>
+                                </div>
+                                <div class="btn-group" dropdown ng-if="isStranger==false && _me._id!=user._id">
                                     <button id="split-button" type="submit" class="btn btn-primary btn-lg" dropdown-toggle>
                                         Action <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li><a href="#">send poke</a></li>
                                         <li role="separator" class="divider"></li>
-                                        <li><a href="#">unfriend</a></li>
+                                        <li><a href="#" ng-click="unFriend(user);">unfriend</a></li>
                                         <li><a href="#">block</a></li>
                                     </ul>
                                 </div>

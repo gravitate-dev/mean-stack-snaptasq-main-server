@@ -3,6 +3,7 @@ var sms = require('../sms/sms.controller');
 var format = require('string-format');
 var Notify = require('./notify.model');
 var moment = require('moment');
+var mongoose = require('mongoose');
 format.extend(String.prototype);
 //sms.text('+15105858953','it works, but damn api calls.');
 /**
@@ -11,118 +12,139 @@ Message
 Time
 type
 **/
-
-/**
- * Notify Codes
- * Account(100-199), MyTask(200-299), ForTaskers(300-399), 
- * Chat(400-499), Friend(500-599), Community(600-699), Beta(700-799)
- **/
-
-var NOTIFICODES = {
-    'UNDEFINED': {
-        msg: 'undefined',
-        id: 0
+var hrefs = {
+    user: "/user/view/",
+    task: "/tasq/view/",
+    community: "/community/view/",
+};
+var accountCodes = {};
+var friendCodes = {
+    newFriendRequest: {
+        msg: '{name} would like to be your friend',
+        href: hrefs.user,
+        category: "friendRequest",
     },
-    'ACCOUNT_CREATE_NEW': {
-        msg: 'Welcome to SnapTasq, {name}',
-        id: 100
+    friendshipCreated: {
+        msg: '{name} is now your friend',
+        href: hrefs.user,
+        category: "friend",
     },
-    'ACCOUNT_VERIFY_EMAIL_SUCCESS': {
-        msg: 'Your account is verified',
-        id: 101
+    friendRequestHelp: {
+        msg: '{name} is asking for you to help with {task}',
+        href: hrefs.user,
+        category: "friend",
     },
-    'ACCOUNT_VERIFY_PHONE_NUMBER_SUCCESS': {
-        msg: 'Your number is verified',
-        id: 102
-    },
-    'MYTASK_NEW_APPLICANT': {
-        msg: '{tasker_name} has applied to your task {task}',
-        id: 200,
-        sms: true
-    },
-    'MYTASK_CREATED': {
+};
+var taskOwnerCodes = {
+    created: {
         msg: '{name} has created a task for {task}',
-        id: 201,
-        sms: false
+        href: hrefs.task,
+        category: "taskOwner",
     },
-    'MYTASK_LEFT_APPLICANT': {
-        msg: '{tasker_name} has left to your task. {task}',
-        id: 202,
-        sms: false
+    taskerQuit: {
+        msg: '{name} has stopped helping you for {task}',
+        href: hrefs.task,
+        category: "taskOwner",
     },
-    'MYTASK_FINISHED': {
-        msg: '{tasker_name} has completed your task. {task}',
-        id: 203,
-        sms: true
+    newApplicant: {
+        msg: '{name} has applied to help you for {task}',
+        href: hrefs.task,
+        category: "taskOwner",
     },
-    'TASKER_UNASSIGNED': {
-        msg: 'You are no longer a tasker for this task. {task}',
-        id: 301
+    taskerStarted: {
+        msg: '{name} has started helping you for {task}',
+        href: hrefs.task,
+        category: "taskOwner",
     },
-    'TASKER_ASSIGNED': {
-        msg: '{tasker_name} is chosen to help {task_owner_name} with task, {task}',
-        id: 302
+    taskerFinished: {
+        msg: '{name} has finished your task for {task}',
+        href: hrefs.task,
+        category: "taskOwner",
     },
-    'CHAT_NEW_MESSAGE_RECV': {
-        msg: 'New message from {sender_name}',
-        id: 400
+};
+var taskApplicantCodes = {
+    created: {
+        msg: 'You have applied to help {ownerName} with {task}',
+        href: hrefs.task,
+        category: "taskApplicant",
     },
-    'CHAT_NEW_MESSAGE_RECV': {
-        msg: 'Message sent to {recv_name}',
-        id: 401
+    taskerChosen: {
+        msg: '{ownerName} has picked {chosenName} to help for {task}',
+        href: hrefs.task,
+        category: "taskApplicant",
     },
-    'FRIEND_NEW_REQUEST': {
-        msg: 'New friend request from, {sender_name}',
-        id: 500
+    taskerCompleted: {
+        msg: '{chosenName} has helped {ownerName} with {task}',
+        href: hrefs.task,
+        category: "taskApplicant",
     },
-    'FRIEND_SENT_REQUEST': {
-        msg: 'Sent friend request to, {recv_name}',
-        id: 501
+    taskerUnchosen: {
+        msg: '{task} is now open again.',
+        href: hrefs.task,
+        category: "taskApplicant",
     },
-    'GROUPS_CREATED_NEW': {
-        msg: 'New Community {name} Created',
-        id: 600
-    },
-    'GROUPS_CREATED_NEW': {
-        msg: 'You have been accepted into the community, {name}',
-        id: 601
-    },
-    'BETA_CODE_REGISTER_SUCCESS': {
-        msg: 'Success. Welcome to the beta {name}.',
-        id: 700
-    }
 };
 
-function notify(toId, code, params, link) {
-    if (NOTIFICODES[code] == undefined)
-        throw new Error("Invalid error code " + code);
-    var n = NOTIFICODES[code];
-    var formatted = n.msg.format(params);
+var CODES = {
+    account: accountCodes,
+    friend: friendCodes,
+    taskOwner: taskOwnerCodes,
+    taskApplicant: taskApplicantCodes
+};
+
+function notify(data) {
+    if (data == undefined) {
+        return console.error("Empty data passed to notify");
+    }
+    var forOne = data.forOne || undefined;
+    var forMany = data.forMany || [];
+    var hrefId = data.hrefId;
+    var codeObj = data.code;
+    var params = data.params;
+    if (codeObj == undefined || codeObj.msg == undefined) {
+        return console.error("Passed in an invalid codeObj,", toOne, toMany, hrefId);
+    }
+    if (hrefId == undefined || typeof hrefId === 'string' || hrefId instanceof String) {
+        return console.error("Missing hrefID or it is a normal string. Requires ObjectID.", hrefId, toOne, toMany);
+    }
+    var formatted = codeObj.msg.format(params);
+    var href = codeObj.href + hrefId.toString();
+    var category = codeObj.category;
 
     var notifyObj = {
-        to: toId,
+        forOne: forOne,
+        forMany: forMany,
+        source: hrefId,
+        href: href,
         message: formatted,
-        codeId: n.id,
-        link: link
+        category: category
     };
     var newNotify = new Notify(notifyObj);
-    newNotify.save(function(err, notify) {});
+    newNotify.save(function(err, notify) {
+        if (err) console.error("Error saving notify", err);
+    });
 }
 
 /**
  * Returns Notifications for the current user for this week
  **/
 function getMyNotifications(req, res) {
+    var category = req.param('category');
     var today = moment().endOf('day');
     var lastWeek = moment(today).subtract(7, 'days');
     var currentUserId = req.session.userId;
-    Notify.find({
-        to: currentUserId,
+
+    var query = {
+        forOne: currentUserId,
         created: {
             $gte: lastWeek.toDate(),
             $lt: today.toDate()
         }
-    }).sort({
+    };
+    if (category != undefined) {
+        query.category = category;
+    }
+    Notify.find(category).sort({
         created: -1
     }).exec(function(err, notifications) {
         return res.json(200, notifications);
@@ -131,5 +153,6 @@ function getMyNotifications(req, res) {
 
 module.exports = {
     put: notify,
+    CODES: CODES,
     getMyNotifications: getMyNotifications
 }

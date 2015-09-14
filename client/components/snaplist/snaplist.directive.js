@@ -74,15 +74,27 @@ angular.module('snaptasqApp')
             controller: function($scope) {},
             link: function(scope, element, attrs) {}
         };
-    }).directive('snaplistTitle', function() {
+    }).directive('snaplistTitle', function($location) {
         return {
             restrict: 'ACE',
             replace: false,
             scope: {
-                title: "=snaplistTitle"
+                title: "=snaplistTitle",
+                notification: "=notification",
             },
             templateUrl: 'components/snaplist/base/title/title.directive.html',
-            controller: function($scope) {},
+            controller: function($scope) {
+                if (!angular.isUndefined($scope.notification)) {
+                    $scope.notificationCount = $scope.notification.count;
+                    $scope.notificationHref = $scope.notification.href;
+                }
+                $scope._goToPath = function(url, $event) {
+                    if (!angular.isUndefined($event)) {
+                        $event.stopPropagation();
+                    }
+                    $location.path(url);
+                }
+            },
             link: function(scope, element, attrs) {}
         };
     }).directive('snaplistButton', function() {

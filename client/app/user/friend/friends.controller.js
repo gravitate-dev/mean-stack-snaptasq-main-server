@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('snaptasqApp')
-    .controller('FriendCtrl', function($scope, $location, User, Task, UserMessage, Notification, Community, _me, $routeParams) {
+    .controller('FriendCtrl', function($scope, $location, $timeout, $window, User, Task, $route, UserMessage, Notification, Community, _me, $routeParams) {
         $scope._bgcolorGrey();
         $scope._noFooter();
         $scope.id = $routeParams.id;
@@ -16,7 +16,26 @@ angular.module('snaptasqApp')
         $scope.friendCommunities = [];
         $scope.friendTasks = [];
         $scope.isStranger == undefined;
+        $scope.isFriendRequestingMe = false;
+        $scope.hasFriendRequestAlreadySent = undefined;
         _me.$promise.then(function(me) {
+            $scope._me = me;
+            User.getById($scope.id, function(user) {
+                if (angular.isUndefined(user)) {
+                    $scope.user = {};
+                    $scope.userDoesntExist = true;
+                } else {
+                    $scope.hasFriendRequestAlreadySent = false;
+                    for (var i = 0; i < user.canFriend.length; i++) {
+                        if (user.canFriend[i] == _me._id) {
+                            $scope.hasFriendRequestAlreadySent = true;
+                            break;
+                        }
+                    }
+                    $scope.userDoesntExist = false;
+                    $scope.user = user;
+                }
+            });
             if ($scope.id == me._id) {
                 $scope.isStranger = false;
             } else {
@@ -33,6 +52,12 @@ angular.module('snaptasqApp')
                 Task.getFriendTasks($scope.id, function(data) {
                     $scope.friendTasks = data;
                 });
+            } else {
+                _.each($scope._me.canFriend, function(item) {
+                    if (item == $scope.id) {
+                        $scope.isFriendRequestingMe = true;
+                    }
+                });
             }
             Community.getUserCommunties($scope.id, function(data) {
                 if (data == undefined || data == null) {
@@ -42,23 +67,54 @@ angular.module('snaptasqApp')
                 }
             });
         });
-        User.getById($scope.id, function(user) {
-            if (angular.isUndefined(user)) {
-                $scope.user = {};
-                $scope.userDoesntExist = true;
-            } else {
-                $scope.userDoesntExist = false;
-                $scope.user = user;
-            }
-        });
 
-
-        $scope.addFriend = function(friend) {
-            UserMessage.makeFriendRequest(friend._id, function(success) {
-                Notification.success("Friend request sent to " + friend.name);
+        $scope.unFriend = function(friend) {
+            User.removeFriendship(friend._id, function(success) {
+                Notification.success({
+                    message: "You are no longer friends with " + friend.name,
+                    replaceMessage: true
+                });
+                $timeout(function() {
+                    //$route.reload();   
+                    $scope.$apply(function() {
+                        $window.location.reload();
+                    })
+                }, 500);
             }, function(fail) {
-                Notification.warning("Friend request already sent to " + friend.name);
-            })
+                console.error(fail);
+                Notification.warning({
+                    message: "You have already unfriended " + friend.name,
+                    replaceMessage: true
+                });
+            });
+        }
+        $scope.addFriend = function(friend) {
+            User.makeFriendRequest(friend._id, function(success) {
+                $scope.hasFriendRequestAlreadySent = true;
+                if ($scope.isFriendRequestingMe) {
+                    // if true, it means i am accepting a friend request
+                    Notification.success({
+                        message: "You are now friends with " + friend.name,
+                        replaceMessage: true
+                    });
+                } else {
+                    Notification.success({
+                        message: "Friend request sent to " + friend.name,
+                        replaceMessage: true
+                    });
+                }
+                $timeout(function() {
+                    $scope.$apply(function() {
+                        $window.location.reload();
+                    })
+                }, 500);
+
+            }, function(fail) {
+                Notification.warning({
+                    message: "Friend request already sent to " + friend.name,
+                    replaceMessage: true
+                });
+            });
         }
 
     })

@@ -98,6 +98,8 @@ angular.module('snaptasqApp')
             $window.location.href = '/auth/facebook/reauth';
         };
     }).controller('CommunityCtrl', function($scope, Community, _me, Task, Auth, $routeParams, Notification, notifications) {
+        $scope._bgcolorGrey();
+        $scope._noFooter();
         $scope.id = $routeParams.id;
         $scope.allowed = undefined;
         $scope.taskFilter = {
@@ -108,24 +110,24 @@ angular.module('snaptasqApp')
         };
         $scope.isMember = undefined;
         $scope.init = function() {
-
+            Community.getById($scope.id, function(item) {
+                $scope.group = item;
+            });
             //check to see if i am a member
             //if not check if the group is open
             Community.amIMember($scope.id, function(isMember) {
                 $scope.isMember = isMember;
-                if (isMember) {
-                    $scope.allowed = true;
-                } else {
-                    Community.isGroupOpen($scope.id, function(isOpen) {
-                        $scope.allowed = isOpen;
-                    });
-                }
-
+                Community.isGroupOpen($scope.id, function(isOpen) {
+                    if (isMember || isOpen) {
+                        $scope.allowed = true;
+                    } else {
+                        $scope.allowed = false;
+                    }
+                });
             });
-        }
+        };
 
         $scope.init();
-
         $scope.requestJoin = function(challenge, creds) {
             Community.requestJoin($scope.groupId, $scope._me._id, challenge.id, creds, function(success) {
                 if (challenge.type == "email") {

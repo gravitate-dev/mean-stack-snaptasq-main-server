@@ -11,12 +11,15 @@ var UserMessage = require('../api/userMessage/userMessage.model').Message;
 var UserMessageThread = require('../api/userMessage/userMessage.model').Thread;
 var Task = require('../api/task/task.model');
 var Beta = require('../api/beta/beta.model');
+var Notify = require('../api/notify/notify.model');
 var config = require('./environment');
 var uuid = require('uuid');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var _ = require('lodash');
-
+Notify.find({}).remove(function() {
+    //removed all notifications
+});
 Community.find({}).remove(function() {
     Community.create({
             name: "Public Group 1",

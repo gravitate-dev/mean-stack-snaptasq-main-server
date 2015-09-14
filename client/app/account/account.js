@@ -48,11 +48,6 @@ angular.module('snaptasqApp')
                 controller: 'RewardsCtrl',
                 authenticate: true
             })
-            .when('/notifications', {
-                templateUrl: 'app/account/notifications/notifications.html',
-                controller: 'NotificationsCtrl',
-                authenticate: true
-            })
             .when('/inuse', {
                 templateUrl: 'app/account/inuse/inuse.html',
             });

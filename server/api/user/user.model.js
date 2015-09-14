@@ -78,6 +78,13 @@ var UserSchema = new Schema({
         type: String,
         default: 'user'
     },
+    knownIpAddresses: [{
+        ip: String,
+        popularity: {
+            type: Number,
+            default: 0
+        }
+    }],
     link: String, //this will be set with fb comes in
     groups: [{
         id: Schema.Types.ObjectId,
@@ -86,6 +93,7 @@ var UserSchema = new Schema({
         source: String
     }],
     otherTasks: [Schema.Types.ObjectId],
+    canFriend: [Schema.Types.ObjectId],
     friends: [friendSchema],
     hashedPassword: String,
     provider: String,

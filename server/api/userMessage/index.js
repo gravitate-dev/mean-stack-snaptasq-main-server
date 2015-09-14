@@ -7,6 +7,7 @@ var auth = require('../../auth/auth.service');
 var router = express.Router();
 
 /* Gets my Messages, this week */
+/*
 router.get('/getPrimary', controller.getMyMessagesPrimary);
 router.get('/getFriends', controller.getMyMessagesFriendRequests);
 router.post('/', auth.isAuthenticated(), controller.create);
@@ -18,4 +19,6 @@ router.post('/:id/reply', auth.isAuthenticated(), controller.replyToMessage);
 router.post('/newMessage', auth.isAuthenticated(), controller.create);
 router.post('/:id/thread/hide', auth.isAuthenticated(), controller.doesUserOwnAndSeeMessageThread, controller.hideMessageThread);
 router.delete('/:id', auth.isAuthenticated(), controller.deleteById);
+*/
+// Module deprecated so far
 module.exports = router;

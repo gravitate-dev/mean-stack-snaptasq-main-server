@@ -1,3 +1,6 @@
-<div class="panel-heading c-list">
-    <span class="title">{{title}}</span>
+<div class="panel-heading c-list" style="padding-right:5px;">
+    <div class="title">{{title}}</div>
+    <button ng-if="notificationCount>0" class="pull-right btn btn-success" style="margin-top:5px;" ng-click="_goToPath(notificationHref);" type="button">
+        New <span class="badge">{{notificationCount}}</span></button>
+</div>
 </div>

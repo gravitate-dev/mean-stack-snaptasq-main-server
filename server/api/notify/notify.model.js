@@ -4,14 +4,20 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var NotifySchema = new Schema({
     message: String,
-    to: Schema.Types.ObjectId, //this is the input box they can use to set their username customly when they signup
-    link: {
+    forOne: {
+        type: Schema.Types.ObjectId,
+        index: true
+    },
+    forMany: [Schema.Types.ObjectId],
+    source: Schema.Types.ObjectId, //this is the source it comes from
+    href: {
         type: String,
         default: '#'
     }, //# is default because it makes browser stay on the page
-    codeId: {
-        type: Number
-    },
+    category: {
+        type: String,
+        index: true
+    }, //friend,community,taskOwner,taskApplicant
     created: {
         type: Date,
         default: Date.now
@@ -19,10 +25,6 @@ var NotifySchema = new Schema({
     updated: {
         type: Date,
         default: Date.now
-    },
-    seen: {
-        type: Boolean,
-        default: false
     }
 });
 

@@ -51,7 +51,7 @@ angular.module('snaptasqApp')
                     type: "friendRequest"
                 }, {
                     title: "New Friend Request",
-                    body: "Will you accept my friend request?",
+                    body: "Will you be my friend?",
                     type: "friendRequest",
                 }, function(success) {
                     return cb(success);

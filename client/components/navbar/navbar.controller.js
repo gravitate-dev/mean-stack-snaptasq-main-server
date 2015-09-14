@@ -104,13 +104,15 @@ angular.module('snaptasqApp')
 
         /* Notifications from the server from this week */
         $scope.notifications = [];
-        /*
+
         $interval(function() {
-            Notify.get(function(notifications) {
-                $scope.notifications = notifications;
-            });
-        }, 5000);
-*/
+            if (!angular.isUndefined($scope._me) && !angular.isUndefined($scope._me._id)) {
+                Notify.get(function(notifications) {
+                    $scope.notifications = notifications;
+                });
+            }
+        }, 2000);
+
         Notify.get(function(notifications) {
             //console.log(notifications);
             $scope.notifications = notifications;

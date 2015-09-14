@@ -7,7 +7,8 @@ var config = require('../../config/environment');
 var Notify = require('../notify/notify.controller');
 var moment = require('moment');
 var RateLimiter = require('limiter').RateLimiter;
-var limiterSetTasker = new RateLimiter(1, 'hour', true);
+var limiterSetTasker = new RateLimiter(10, 'hour', true);
+var limiterStartTaskNotify = new RateLimiter(4, 'hour', true);
 
 // Get list of tasks
 exports.index = function(req, res) {
@@ -164,15 +165,20 @@ exports.create = function(req, res) {
 
         newTask.ownerName = user.name;
         newTask.ownerPic = user.pic;
-
         Task.create(newTask, function(err, task) {
             if (err) {
                 return handleError(res, err);
             }
-            Notify.put(user._id, "MYTASK_CREATED", {
-                task: task.name,
-                name: user.name
-            }, '/tasq/view/' + task._id.toString());
+            Notify.put({
+                forOne: user._id,
+                forMany: [],
+                hrefId: task._id,
+                code: Notify.CODES.taskOwner.created,
+                params: {
+                    task: task.name,
+                    name: user.name
+                }
+            });
             return res.json(201, task);
         });
     });
@@ -270,6 +276,30 @@ exports.applyToTask = function(req, res) {
                         if (err) {
                             return handleError(res, err);
                         }
+                        // Task Owner, new Applicant
+                        Notify.put({
+                            forOne: task.ownerId,
+                            forMany: [],
+                            hrefId: task._id,
+                            code: Notify.CODES.taskOwner.newApplicant,
+                            params: {
+                                task: task.name,
+                                name: user.name
+                            }
+                        });
+
+                        // Task Applicant, new task applied to
+                        Notify.put({
+                            forOne: user._id,
+                            forMany: [],
+                            hrefId: task._id,
+                            code: Notify.CODES.taskApplicant.created,
+                            params: {
+                                task: task.name,
+                                ownerName: task.ownerName
+                            }
+                        });
+
                         return res.json(200, task);
                     });
                 });
@@ -278,7 +308,106 @@ exports.applyToTask = function(req, res) {
     });
 };
 
+/**
+ * A Tasker can signal they are starting the task with this api call
+ **/
+exports.startTask = function(req, res) {
+    var taskId = req.param('id');
+    if (taskId == undefined) return res.send(400, "Missing parameter id. For the TaskID");
+    var currentUserId = req.session.userId;
+    if (currentUserId == undefined) return res.send(401, "Please login again");
+    Task.findById(taskId, function(err, task) {
+        if (err) return handleError(res, err);
+        if (!task) return res.send(404, "Tasq not found");
+        if (task.tasker != undefined && task.tasker.id != undefined && task.tasker.id.equals(currentUserId)) {
+            task.endTime = undefined;
+            task.totalTime = undefined;
+            task.startTime = Date.now();
+            task.save(function(err) {
+                if (err) {
+                    return handleError(res, err);
+                }
 
+                limiterStartTaskNotify.removeTokens(1, function(err, remainingRequests) {
+                    if (remainingRequests > 0) {
+                        Notify.put({
+                            forOne: task.ownerId,
+                            forMany: [],
+                            hrefId: task._id,
+                            code: Notify.CODES.taskOwner.taskerStarted,
+                            params: {
+                                task: task.name,
+                                name: task.tasker.name
+                            }
+                        });
+                    } else {
+                        // the notification will not be put because spam detected
+                        console.error("startTask was clicked too often by userID", currentUserId);
+                    }
+                });
+                return res.json(200, task);
+            });
+        } else {
+            return res.send(500, "You are not the current tasker anymore");
+        }
+    });
+};
+
+/**
+ * A Tasker can signal they finished the task
+ **/
+exports.finishTask = function(req, res) {
+    var taskId = req.param('id');
+    if (taskId == undefined) return res.send(400, "Missing parameter id. For the TaskID");
+    var currentUserId = req.session.userId;
+    if (currentUserId == undefined) return res.send(401, "Please login again");
+    Task.findById(taskId, function(err, task) {
+        if (err) return handleError(res, err);
+        if (!task) return res.send(404, "Tasq not found");
+        if (task.startTime == undefined) {
+            return res.send(500, "You must start the tasq first before completeing it.");
+        }
+        if (task.tasker != undefined && task.tasker.id != undefined && task.tasker.id.equals(currentUserId)) {
+            //
+            task.endTime = Date.now();
+            task.totalTime = Math.floor((task.endTime - task.startTime) / (1000 * 60)); //in minutes
+            task.status = "completed";
+            task.save(function(err) {
+                if (err) {
+                    return handleError(res, err);
+                }
+                // Task Owner, task completed
+                Notify.put({
+                    forOne: task.ownerId,
+                    forMany: [],
+                    hrefId: task._id,
+                    code: Notify.CODES.taskOwner.taskerFinished,
+                    params: {
+                        task: task.name,
+                        name: task.tasker.name
+                    }
+                });
+
+                // Task Applicants, task completed
+                var applicantIds = _.pluck(task.applicants, 'id');
+                Notify.put({
+                    forOne: task.tasker.id,
+                    forMany: applicantIds,
+                    hrefId: task._id,
+                    code: Notify.CODES.taskApplicant.taskerCompleted,
+                    params: {
+                        task: task.name,
+                        chosenName: task.tasker.name,
+                        ownerName: task.ownerName
+                    }
+                });
+                return res.json(200, task);
+            });
+        } else {
+            return res.send(500, "You are not the current tasker anymore");
+        }
+    });
+};
 /**
  * Owner can set who they want to help them from the
  * Applicants, if no user id is passed, we can say
@@ -319,11 +448,27 @@ exports.setTasker = function(req, res) {
                 };
                 if (user.fb && user.fb.id)
                     task.tasker.fbId = user.fb.id;
+                task.startTime = undefined;
+                task.endTime = undefined;
+                task.totalTime = undefined;
                 task.status = "in progress";
                 task.save(function(err) {
                     if (err) {
                         return handleError(res, err);
                     }
+                    var applicantIds = _.pluck(task.applicants, 'id');
+                    // Task Applicants, tasker chosen
+                    Notify.put({
+                        forOne: user._id,
+                        forMany: applicantIds,
+                        hrefId: task._id,
+                        code: Notify.CODES.taskApplicant.taskerChosen,
+                        params: {
+                            task: task.name,
+                            chosenName: user.name,
+                            ownerName: task.ownerName
+                        }
+                    });
                     //https://snaptasq.com/task/view/55c82438ede999467491c629
                     //TODO write a wrapper for emailer
                     limiterSetTasker.removeTokens(1, function(err, remainingRequests) {
@@ -336,62 +481,42 @@ exports.setTasker = function(req, res) {
                 });
             });
         } else {
-            task.tasker = {
-                id: chosenApplicantId
-            };
-            task.status = "open";
-            task.save(function(err) {
-                if (err) {
-                    return handleError(res, err);
-                }
+
+            if (task.tasker.id == undefined) {
+                //do nothing, tasker was already unassigned!
+                console.error("Tasker already unset", task.name);
                 return res.status(200).json(task);
-            });
-        }
-    });
-};
-
-/**
- * A chosen tasker must confirm that they can help
- * /:id/confirmTasker
- * @requires, the task must be have the caller as an applicant
- * @param id: taskId
- * @param isAccepted: true if they accepted, false if they rejected the task
- * If the user rejects the task, then the task is set to open, the applicant then
- * will be removed from the applicants
- **/
-exports.confirmTasker = function(req, res) {
-    Task.findById(req.params.id, function(err, task) {
-        if (err) {
-            return handleError(res, err);
-        }
-        if (!task) {
-            return res.send(404);
-        }
-
-        if (task.tasker.id == undefined) {
-            return res.status(500).send("The owner has not yet picked a tasker");
-        }
-        // check for logged out
-        if (!task.tasker.id.equals(req.session.userId)) {
-            return res.status(403).send("You are not selected to help on this task.");
-        } else {
-            task.tasker.confirmed = req.param('isAccepted');
-            if (task.tasker.confirmed) {
-                task.status = "in progress";
             } else {
-                task = removeApplicantFromTaskById(task, task.tasker.id);
+                var applicantIds = _.pluck(task.applicants, 'id');
+                // Task Applicants, task is now open
+                Notify.put({
+                    forOne: task.tasker.id,
+                    forMany: applicantIds,
+                    hrefId: task._id,
+                    code: Notify.CODES.taskApplicant.taskerUnchosen,
+                    params: {
+                        task: task.name
+                    }
+                });
+                task.tasker = {
+                    id: undefined
+                };
+                task.markModified('tasker');
+                task.startTime = undefined;
+                task.endTime = undefined;
+                task.totalTime = undefined;
                 task.status = "open";
-                task.tasker = undefined;
+                task.save(function(err) {
+                    if (err) {
+                        return handleError(res, err);
+                    }
+                    return res.status(200).json(task);
+                });
             }
-            task.save(function(err) {
-                if (err) {
-                    return handleError(res, err);
-                }
-                return res.json(200, task);
-            });
         }
     });
 };
+
 
 /**
  * Removes a given applicant from a task
@@ -409,23 +534,30 @@ function removeApplicantFromTaskById(task, applicantId) {
     return task;
 }
 
+// yes i know duplicate function. i can refactor lator.
+//TODO: refactor this along with its cousin removeApplicantsFromTaskById
+function isAppliantToTask(task, applicantId) {
+    for (var i = task.applicants.length - 1; i >= 0; i--) {
+        if (task.applicants[i].id.equals(applicantId)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function isUserTasker(task, userId) {
     if (task.tasker.id == undefined)
         return false;
     return task.tasker.id.equals(userId);
 }
 
-function removeTasker(task) {
-    task.tasker = undefined;
-    task.status = "open";
-    return task;
-}
-
 /**
  * Allowsa user to apply to help for a task
  **/
 exports.unapplyToTask = function(req, res) {
-    Task.findById(req.params.id, function(err, task) {
+    var id = req.param('id');
+    if (id == undefined) return res.send(400, "Missing parameter id. The Task Id");
+    Task.findById(id, function(err, task) {
         if (err) {
             return handleError(res, err);
         }
@@ -433,11 +565,15 @@ exports.unapplyToTask = function(req, res) {
             return res.send(404);
         }
         var currentUserId = req.session.userId;
+        if (currentUserId == undefined) return res.send(403, "Please login again");
+        if (isAppliantToTask(task, currentUserId) == false) {
+            return res.send(200, "Already not applied");
+        }
         User.findOne({
             _id: currentUserId
-        }, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, user) { // don't ever give out the password or salt
+        }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) { // don't ever give out the password or salt
             if (err) return res.status(500).json(err);
-            if (!user) return res.json(401);
+            if (!user) return res.send(404, "Not logged in");
 
             task = removeApplicantFromTaskById(task, user._id);
             for (var i = user.otherTasks.length - 1; i >= 0; i--) {
@@ -451,12 +587,36 @@ exports.unapplyToTask = function(req, res) {
                     return handleError(res, err);
                 }
 
+                var wasTaskerRemoved = false;
                 if (isUserTasker(task, user._id)) {
-                    removeTasker(task);
+                    //this is when the TASKER quits
+                    task.tasker = {
+                        id: undefined
+                    };
+                    task.status = "open";
+                    task.startTime = undefined;
+                    task.endTime = undefined;
+                    task.totalTime = undefined;
+                    wasTaskerRemoved = true;
                 }
                 task.save(function(err) {
                     if (err) {
                         return handleError(res, err);
+                    }
+                    if (wasTaskerRemoved) {
+                        Notify.put({
+                            forOne: task.ownerId,
+                            forMany: [],
+                            hrefId: task._id,
+                            code: Notify.CODES.taskOwner.taskerQuit,
+                            params: {
+                                task: task.name,
+                                name: user.name
+                            }
+                        });
+                    } else {
+                        // no notification if an applicant quits your task.
+                        // by design
                     }
                     return res.json(200, task);
                 });

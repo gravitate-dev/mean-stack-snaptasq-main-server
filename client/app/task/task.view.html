@@ -1,5 +1,5 @@
 <div class="container top-buffer" style="word-break: break-word;" ng-controller="TaskGlobalCtrl">
-    <a href="/tasqs">Back to my tasqs</a>
+    <a ng-if="_me" href="/tasqs">Back to my tasqs</a>
     <div class="well" style="background-color:white">
         <div class="row bot-buffer">
             <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
@@ -9,16 +9,19 @@
                 <div>
                     <strong><a href="/user/view/{{task.ownerId}}">{{task.ownerName}}</a></strong>
                 </div>
-                <div>{{task.created | date:'MMM d, y h:mm a'}}&nbsp;<span class="badge badge-info">{{task.status | capslock}}</span>
+                <div>{{task.created | date:'MMM d, y h:mm a'}}</div>
+                <div class="badge" ng-class="{'badge-success':task.status=='completed','badge-info':task.status!='completed'}">{{task.status | capslock}}<span ng-if="task.tasker.name">&nbsp;<a href="/user/view/{{task.tasker.id}}" style="color:white;">by {{task.tasker.name}}</a></span></span>
                 </div>
             </div>
             <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
                 <div class="pull-lg-right pull-md-right pull-sm-right">
-                    <button ng-if="task.applicants.length==0" ng:disabled="true" ng-click="showApplicants(task)" class="btn btn-info" style="height:46px;">No Applicants Yet</button>
+                    <button ng-if="task.applicants.length==0 && _me" ng:disabled="true" ng-click="showApplicants(task)" class="btn btn-info" style="height:46px;">No Applicants Yet</button>
                     <button ng-if="task.applicants.length!=0" ng-click="showApplicants(task)" class="btn btn-info" style="height:46px;">View <span ng-if="task.applicants.length>0">{{task.applicants.length}}</span> Applicants</button>
                     <span ng-if="task.ownerId!=_me._id">
+                        <button ng-if="canStartTask(task,_me)" ng-click="startTask(task);" class="btn btn-success" style="height:46px;">Start Tasq</button>
+                        <button ng-if="canFinishTask(task,_me)" ng-click="finishTask(task);" class="btn btn-success" style="height:46px;">Mark Tasq Completed</button>
                         <button ng-if="canApplyToTask(task,_me);" ng-click="applyToTask(task)" class="btn btn-success" style="height:46px;">Apply to Task</button>
-                        <button ng-if="canUnapplyToTask(task,_me)" ng-click="unapplyToTask(task)" class="btn btn-warning" style="height:46px;">Unapply to Task</button>
+                        <button ng-if="canUnapplyToTask(task,_me) && _me" ng-click="unapplyToTask(task)" class="btn btn-warning" style="height:46px;">Unapply to Task</button>
                     </span>
                     <!-- task owner buttons -->
                     <span ng-if="task.ownerId==_me._id">

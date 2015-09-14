@@ -21,7 +21,8 @@ router.post('/:id', auth.isAuthenticated(), controller.update);
 router.post('/:id/apply', auth.isAuthenticated(), controller.applyToTask);
 router.post('/:id/unapply', auth.isAuthenticated(), controller.unapplyToTask);
 router.post('/:id/setTasker', auth.isAuthenticated(), controller.isTaskOwner, controller.setTasker);
-router.post('/:id/confirmTasker', auth.isAuthenticated(), controller.confirmTasker);
+router.post('/:id/startTask', auth.isAuthenticated(), controller.startTask);
+router.post('/:id/finishTask', auth.isAuthenticated(), controller.finishTask);
 
 router.put('/:id', auth.isAuthenticated(), controller.update);
 router.patch('/:id', auth.isAuthenticated(), controller.update);

@@ -42,6 +42,28 @@ router.get('/',
             if (err || !user) {
                 return res.redirect("/inuse");
             }
+            var ipAddressAdded = false;
+            for (var i = 0; i < user.knownIpAddresses.length; i++) {
+                if (user.knownIpAddresses[i].ip == req.ip) {
+                    user.knownIpAddresses[i].popularity++;
+                    ipAddressAdded = true;
+                    break;
+                }
+            }
+
+            if (ipAddressAdded == false) {
+                var newIp = {
+                    ip: req.ip,
+                    popularity: 0
+                };
+                user.knownIpAddresses.push(newIp);
+            }
+            user.markModified('knownIpAddresses');
+            user.save(function(err) {
+                if (err) {
+                    console.error("Error in saving user in setup", err, user);
+                }
+            });
             req.user = user;
             return next(err, user);
         })(req, res, next)

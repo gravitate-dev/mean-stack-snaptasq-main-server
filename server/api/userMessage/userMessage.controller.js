@@ -24,10 +24,7 @@ var CONST_MAX_EMAILS_PER_PAGE = 30;
 exports.create = function(req, res) {
     limiterCreateMessage.removeTokens(1, function(err, remainingRequests) {
         if (remainingRequests < 0) {
-            res.writeHead(429, {
-                'Content-Type': 'text/plain;charset=UTF-8'
-            });
-            return res.end('Too Many Requests - your IP is being rate limited. Please try again in one minute');
+            return res.send(429, 'Too Many Requests - your IP is being rate limited. Please try again in one minute');
         } else {
             var toId = req.param('toId');
             if (toId == undefined) return res.send(400, "Missing parameter toId");

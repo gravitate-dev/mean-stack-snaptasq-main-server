@@ -26,6 +26,7 @@ var myCookieParser = cookieParser(config.secrets.session);
 
 // Setup server
 var app = express();
+
 var session = require('express-session');
 
 var sessionStore;
@@ -56,6 +57,8 @@ var sess = {
 
 app.use(session(sess));
 
+//app trusts proxy this is to get the ip address of the user
+app.enable('trust proxy');
 app.disable('x-powered-by');
 
 var server = require('http').createServer(app);
