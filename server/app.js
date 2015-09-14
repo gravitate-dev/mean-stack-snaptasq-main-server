@@ -63,12 +63,12 @@ app.disable('x-powered-by');
 
 
 var server = require('http').createServer(app);
-
-var socketio = require('socket.io').listen(server);
 console.log('Attempting to launch Express server listening on %d, in %s mode', config.port, app.get('env'));
 server.listen(config.port, config.ip, function() {
     console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
 });
+
+var socketio = require('socket.io').listen(server);
 /*
 app.use(seo({
     cacheClient: 'disk', // Can be 'disk' or 'redis'

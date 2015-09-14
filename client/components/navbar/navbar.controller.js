@@ -123,8 +123,6 @@ angular.module('snaptasqApp')
             socket.syncUpdates('notify', $scope.notifications);
             //set up watcher for animations
             $scope.$watch('notifications.length', function(newValue) {
-                console.log($scope.muteSoundUntil < Date.now());
-                console.log($scope.muteSoundUntil - Date.now());
                 if (newValue > $scope.readNotificationsCount && $scope.muteSoundUntil < Date.now()) {
                     $scope.newNotificationSound.play();
                     $scope.muteSoundUntil.setTime($scope.muteSoundUntil.getTime() + 1000 * 20);
