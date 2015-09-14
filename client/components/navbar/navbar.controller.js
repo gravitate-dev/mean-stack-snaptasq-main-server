@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('snaptasqApp')
-    .controller('NavbarCtrl', function($scope, $location, $window, Auth, Notify, User, TaskMarshaler, $interval, $timeout) {
+    .controller('NavbarCtrl', function($scope, socket, ngAudio, $location, $window, Auth, Notify, User, TaskMarshaler, $interval, $timeout) {
+        $scope.newNotificationSound = ngAudio.load("assets/sounds/notification.mp3"); // returns NgAudioObject
         $scope.responsibleCount = 0;
         $scope.menuAdmin = [];
         $scope.menu = [];
@@ -104,7 +105,7 @@ angular.module('snaptasqApp')
 
         /* Notifications from the server from this week */
         $scope.notifications = [];
-
+        /*
         $interval(function() {
             if (!angular.isUndefined($scope._me) && !angular.isUndefined($scope._me._id)) {
                 Notify.get(function(notifications) {
@@ -112,12 +113,28 @@ angular.module('snaptasqApp')
                 });
             }
         }, 2000);
-
+*/
+        $scope.readNotificationsCount = undefined;
+        $scope.muteSoundUntil = new Date();
         Notify.get(function(notifications) {
             //console.log(notifications);
             $scope.notifications = notifications;
+            $scope.readNotificationsCount = notifications.length;
+            socket.syncUpdates('notify', $scope.notifications);
+            //set up watcher for animations
+            $scope.$watch('notifications.length', function(newValue) {
+                console.log($scope.muteSoundUntil < Date.now());
+                console.log($scope.muteSoundUntil - Date.now());
+                if (newValue > $scope.readNotificationsCount && $scope.muteSoundUntil < Date.now()) {
+                    $scope.newNotificationSound.play();
+                    $scope.muteSoundUntil.setTime($scope.muteSoundUntil.getTime() + 1000 * 20);
+                }
+            });
         });
 
+        $scope.onOpenNotificaions = function() {
+            $scope.readNotificationsCount = $scope.notifications.length;
+        }
         $scope.isNotCollapsed = true;
         $scope.isLoggedIn = Auth.isLoggedIn;
         $scope.isUserBetaLocked = !Auth.isBetaUnlocked();

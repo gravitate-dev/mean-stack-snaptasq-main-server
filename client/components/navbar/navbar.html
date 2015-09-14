@@ -26,6 +26,14 @@
                 <li id="myMenu" ng-repeat="item in menu" class="ng-cloak" ng-class="{active: isActive(item.link)}">
                     <a ng-href="{{item.link}}">{{item.title}}</a>
                 </li>
+                <li ng-show="isLoggedIn()">
+                    <div class="show-only-when-collapsed-navbar">
+                        <button class="btn btn-default dropdown-toggle" style="margin-left:10px;" type="button" ng-click="goToNotifications()"><i class="fa fa-bell"></i></button>
+                    </div>
+                    <div class="hide-when-collapsed-navbar notifications">
+                        <div ng-include src="'components/navbar/notifications.html'"></div>
+                    </div>
+                </li>
                 <li id="loggedOutMenu" ng-if="!isLoggedIn()" class="ng-cloak">
                     <a ng-href="/signin?action=register" style="position:relative;top:10px;text-transform:uppercase;font-weight:bold;padding:5px;"><span style="border:2px solid black;border-radius:5px;padding:5px;">Become a beta tester</span></a>
                 </li>
@@ -54,14 +62,6 @@
                         <li ng-class="{active: isActive('/settings')}"><a href="/settings">Account</a></li>
                         <li ng-class="{active: isActive('/logout')}"><a href="" ng-click="logout()">Logout</a></li>
                     </ul>
-                </li>
-                <li ng-show="isLoggedIn()">
-                    <div class="show-only-when-collapsed-navbar">
-                        <button class="btn btn-default dropdown-toggle" style="margin-left:10px;" type="button" ng-click="goToNotifications()"><i class="fa fa-bell"></i></button>
-                    </div>
-                    <div class="hide-when-collapsed-navbar notifications">
-                        <div ng-include src="'components/navbar/notifications.html'"></div>
-                    </div>
                 </li>
             </ul>
         </div>

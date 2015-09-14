@@ -57,29 +57,31 @@
     <link rel="stylesheet" href="app/app.css">
     <link href="licenses.html" rel="license" title="Licensing Information">
     <!-- endbuild -->
+
+    <script src="/socket.io/socket.io.js"></script>
 </head>
 <body style="display: flex;
-  min-height: 100vh;
-  flex-direction: column; background:{{_bgcolor}}" 
-  >
+min-height: 100vh;
+flex-direction: column; background:{{_bgcolor}}" 
+>
 <div id="fb-root"></div>
 <noscript>
- For full functionality of this site it is necessary to enable JavaScript.
- Here are the <a href="http://www.enable-javascript.com/" target="_blank">
- instructions how to enable JavaScript in your web browser</a>.
+   For full functionality of this site it is necessary to enable JavaScript.
+   Here are the <a href="http://www.enable-javascript.com/" target="_blank">
+   instructions how to enable JavaScript in your web browser</a>.
 </noscript>
 <script src="https://apis.google.com/js/platform.js" async defer></script>
     <!--[if lt IE 7]>
         <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
-    <notifications-bar class="notifications" closeIcon="fa fa-times-circle"></notifications-bar>
-    <!-- Add your site or application content here -->
-    <div id="top" ng-include="'components/navbar/navbar.html'" ></div>
-    <!-- flex1 allows me to make the footer sticky! -->
+        <![endif]-->
+        <notifications-bar class="notifications" closeIcon="fa fa-times-circle"></notifications-bar>
+        <!-- Add your site or application content here -->
+        <div id="top" ng-include="'components/navbar/navbar.html'" ></div>
+        <!-- flex1 allows me to make the footer sticky! -->
         <!-- the ng view is inside a wrapper because this styles the bg color -->
         <div id="ngViewMain"  ng-view="" style="flex:1;background:{{_bgcolor}}">
         </div>
-    <div ng-show="_showFooter" style="margin-bottom:-25px;" ng-include="'components/footer/footer.html'" ></div>
+        <div ng-show="_showFooter" style="margin-bottom:-25px;" ng-include="'components/footer/footer.html'" ></div>
 
 
 
@@ -90,10 +92,10 @@
    | / _` \ V / _` (_-</ _| '_| | '_ \  _|
   _/ \__,_|\_/\__,_/__/\__|_| |_| .__/\__|
  |__/                           |_|        below
- -->
+-->
 
-    <!-- PT Engine Analytics -->
-    <script type="text/javascript">
+<!-- PT Engine Analytics -->
+<script type="text/javascript">
     window._pt_lt = new Date().getTime();
     window._pt_sp_2 = [];
     _pt_sp_2.push('setAccount,58892931');
@@ -107,31 +109,31 @@
         s.parentNode.insertBefore(atag, s);s.parentNode.insertBefore(stag, s);
     })();
 </script>
- 
- <!-- viewport fix for ie-->                       
+
+<!-- viewport fix for ie-->                       
 <script>
-if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
-  var msViewportStyle = document.createElement("style")
-  msViewportStyle.appendChild(
-    document.createTextNode(
-      "@-ms-viewport{width:auto!important}"
-    )
-  )
-  document.getElementsByTagName("head")[0].appendChild(msViewportStyle)
-}
+    if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+      var msViewportStyle = document.createElement("style")
+      msViewportStyle.appendChild(
+        document.createTextNode(
+          "@-ms-viewport{width:auto!important}"
+          )
+        )
+      document.getElementsByTagName("head")[0].appendChild(msViewportStyle)
+  }
 </script>
-    <!-- CrazyEgg Analytics -->
-    <script type="text/javascript">
+<!-- CrazyEgg Analytics -->
+<script type="text/javascript">
     setTimeout(function(){var a=document.createElement("script");
-    var b=document.getElementsByTagName("script")[0];
-    a.src=document.location.protocol+"//script.crazyegg.com/pages/scripts/0035/0799.js?"+Math.floor(new Date().getTime()/3600000);
-    a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
-    </script>
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-    <script>
+        var b=document.getElementsByTagName("script")[0];
+        a.src=document.location.protocol+"//script.crazyegg.com/pages/scripts/0035/0799.js?"+Math.floor(new Date().getTime()/3600000);
+        a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
+</script>
+<!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+<script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
   ga('create', 'UA-64904704-1', 'auto');
@@ -154,6 +156,7 @@ if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angucomplete-alt/angucomplete-alt.js"></script>
     <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-audio/app/angular.audio.js"></script>
     <script src="bower_components/angular-bindonce/bindonce.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
@@ -270,20 +273,20 @@ if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
     <script type="text/javascript" src="assets/js/ngeohash.js"></script>
     <script type="text/javascript" src="bower_components/angular-google-maps/dist/angular-google-maps.js"></script>
 
-<div id="DEBUG">
-</div>
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/55d68a709e26cac84ad89fe0/default';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
+    <div id="DEBUG">
+    </div>
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+            s1.async=true;
+            s1.src='https://embed.tawk.to/55d68a709e26cac84ad89fe0/default';
+            s1.charset='UTF-8';
+            s1.setAttribute('crossorigin','*');
+            s0.parentNode.insertBefore(s1,s0);
+        })();
+    </script>
+    <!--End of Tawk.to Script-->
 </body>
 </html>

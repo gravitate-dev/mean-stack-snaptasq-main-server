@@ -82,7 +82,7 @@ var UserSchema = new Schema({
         ip: String,
         popularity: {
             type: Number,
-            default: 0
+            default: 1
         }
     }],
     link: String, //this will be set with fb comes in

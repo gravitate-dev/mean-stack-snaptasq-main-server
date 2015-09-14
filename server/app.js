@@ -61,7 +61,10 @@ app.use(session(sess));
 app.enable('trust proxy');
 app.disable('x-powered-by');
 
+
 var server = require('http').createServer(app);
+
+var socketio = require('socket.io').listen(server);
 console.log('Attempting to launch Express server listening on %d, in %s mode', config.port, app.get('env'));
 server.listen(config.port, config.ip, function() {
     console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
@@ -72,9 +75,8 @@ app.use(seo({
     cacheDuration: 2 * 60 * 60 * 24 * 1000, // In milliseconds for disk cache
 }));
 */
-//require('./config/socketio')(socketio);
+require('./config/socketio')(socketio);
 require('./config/express')(app);
 require('./routes')(app);
-require('./api/notify');
 // Expose app
 exports = module.exports = app;

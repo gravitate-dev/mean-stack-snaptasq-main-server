@@ -1,5 +1,5 @@
 'use strict';
-var app = angular.module('snaptasqApp', ['infinite-scroll', 'angucomplete-alt' /*,'bcherny/formatAsCurrency'*/ , 'slick', 'angularMoment', 'LocalStorageModule', 'seo', 'FBAngular', 'ezfb', 'djds4rce.angular-socialshare', 'ngDisqus', 'ui-notification', 'pasvaz.bindonce', 'uiGmapgoogle-maps', 'ngAutocomplete', 'commentBox', 'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', /*'btford.socket-io',*/ 'ui.bootstrap', 'ngAnimate', 'ngNotificationsBar', 'vcRecaptcha'])
+var app = angular.module('snaptasqApp', ['ngAudio', 'infinite-scroll', 'angucomplete-alt' /*,'bcherny/formatAsCurrency'*/ , 'slick', 'angularMoment', 'LocalStorageModule', 'seo', 'FBAngular', 'ezfb', 'djds4rce.angular-socialshare', 'ngDisqus', 'ui-notification', 'pasvaz.bindonce', 'uiGmapgoogle-maps', 'ngAutocomplete', 'commentBox', 'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'btford.socket-io', 'ui.bootstrap', 'ngAnimate', 'ngNotificationsBar', 'vcRecaptcha'])
     .config(function($routeProvider) {
         $routeProvider.otherwise({
             redirectTo: '/'
@@ -184,7 +184,26 @@ var app = angular.module('snaptasqApp', ['infinite-scroll', 'angucomplete-alt' /
         })
     });
 
-app.controller('GlobalCtrl', function GlobalCtrl($scope, BadgeAlerts, localStorageService, $q, $templateCache, $interval, notifications, $http, $anchorScroll, Auth, User, $location, $rootScope, $timeout) {
+app.controller('GlobalCtrl', function GlobalCtrl($scope, BadgeAlerts, socket, localStorageService, $q, $templateCache, $interval, notifications, $http, $anchorScroll, Auth, User, $location, $rootScope, $timeout) {
+    //socket.connect();
+
+    socket.socket.on('lol', function(data) {
+            console.log(data);
+        })
+        /*var socket = io.connect({transports: ['websocket']});
+        socket.on('news', function (data) {
+            console.log(data);
+            socket.emit('my other event', { my: 'data' });
+        });
+
+        socket.on('connect_error', function(e) {
+            socket.io.reconnection(false);
+        });
+    
+        socket.socket.on('lol', function(item) {
+            console.log(item);
+        });
+        */
     $timeout(function() {
         /* CLOSE NAVBAR ON CLICK */
         /* Javascript queueing */
