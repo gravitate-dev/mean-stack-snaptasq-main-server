@@ -33,7 +33,7 @@ module.exports = function(app) {
     var myMorgan = morgan({
         format: 'dev',
         skip: function(req, res) {
-            return req.originalUrl === '/api/notify' || req.originalUrl === '/api/users/me'
+            return req.originalUrl === '/api/users/me'
         }
     })
     if ('production' === env) {
