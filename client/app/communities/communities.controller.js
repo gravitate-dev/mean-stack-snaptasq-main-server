@@ -1,6 +1,6 @@
 'use strict';
 angular.module('snaptasqApp')
-    .controller('CommunityJoinCtrl', function($scope, Auth, notifications, Community, Notification, FbCommunity, $timeout, $location) {
+    .controller('CommunityJoinCtrl', function($scope, Auth, notifications, Community, Notification, FbCommunity, $window, $timeout, $location, $route) {
         $scope.freezeInput = false;
         $scope.noResults = false;
         $scope.searchResults = [];
@@ -15,10 +15,7 @@ angular.module('snaptasqApp')
                     return;
                 }
                 if ($scope.isurl_fb(newvalue) && !$scope._me.isConnectedWithFb) {
-                    Notification.error("");
-                    notifications.showError({
-                        message: "you must first connect with facebook to join a facebook community. Go to your account to connect."
-                    });
+                    Notification.error("you must first connect with facebook to join a facebook community. Go to your account to connect.");
                     return;
                 }
                 $scope.searchForCommunities(newvalue);
@@ -97,10 +94,13 @@ angular.module('snaptasqApp')
         $scope.reconnect = function() {
             $window.location.href = '/auth/facebook/reauth';
         };
-    }).controller('CommunityCtrl', function($scope, Community, _me, Task, Auth, $routeParams, Notification, notifications) {
+    }).controller('CommunityCtrl', function($scope, $timeout, Community, _me, Task, Auth, $routeParams, Notification, notifications, Modal) {
         $scope._bgcolorGrey();
         $scope._noFooter();
         $scope.id = $routeParams.id;
+        _me.$promise.then(function(me) {
+            $scope._me = me;
+        });
         $scope.allowed = undefined;
         $scope.taskFilter = {
             text: undefined
@@ -128,19 +128,49 @@ angular.module('snaptasqApp')
         };
 
         $scope.init();
-        $scope.requestJoin = function(challenge, creds) {
-            Community.requestJoin($scope.groupId, $scope._me._id, challenge.id, creds, function(success) {
-                if (challenge.type == "email") {
-                    notifications.showSuccess("Please check your email for an emailed join link");
-                } else if (challenge.type == "areacode") {
-                    notifications.showSuccess("Please check your phone for a texted join link");
-                } else {
-                    notifications.showSuccess("Welcome to the group");
-                }
+        $scope.requestJoin = function() {
+            if (angular.isUndefined($scope._me)) {
+                return Notification.error({
+                    message: "Please login first",
+                    replaceMessage: true
+                });
+            }
+            if ($scope.group.source == 'facebook' && !$scope._me.isConnectedWithFb) {
+                return Notification.error({
+                    message: "To join this group you must connect your account with facebook in your <a href='/settings' style='text-decoration: underline;color: #0000EE;'>account settings.</a>",
+                    replaceMessage: true
+                });
+            }
+            Community.requestJoin($scope.group._id, $scope.group.source, function(success) {
+                Notification.success({
+                    message: "You have successfully joined the group.",
+                    replaceMessage: true
+                });
+                $scope.init();
             }, function(fail) {
-                Notification.error(fail.data);
+                Notification.error({
+                    message: "Sorry you can not join this group.",
+                    replaceMessage: true
+                });
             })
         }
+
+        $scope.requestLeave = function() {
+            Modal.confirm.leaveGroup(function(data) {
+                Community.requestLeave($scope.group._id, function(success) {
+                    Notification.success({
+                        message: "You have successfully left the group.",
+                        replaceMessage: true
+                    });
+                    $scope.init();
+                }, function(fail) {
+                    Notification.error(fail);
+                });
+            })($scope.group);
+
+        }
+
+
     })
     .controller('CommunityFriendCtrl', function($scope, _me, Community, Task, Auth, User, $routeParams, Notification, notifications) {
         //cant cache this as i get my friends!

@@ -18,6 +18,7 @@ var sms = require('../sms/sms.controller');
 var Email = require('../email/email.controller');
 var config = require('../../config/environment');
 var URLSafeBase64 = require('urlsafe-base64');
+var FbCommunity = require('./fb/fb.community.controller');
 
 
 function escapeRegExp(string) {
@@ -206,11 +207,9 @@ console.log(plaintext);
  **/
 exports.requestJoin = function(req, res) {
     var groupId = req.param('id');
-    var userId = req.param('applicantId');
-    var creds = req.param('creds');
-    var challengeId = req.param('challengeId');
-    if (userId == undefined)
-        return res.send(500, "missing userId");
+    var currentUserId = req.session.userId;
+    if (currentUserId == undefined)
+        return res.send(401, "Please login first");
     if (groupId == undefined)
         return res.send(500, "missing groupId");
     Community.findById(groupId, function(err, comm) {
@@ -218,21 +217,41 @@ exports.requestJoin = function(req, res) {
             return handleError(res, err);
         }
         if (!comm) {
-            return res.send(404);
+            return res.send(404, "Group no longer exists");
         }
-        User.findById(userId, function(err, user) {
+        User.findById(currentUserId, function(err, user) {
             if (err) {
                 return handleError(res, err);
             }
             if (!user) {
                 return res.send(404);
             }
-            //find the right auth method they chose
-            for (var i = 0; i < comm.challenges.length; i++) {
-                if (challengeId == comm.challenges[i].id) {
-                    _handleChallenge(req, res, comm.challenges[i], comm, user, creds);
+
+            if (comm.source == "facebook") {
+                if (_isUserAlreadyInGroup(comm, user)) {
+                    return res.send(200, "You are already in this group");
                 }
+                if (_isBannedFromGroup(comm, user))
+                    return res.send(403, "You are banned from this group. Sorry!");
+                // join via facebook
+                // GROUPID is the FACEBOOK GROUP ID not the SNAPTASQ GROUP ID!!!!!
+                FbCommunity.isUserAllowedToJoinInternal(req, res, comm.identifier, function(isAllowed) {
+                    if (isAllowed) {
+                        return _addUserToComm(req, res, comm, user);
+                    } else {
+                        return res.send(403, "You are not allowed in this group. Please join this group on facebook first, then try again.");
+                    }
+                })
+            } else if (comm.source == "snaptasq") {
+                for (var i = 0; i < comm.challenges.length; i++) {
+                    if (challengeId == comm.challenges[i].id) {
+                        _handleChallenge(req, res, comm.challenges[i], comm, user, creds);
+                    }
+                }
+            } else {
+                return res.send(500, "Unsupported group source " + comm.source);
             }
+            //find the right auth method they chose
 
         });
     });
@@ -333,6 +352,55 @@ function _isUserAlreadyInGroup(comm, user) {
     }
     return false;
 }
+exports.leaveGroup = function(req, res) {
+    var groupId = req.param('id');
+    var currentUserId = req.session.userId;
+    if (groupId == undefined) return res.send(400, "Missing id. The Group ID you are leaving");
+    Community.findById(groupId, function(err, comm) {
+        if (err) {
+            return handleError(res, err);
+        }
+        if (!comm) {
+            return res.send(404, "Group no longer exists");
+        }
+        User.findById(currentUserId, function(err, user) {
+            if (err) {
+                return handleError(res, err);
+            }
+            if (!user) {
+                return res.send(404);
+            }
+            return _removeUserFromComm(req, res, comm, user);
+        });
+    });
+}
+
+function _removeUserFromComm(req, res, comm, user) {
+    //first check that i dont contain the group id already
+    if (!_isUserAlreadyInGroup(comm, user)) {
+        return res.send(200, "You are not in this group already.");
+    }
+
+    user.groups = _.filter(user.groups, function(item) {
+        return !comm._id.equals(item.id)
+    })
+    user.save(function(err, user) {
+        if (err) return handleError(res, err);
+
+        var usr = {
+            id: user._id,
+            name: user.name,
+            pic: user.pic
+        };
+        comm.users = _.filter(comm.users, function(item) {
+            return !user._id.equals(item.id);
+        });
+        comm.save(function(err, comm) {
+            if (err) return handleError(res, err);
+            return res.json(200, comm);
+        });
+    });
+}
 
 function _addUserToComm(req, res, comm, user) {
     //first check that i dont contain the group id already
@@ -362,7 +430,6 @@ function _addUserToComm(req, res, comm, user) {
             return res.json(200, comm);
         });
     });
-
 }
 
 exports.getTasks = function(req, res) {

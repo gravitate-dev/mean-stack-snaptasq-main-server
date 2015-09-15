@@ -78,7 +78,7 @@ exports.getFbAccessToken = function(req, res, next) {
     }, function(err, user) {
         if (err) validationError(res, err);
         if (!user) return res.send(403, "Please login again");
-        if (!user.fb) return res.send(500, "You are not connected with facebook");
+        if (!user.fb) return res.send(403, "You are not connected with facebook");
         req.token = user.fb.accessToken;
         next();
     });

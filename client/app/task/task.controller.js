@@ -92,7 +92,7 @@ angular.module('snaptasqApp')
                 id: task._id
             }, {}, function(data) {
                 Notification.success({
-                    message: "You are no longer a helper for this task.",
+                    message: "You are no longer a helper for this tasq.",
                     replaceMessage: true
                 });
                 task.applicants = data.applicants;
@@ -103,7 +103,10 @@ angular.module('snaptasqApp')
         $scope.deleteTask = function(t) {
             Modal.confirm.delete(function(data) {
                 Task.delete(t._id, function(data) {
-                    notifications.showSuccess("tasq deleted");
+                    Notification.success({
+                        message: "Tasq deleted.",
+                        replaceMessage: true
+                    });
                     $location.path('/tasqs');
                 }, function(err) {
                     notifications.showError(err);
@@ -119,7 +122,7 @@ angular.module('snaptasqApp')
                     id: task._id
                 }, {}, function(data) {
                     Notification.success({
-                        message: "You have applied to help for this task.",
+                        message: "You have applied to help for this tasq.",
                         replaceMessage: true
                     });
                     $scope.task = data;
@@ -210,7 +213,7 @@ angular.module('snaptasqApp')
 
             }, function(err) {
                 notifications.showError({
-                    message: "This Task no longer exists. Because it was deleted by the owner."
+                    message: "This tasq no longer exists, because it was deleted by the owner."
                 });
                 $location.path('/tasqs');
             });
@@ -252,7 +255,7 @@ angular.module('snaptasqApp')
                 $scope.task.locationCopy = _.clone(data.location, true);
             }, function(err) {
                 notifications.showError({
-                    message: "This Task no longer exists. Because it was deleted by the owner."
+                    message: "This task no longer exists, because it was deleted by the owner."
                 });
                 $location.path('/tasqs');
             });
@@ -399,7 +402,7 @@ angular.module('snaptasqApp')
                 $scope.task.communitiesIn = $scope.getCheckedCommunities($scope.communitiesList);
                 if (!Auth.isLoggedIn()) {
                     TaskMarshaler.setTask($scope.task);
-                    notifications.showSuccess("Task Saved. Please signup or login to publish your task.");
+                    notifications.showSuccess("task saved. Please signup or login to publish your tasq.");
                     $location.path("/signin");
                 } else {
                     Task.create($scope.task,

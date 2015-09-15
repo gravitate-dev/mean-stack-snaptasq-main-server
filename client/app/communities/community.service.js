@@ -178,15 +178,37 @@ angular.module('snaptasqApp')
              * Will trigger success if the joining was accepted
              * Will trigger failure if the joining was rejected
              **/
-            requestJoin: function(id, cb) {
+            requestJoin: function(id, groupType, cb, cbfail) {
+                if (groupType != "facebook" && groupType != "snaptasq") {
+                    return cbfail("groupType must either be facebook or snaptasq, you gave " + groupType);
+                }
                 var cb = cb || angular.noop;
+                var cbfail = cbfail || angular.noop;
                 var deferred = $q.defer();
-                $http.post('/api/communities/' + id + '/requestJoin').success(function(data) {
-                    deferred.resolve(response);
+                $http.post('/api/communities/' + id + '/requestJoin/' + groupType).success(function(data) {
+                    deferred.resolve(data);
                     return cb(data);
-                }).error(function(err) {
+                }).error(function(fail) {
                     deferred.reject(fail);
-                    return cb(undefined);
+                    return cbfail(fail);
+                });
+                return deferred.promise;
+            },
+            /**
+             * A user can try to LEAVE a group
+             * Will trigger success if the leaving was accepted
+             * Will trigger failure if the leaving was rejected
+             **/
+            requestLeave: function(id, cb, cbfail) {
+                var cb = cb || angular.noop;
+                var cbfail = cbfail || angular.noop;
+                var deferred = $q.defer();
+                $http.post('/api/communities/' + id + '/leaveGroup').success(function(data) {
+                    deferred.resolve(data);
+                    return cb(data);
+                }).error(function(fail) {
+                    deferred.reject(fail);
+                    return cbfail(fail);
                 });
                 return deferred.promise;
             },

@@ -121,6 +121,50 @@ angular.module('snaptasqApp')
                             cb.apply(event, args);
                         });
                     };
+                },
+                /**
+                 * Create a function to leave a community
+                 * @param  {Function} cb  - callback, ran when start is confirmed
+                 * @return {Function}     - the function to open the modal (ex. myModalFn)
+                 */
+                leaveGroup: function(cb) {
+                    cb = cb || angular.noop;
+
+                    /**
+                     * Open a leaveGroup confirmation modal
+                     * @param  {String} name   - name or info to show on modal
+                     * @param  {All}           - any additional args are passed staight to cb callback
+                     */
+                    return function() {
+                        var args = Array.prototype.slice.call(arguments),
+                            community = args.shift(),
+                            myModal;
+
+                        myModal = openModal({
+                            modal: {
+                                dismissable: true,
+                                title: 'Leave the Group',
+                                html: '<p>Do you want to leave ' + community.name + '?</p>',
+                                buttons: [{
+                                    classes: 'btn-success',
+                                    text: 'Leave the group',
+                                    click: function(e) {
+                                        myModal.close(e);
+                                    }
+                                }, {
+                                    classes: 'btn-default',
+                                    text: 'Cancel',
+                                    click: function(e) {
+                                        myModal.dismiss(e);
+                                    }
+                                }]
+                            }
+                        }, 'modal-danger');
+
+                        myModal.result.then(function(event) {
+                            cb.apply(event, args);
+                        });
+                    };
                 }
             },
             /* Signup modals */

@@ -3,6 +3,7 @@
  var express = require('express');
  var controller = require('./community.controller');
  var auth = require('../../auth/auth.service');
+ var user = require('../user/user.controller');
  var dsl = require('../../components/dsl');
 
 
@@ -15,7 +16,9 @@
  router.get('/:id', controller.show);
  router.get('/:id/amIMember', auth.isAuthenticated(), controller.amIMember); //auth.isAuthenticated() removed on purpose
  router.get('/:id/join/:encUserId', controller.join);
- router.post('/:id/requestJoin', auth.isAuthenticated(), controller.requestJoin);
+ router.post('/:id/requestJoin/snaptasq', auth.isAuthenticated(), controller.requestJoin);
+ router.post('/:id/requestJoin/facebook', auth.isAuthenticated(), user.getFbAccessToken, controller.requestJoin);
+ router.post('/:id/leaveGroup', auth.isAuthenticated(), controller.leaveGroup);
  router.post('/search', controller.search);
  router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 

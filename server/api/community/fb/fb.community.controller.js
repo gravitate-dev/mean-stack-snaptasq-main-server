@@ -56,7 +56,7 @@ exports.processJoinUrl = function(req, res) {
 exports.isUserAllowedToJoinInternal = function(req, res, id, cb) {
         if (id == undefined) {
             console.error("Failed to pass id to function, isUserAllowedToJoinInternal");
-            return res.send(400, "An error occured");
+            return res.send(400, "Missing a groupid.");
         }
 
         _isUserAllowedToGroup(req, res, id, function(allowed) {
@@ -69,7 +69,7 @@ exports.isUserAllowedToJoinInternal = function(req, res, id, cb) {
      **/
 function _getGroupIdFromUrl(req, res, url, cb) {
     if (req.token == undefined) {
-        return res.send(400, "Call getFbAccessToken first");
+        return res.send(400, "You must authenticate with facebook first.");
     }
     //https://www.facebook.com/groups/165644006892325/
     //https://www.facebook.com/groups/findyournextopportunity/
@@ -90,7 +90,7 @@ function _getGroupIdFromUrl(req, res, url, cb) {
         //get the groupid by doing a search with the fb token
         var query = '/search?q=' + url + '&type=group';
         graph.get(query + "&access_token=" + req.token, function(err, response) {
-            if (err) return res.send(500, "No group found from the facebook group link you provided.");
+            if (err) return res.send(500, err);
             if (!response) return res.send(404, "No group found from the facebook group link you provided.");
             if (response.data.length == 0) return res.send(404, "Facebook group not found with the given url");
             return cb(response.data[0].id)
@@ -103,12 +103,12 @@ function _getGroupIdFromUrl(req, res, url, cb) {
 function _isUserAllowedToGroup(req, res, groupId, cb) {
     //if they are not allowed the response.data.length==0 or error will be there
     if (req.token == undefined) {
-        console.error("Call getFbAccessToken First");
-        return res.send(500, "An error occured");
+        console.error("Call getFbAccessToken First _isUserAllowedToGroup");
+        return res.send(403, "To join this group you must connect your account with facebook in your <a href='/settings' style='text-decoration: underline;color: #0000EE;'>account settings.</a>");
     }
     var query = '/' + groupId + '/members?limit=1';
     graph.get(query + "&access_token=" + req.token, function(err, response) {
-        if (err) return res.send(500, "No group found from the facebook group link you provided.");
+        if (err) return res.send(500, err);
         if (!response) return res.send(404, "No group found from the facebook group link you provided.");
         if (response.data.length == 0) return res.send(404, "Not allowed into group");
         return cb(true);
