@@ -20,8 +20,7 @@
                 <img ng-src="{{item.pic}}" alt="{{item.name}}" style="max-width:64px;" class="img-responsive img-circle" />
             </div>
             <div class="col-md-9 col-sm-9 col-xs-9">
-                <span class="name">{{item.name}}</span>
-                <br/>
+                <span class="name"><a href="{{'/community/view/'+item.id}}">{{item.name}}</a></span>
             </div>
             <div class="clearfix"></div>
         </li>
