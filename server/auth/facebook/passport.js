@@ -84,10 +84,11 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                     if (err) return cb(user);
                     if (!newFwends) return cb(user);
                     _.each(newFwends, function(friend) {
+                        var addFriendOkay = true;
                         for (var i = 0; i < user.doNotAutoFriend.length; i++) {
                             if (user.doNotAutoFriend[i].equals(friend._id)) {
-                                console.log("NOT AUTOFRIENDING");
-                                continue;
+                                addFriendOkay = false;
+                                break;
                             }
                         }
                         var f = {
@@ -97,7 +98,8 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                             pic: friend.pic,
                             source: "facebook"
                         };
-                        user.friends.push(f);
+                        if (addFriendOkay)
+                            user.friends.push(f);
                     });
                     //console.log("After putting friends in ",user.friends.length);
                     return cb(user);
