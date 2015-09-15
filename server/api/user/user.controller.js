@@ -202,6 +202,7 @@ exports.applyBetaCode = function(req, res, next) {
  * Can be triggered by either user.
  * This will unfriend both sides.
  * This will NOT block the users
+ * This will add the user to User.doNotAutoFriend
  **/
 exports.removeFriendship = function(req, res) {
         var currentUserId = req.session.userId;
@@ -319,6 +320,7 @@ exports.requestFriendship = function(req, res) {
                         forOne: friend._id,
                         forMany: [],
                         hrefId: user._id,
+                        pic: user.pic,
                         code: Notify.CODES.friend.newFriendRequest,
                         params: {
                             name: user.name
@@ -378,10 +380,27 @@ function _makeFriends(req, res, idOther, idMe, cb) {
             //now check if i am already their friend
             var needToSaveOther = false;
             if (!_isFriendsAlready(me, other._id)) {
+                // i should not have them not auto friend if they are now friends.
+                // its kinda meaningless, but i do it here just because it wont hurt either.
+                for (var i = 0; i < me.doNotAutoFriend.length; i++) {
+                    if (me.doNotAutoFriend[i].equals(other._id)) {
+                        me.doNotAutoFriend.splice(i, 1);
+                        break;
+                    }
+                }
                 me.friends.push(_friendObjectFromUser(other));
             }
             if (!_isFriendsAlready(other, me._id)) {
                 other.friends.push(_friendObjectFromUser(me));
+
+                // i should not have them not auto friend if they are now friends.
+                // its kinda meaningless, but i do it here just because it wont hurt either.
+                for (var i = 0; i < other.doNotAutoFriend.length; i++) {
+                    if (other.doNotAutoFriend[i].equals(me._id)) {
+                        other.doNotAutoFriend.splice(i, 1);
+                        break;
+                    }
+                }
                 needToSaveOther = true;
             }
             if (needToSaveOther) {
@@ -435,6 +454,16 @@ function _removeFriends(req, res, idOther, idMe, cb) {
             me.friends = _.filter(me.friends, function(item) {
                 return !item.id.equals(idOther);
             });
+            var needsDontAutoFriend = true;
+            for (var i = 0; i < me.doNotAutoFriend.length; i++) {
+                if (me.doNotAutoFriend[i].equals(other._id)) {
+                    needsDontAutoFriend = false;
+                    break;
+                }
+            }
+            if (needsDontAutoFriend) {
+                me.doNotAutoFriend.push(other._id);
+            }
             me.save(function(err) {
                 if (err) return validationError(res, err);
                 if (other) {
@@ -444,6 +473,16 @@ function _removeFriends(req, res, idOther, idMe, cb) {
                     other.friends = _.filter(other.friends, function(item) {
                         return !item.id.equals(idMe);
                     });
+                    var needsDontAutoFriend = true;
+                    for (var i = 0; i < me.doNotAutoFriend.length; i++) {
+                        if (other.doNotAutoFriend[i].equals(other._id)) {
+                            needsDontAutoFriend = false;
+                            break;
+                        }
+                    }
+                    if (needsDontAutoFriend) {
+                        other.doNotAutoFriend.push(me._id);
+                    }
                     other.save(function(err) {
                         if (err) return validationError(res, err);
                         return cb(true);

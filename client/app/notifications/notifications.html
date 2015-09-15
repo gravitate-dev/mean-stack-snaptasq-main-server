@@ -11,8 +11,9 @@
             <!-- <div class="pull-left">
                 <img ng-src="{{item.pic}}" alt="{{item.name}}" class="img-circle" style="height:50px;width:50px;" />
             </div> -->
-            <div class="col-xs-9 col-sm-9">
-                <span class="name">{{item.msg}}</span>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <span class="name" ng-if="item.forOne==_me._id">{{item.messageOne}}</span>
+                <span class="name" ng-if="item.forOne!=_me._id">{{item.message}}</span>
             </div>
             <div class="clearfix"></div>
         </li>

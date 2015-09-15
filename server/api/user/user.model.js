@@ -94,6 +94,7 @@ var UserSchema = new Schema({
     }],
     otherTasks: [Schema.Types.ObjectId],
     canFriend: [Schema.Types.ObjectId],
+    doNotAutoFriend: [Schema.Types.ObjectId], //these are people you dont want to auto friend. This happens when a user unfriends a facebook friend
     friends: [friendSchema],
     hashedPassword: String,
     provider: String,

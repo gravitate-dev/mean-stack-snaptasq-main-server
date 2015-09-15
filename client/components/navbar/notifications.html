@@ -4,21 +4,26 @@
     </button>
     <ul class="notifications dropdown-menu" style="position:absolute;right:0px;" role="menu" aria-labelledby="dropdownMenu1">
         <div class="notification-heading">
-            <h4 class="menu-title">Notifications</h4><a href="/notifications"><h4 class="menu-title pull-right">View all<i class="glyphicon glyphicon-circle-arrow-right"></i></h4></a>
+            <h4 class="menu-title">Notifications</h4><a href="/notifications"><h4 class="menu-title pull-right">View all<i class="fa fa-circle-arrow-right"></i></h4></a>
         </div>
         <li class="divider"></li>
         <div class="notifications-wrapper">
             <a class="content" href="{{item.href}}" ng-repeat="item in notifications | orderBy:'-created'">
 
                 <div class="notification-item">
-                    <h4 class="item-title">{{item.message}}</h4>
-                    <p class="item-info" am-time-ago="item.created"></p>
-                </div>
+                    <div class="row">
+                        <div class="col-md-2 col-sm-2 col-xs-2"><img ng-src="{{item.pic}}" class="img-responsive" /></div>
+                        <div class="col-md-10 col-sm-10 col-xs-10">
+                            <h4 ng-if="item.forOne==myId" class="item-title">{{item.messageOne}}</h4>
+                            <h4 ng-if="item.forOne!=myId" class="item-title">{{item.message}}</h4>
+                            <p class="item-info" am-time-ago="item.created"></p>
+                        </div>
+                    </div>
 
             </a>
-        </div>
-        <li class="divider"></li>
-        <div class="notification-footer"><a href="/notifications"><h4 class="menu-title">View all<i class="glyphicon glyphicon-circle-arrow-right"></i></h4></a></div>
+            </div>
+            <li class="divider"></li>
+            <div class="notification-footer"><a href="/notifications"><h4 class="menu-title">View all<i class="fa fa-circle-arrow-right"></i></h4></a></div>
     </ul>
 
-</div>
+    </div>

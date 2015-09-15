@@ -1,13 +1,15 @@
 'use strict';
 angular.module('snaptasqApp')
-    .controller('NotificationsCtrl', function($scope, $routeParams, Notify) {
+    .controller('NotificationsCtrl', function($scope, socket, $routeParams, _me, Notify) {
         $scope.type = $routeParams.type;
-        $scope.items = [];
-        $scope.getNotifications = function() {
+        _me.$promise.then(function(me) {
+            $scope._me = me;
+            $scope.notifications = [];
+            $scope.readNotificationsCount = undefined;
             Notify.get(function(notifications) {
                 $scope.items = notifications;
-            }, $scope.type);
-        }
-        $scope.getNotifications();
-
+                $scope.readNotificationsCount = notifications.length;
+                socket.syncUpdates('notify', $scope.items);
+            });
+        });
     })

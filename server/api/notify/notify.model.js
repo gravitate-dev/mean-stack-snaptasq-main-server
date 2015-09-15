@@ -1,9 +1,14 @@
 'use strict';
-
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var NotifySchema = new Schema({
+    messageOne: String, //messageOne is a message for the singled out id, which is determined by forOne
     message: String,
+    pic: {
+        type: String,
+        default: 'assets/logos/snaptasq-64.png'
+    },
+    code: String, //this is msg type, its very specific like "task.applicant.task.completed"
     forOne: {
         type: Schema.Types.ObjectId,
         index: true

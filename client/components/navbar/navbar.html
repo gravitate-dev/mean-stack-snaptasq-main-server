@@ -10,7 +10,7 @@
             <a href="/" class="navbar-brand" style="color:white;font-size:20px;font-weight:bold;" popover-placement="right" popover-popup-delay="1000" popover="A Santa Clara University Project" popover-trigger="mouseenter"><img src="assets/logos/scuLogo.png" width="32px" style="padding-right:5px;" />snaptasq</a>
         </div>
         <div collapse="isNotCollapsed" class="navbar-collapse collapse" id="navbar-main">
-            <ul class="nav navbar-nav">
+            <ul class="nav navbar-nav col-sm-7 col-md-7">
                 <li class="dropdown hide-when-collapsed-navbar" ng-if="isLoggedIn() && isAdmin()">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">Admin<b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -30,7 +30,8 @@
                     <div class="show-only-when-collapsed-navbar">
                         <button class="btn btn-default dropdown-toggle" style="margin-left:10px;" type="button" ng-click="goToNotifications()"><i class="fa fa-bell"></i></button>
                     </div>
-                    <div class="hide-when-collapsed-navbar notifications">
+                    <!-- this is the notifications -->
+                    <div class="hide-when-collapsed-navbar notifications" ng-controller="NavBarNotificationsCtrl">
                         <div ng-include src="'components/navbar/notifications.html'"></div>
                     </div>
                 </li>
@@ -47,6 +48,7 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
+                <!-- dont apply classes to this guy for sizes-->
                 <li ng-hide="isLoggedIn()" ng-class="{active: isActive('/login')}"><a href="/signin" style="text-transform:uppercase;">Log In</a></li>
                 <li>
                     <div style="margin-top: 10px;padding-right: 5px;margin-left:15px;">

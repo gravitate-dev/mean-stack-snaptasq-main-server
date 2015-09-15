@@ -170,7 +170,7 @@ exports.create = function(req, res) {
                 return handleError(res, err);
             }
             Notify.put({
-                forOne: user._id,
+                forOne: currentUserId,
                 forMany: [],
                 hrefId: task._id,
                 code: Notify.CODES.taskOwner.created,
@@ -390,6 +390,12 @@ exports.finishTask = function(req, res) {
 
                 // Task Applicants, task completed
                 var applicantIds = _.pluck(task.applicants, 'id');
+                applicantIds = _.filter(applicantIds, function(id) {
+                    return !id.equals(task.tasker.id);
+                });
+
+                // one is the tasker
+                // many are the applicants minus tasker
                 Notify.put({
                     forOne: task.tasker.id,
                     forMany: applicantIds,
@@ -457,9 +463,12 @@ exports.setTasker = function(req, res) {
                         return handleError(res, err);
                     }
                     var applicantIds = _.pluck(task.applicants, 'id');
+                    applicantIds = _.filter(applicantIds, function(id) {
+                        return !id.equals(task.tasker.id);
+                    });
                     // Task Applicants, tasker chosen
                     Notify.put({
-                        forOne: user._id,
+                        forOne: task.tasker.id,
                         forMany: applicantIds,
                         hrefId: task._id,
                         code: Notify.CODES.taskApplicant.taskerChosen,
@@ -488,7 +497,12 @@ exports.setTasker = function(req, res) {
                 return res.status(200).json(task);
             } else {
                 var applicantIds = _.pluck(task.applicants, 'id');
-                // Task Applicants, task is now open
+                applicantIds = _.filter(applicantIds, function(id) {
+                        return !id.equals(task.tasker.id);
+                    })
+                    // Task Applicants, task is now open
+                    // one = chosen tasker
+                    // many = applicants minus me
                 Notify.put({
                     forOne: task.tasker.id,
                     forMany: applicantIds,

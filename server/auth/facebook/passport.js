@@ -84,6 +84,12 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                     if (err) return cb(user);
                     if (!newFwends) return cb(user);
                     _.each(newFwends, function(friend) {
+                        for (var i = 0; i < user.doNotAutoFriend.length; i++) {
+                            if (user.doNotAutoFriend[i].equals(friend._id)) {
+                                console.log("NOT AUTOFRIENDING");
+                                continue;
+                            }
+                        }
                         var f = {
                             id: friend._id,
                             name: friend.name,

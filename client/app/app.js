@@ -184,8 +184,10 @@ var app = angular.module('snaptasqApp', ['ngAudio', 'infinite-scroll', 'angucomp
         })
     });
 
-app.controller('GlobalCtrl', function GlobalCtrl($scope, BadgeAlerts, socket, localStorageService, $q, $templateCache, $interval, notifications, $http, $anchorScroll, Auth, User, $location, $rootScope, $timeout) {
+app.controller('GlobalCtrl', function GlobalCtrl($anchorScroll, $http, $interval, $location, $q, $rootScope, $scope, $templateCache, $timeout, Auth, BadgeAlerts, localStorageService, notifications, socket, User) {
     //socket.connect();
+
+
 
     socket.socket.on('lol', function(data) {
             console.log(data);

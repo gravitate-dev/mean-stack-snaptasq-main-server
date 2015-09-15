@@ -9,14 +9,27 @@ var _ = require('lodash');
 
 exports.register = function(socket) {
     Notify.schema.post('save', function(doc) {
+        //i handle the case FOR ONE
         if (doc.forOne != undefined) {
+            console.log("YES");
             if (doc.forOne.toString != undefined) {
+                console.log(doc.forOne.toString(), "vs", socket.uid);
                 if (doc.forOne.toString() == socket.uid) {
                     console.log("NOTIFICATION FOR ME", socket.uid);
+                    return onSave(socket, doc);
+                }
+            } else {
+                console.error("Bad forOne id in notification " + doc.code);
+            }
+        }
+        if (doc.forMany != undefined && !_.isEmpty(doc.forMany)) {
+            for (var i = 0; i < doc.forMany.length; i++) {
+                if (doc.forMany[i].equals(socket.uid)) {
+                    return onSave(socket, doc);
                 }
             }
         }
-        onSave(socket, doc);
+
     });
     /*Task.schema.post('remove', function(doc) {
         onRemove(socket, doc);

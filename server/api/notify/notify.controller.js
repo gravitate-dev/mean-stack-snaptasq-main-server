@@ -20,68 +20,106 @@ var hrefs = {
 var accountCodes = {};
 var friendCodes = {
     newFriendRequest: {
-        msg: '{name} would like to be your friend',
+        // one target friend
+        // many = [];
+        msgOne: '{name} would like to be your friend',
         href: hrefs.user,
         category: "friendRequest",
+        code: "friend.request"
     },
     friendshipCreated: {
-        msg: '{name} is now your friend',
+        // one target friend
+        // many = [];
+        msgOne: '{name} is now your friend',
         href: hrefs.user,
         category: "friend",
+        code: "friend.create"
     },
     friendRequestHelp: {
-        msg: '{name} is asking for you to help with {task}',
+        msgOne: '{name} is asking for you to help with {task}',
         href: hrefs.user,
         category: "friend",
+        code: "friend.help.task"
     },
 };
 var taskOwnerCodes = {
     created: {
-        msg: '{name} has created a task for {task}',
+
+        // One me owner
+        // many []
+        msgOne: 'You created a task for {task}',
         href: hrefs.task,
         category: "taskOwner",
+        code: "task.owner.created.task"
     },
     taskerQuit: {
-        msg: '{name} has stopped helping you for {task}',
+        // One me owner
+        // many []
+        msgOne: '{name} stopped helping you for {task}',
         href: hrefs.task,
         category: "taskOwner",
+        code: "task.owner.tasker.quit"
     },
     newApplicant: {
-        msg: '{name} has applied to help you for {task}',
+        // One me owner
+        // many []
+        msgOne: '{name} applied to help you for {task}',
         href: hrefs.task,
         category: "taskOwner",
+        code: "task.owner.applicant.created"
     },
     taskerStarted: {
-        msg: '{name} has started helping you for {task}',
+        // One me owner
+        // many []
+        msgOne: '{name} started helping you for {task}',
         href: hrefs.task,
         category: "taskOwner",
+        code: "task.owner.tasker.started"
     },
     taskerFinished: {
-        msg: '{name} has finished your task for {task}',
+        // One me owner
+        // many []
+        msgOne: '{name} finished your task for {task}',
         href: hrefs.task,
         category: "taskOwner",
+        code: "task.owner.tasker.finished"
     },
 };
 var taskApplicantCodes = {
     created: {
-        msg: 'You have applied to help {ownerName} with {task}',
+        // one = chosen tasker
+        // many = []
+        msgOne: 'You applied to help {ownerName} with {task}',
         href: hrefs.task,
         category: "taskApplicant",
+        code: "task.applicant.created"
     },
     taskerChosen: {
-        msg: '{ownerName} has picked {chosenName} to help for {task}',
+        // one = chosen tasker
+        // many = applicants minus me
+        msgOne: '{ownerName} picked you to help with {task}',
+        msg: '{ownerName} picked {chosenName} to help with {task}',
         href: hrefs.task,
         category: "taskApplicant",
+        code: "task.applicant.created"
     },
     taskerCompleted: {
-        msg: '{chosenName} has helped {ownerName} with {task}',
+        // one = chosen tasker
+        // many = applicants minus me
+        msgOne: 'You helped {ownerName} with {task}',
+        msg: '{chosenName} helped {ownerName} with {task}',
         href: hrefs.task,
         category: "taskApplicant",
+        code: "task.applicant.task.completed"
     },
     taskerUnchosen: {
+        // one = chosen tasker
+        // many = applicants minus me
+        msgOne: '{ownerName} unchose you to help with {task}',
         msg: '{task} is now open again.',
         href: hrefs.task,
         category: "taskApplicant",
+        code: "task.applicant.unchosen"
     },
 };
 
@@ -101,24 +139,37 @@ function notify(data) {
     var hrefId = data.hrefId;
     var codeObj = data.code;
     var params = data.params;
-    if (codeObj == undefined || codeObj.msg == undefined) {
-        return console.error("Passed in an invalid codeObj,", toOne, toMany, hrefId);
+    if (codeObj == undefined) {
+        console.error("Passed in an invalid codeObj,", forOne, forMany, hrefId);
+        var stack = new Error().stack;
+        return console.log(stack);
     }
     if (hrefId == undefined || typeof hrefId === 'string' || hrefId instanceof String) {
-        return console.error("Missing hrefID or it is a normal string. Requires ObjectID.", hrefId, toOne, toMany);
+        console.error("Missing hrefID or it is a normal string. Requires ObjectID.", hrefId, forOne, forMany);
+        var stack = new Error().stack;
+        return console.log(stack);
     }
-    var formatted = codeObj.msg.format(params);
-    var href = codeObj.href + hrefId.toString();
-    var category = codeObj.category;
-
+    var formattedForMany = undefined;
+    var formattedForOne = undefined;
+    if (codeObj.msg != undefined) {
+        formattedForMany = codeObj.msg.format(params);
+    }
+    if (codeObj.msgOne != undefined) {
+        formattedForOne = codeObj.msgOne.format(params);
+    }
     var notifyObj = {
         forOne: forOne,
         forMany: forMany,
         source: hrefId,
-        href: href,
-        message: formatted,
-        category: category
+        message: formattedForMany,
+        messageOne: formattedForOne,
+        href: codeObj.href + hrefId.toString(),
+        category: codeObj.category,
+        code: codeObj.code
     };
+    if (data.pic != undefined) {
+        notifyObj.pic = data.pic;
+    }
     var newNotify = new Notify(notifyObj);
     newNotify.save(function(err, notify) {
         if (err) console.error("Error saving notify", err);
@@ -144,9 +195,10 @@ function getMyNotifications(req, res) {
     if (category != undefined) {
         query.category = category;
     }
-    Notify.find(category).sort({
+    Notify.find(query).sort({
         created: -1
     }).exec(function(err, notifications) {
+        console.log(notifications);
         return res.json(200, notifications);
     });
 }
