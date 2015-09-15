@@ -474,8 +474,8 @@ function _removeFriends(req, res, idOther, idMe, cb) {
                         return !item.id.equals(idMe);
                     });
                     var needsDontAutoFriend = true;
-                    for (var i = 0; i < me.doNotAutoFriend.length; i++) {
-                        if (other.doNotAutoFriend[i].equals(other._id)) {
+                    for (var i = 0; i < other.doNotAutoFriend.length; i++) {
+                        if (other.doNotAutoFriend[i].equals(me._id)) {
                             needsDontAutoFriend = false;
                             break;
                         }
