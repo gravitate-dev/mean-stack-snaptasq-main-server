@@ -161,3 +161,38 @@ li.dropdown {
   background-color: $bgDefault;
   color: $colHighlight !important;
 }
+
+.nav.nav-tabs {
+  padding: 5px 5px 0 5px;
+  background-color: #FFF;
+  /*border-color: #3071a9;*/
+}
+
+.nav-tabs > li > a,
+.nav-tabs > li > a:hover,
+.nav-tabs > li > a:focus {
+    color: #777;
+    background-color: #ddd;
+    border-color: transparent;
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+  background-color: $bgDefault;
+  color: $colHighlight !important;
+}
+
+li:hover {
+  cursor:pointer;
+}
+
+
+/* Styling for navbar notification buttons */
+.nav-notification-button {
+  margin-right: 15px;
+  padding: 9px 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}

@@ -1,18 +1,23 @@
 <div class="navbar navbar-default navbar-static-top" ng-class="{'navbar-full-opacity': !isMainPage }" ng-controller="NavbarCtrl">
     <div class="container">
         <div class="navbar-header">
-            <div class="pull-right visible-xs">
-                <button>a</button>
-                <button>b</button>
-                <button>c</button>
-                <button class="navbar-toggle" type="button" ng-click="isNotCollapsed = !isNotCollapsed">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-            </div>
+            <button class="visible-xs navbar-toggle" type="button" ng-click="isNotCollapsed = !isNotCollapsed">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
             <a href="/" class="navbar-brand" style="color:white;font-size:20px;font-weight:bold;" popover-placement="right" popover-popup-delay="1000" popover="A Santa Clara University Project" popover-trigger="mouseenter"><img src="assets/logos/scuLogo.png" width="32px" style="padding-right:5px;" />snaptasq</a>
+            <span id="notifications-bar-mobile" ng-if="isLoggedIn()" class="visible-xs pull-right">
+            <a href="/notifications"><button class="nav-notification-button btn btn-primary"><i class="fa fa-globe"></i>&nbsp;<span class="badge">5</span></button>
+            </a>
+            <a href="/notifications/friendRequest">
+                <button class="nav-notification-button btn btn-primary"><i class="fa fa-user"></i>&nbsp;<span class="badge">2</span></button>
+            </a>
+            <a href="/notifications/taskOwner">
+                <button class="nav-notification-button btn btn-primary"><i class="fa fa-tasks"></i>&nbsp;<span class="badge">3</span></button>
+            </a>
+            </span>
         </div>
         <div collapse="isNotCollapsed" class="navbar-collapse collapse" id="navbar-main">
             <ul class="nav navbar-nav col-sm-7 col-md-7">
@@ -32,9 +37,6 @@
                     <a ng-href="{{item.link}}">{{item.title}}</a>
                 </li>
                 <li ng-show="isLoggedIn()">
-                    <div class="show-only-when-collapsed-navbar">
-                        <button class="btn btn-default dropdown-toggle" style="margin-left:10px;" type="button" ng-click="goToNotifications()"><i class="fa fa-bell"></i></button>
-                    </div>
                     <!-- this is the notifications -->
                     <div class="hide-when-collapsed-navbar notifications" ng-controller="NavBarNotificationsCtrl">
                         <div ng-include src="'components/navbar/notifications.html'"></div>

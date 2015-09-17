@@ -99,7 +99,7 @@ angular.module('snaptasqApp')
         };
     }).directive('snaplistButton', function() {
         return {
-            restrict: 'ACE',
+            restrict: 'AE',
             replace: false,
             scope: {
                 button: "=snaplistButton"

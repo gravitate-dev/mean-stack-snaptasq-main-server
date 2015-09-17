@@ -1,6 +1,8 @@
 'use strict';
 angular.module('snaptasqApp')
     .controller('NotificationsCtrl', function($scope, socket, $routeParams, _me, Notify) {
+        $scope._bgcolorGrey();
+        $scope._noFooter();
         $scope.type = $routeParams.type;
         _me.$promise.then(function(me) {
             $scope._me = me;
