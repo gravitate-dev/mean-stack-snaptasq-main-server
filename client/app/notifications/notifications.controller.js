@@ -10,6 +10,6 @@ angular.module('snaptasqApp')
                 $scope.items = notifications;
                 $scope.readNotificationsCount = notifications.length;
                 socket.syncUpdates('notify', $scope.items);
-            });
+            }, $scope.type);
         });
     })

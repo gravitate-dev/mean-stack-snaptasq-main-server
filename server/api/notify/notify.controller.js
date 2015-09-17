@@ -46,8 +46,9 @@ var taskOwnerCodes = {
     created: {
 
         // One me owner
-        // many []
-        msgOne: 'You created a task for {task}',
+        // many myFriends
+        msgOne: 'You created a tasq for {task}',
+        msg: '{name} created a tasq for {task}',
         href: hrefs.task,
         category: "taskOwner",
         code: "task.owner.created.task"
@@ -79,7 +80,7 @@ var taskOwnerCodes = {
     taskerFinished: {
         // One me owner
         // many []
-        msgOne: '{name} finished your task for {task}',
+        msgOne: '{name} finished your tasq for {task}',
         href: hrefs.task,
         category: "taskOwner",
         code: "task.owner.tasker.finished"
@@ -184,9 +185,14 @@ function getMyNotifications(req, res) {
     var today = moment().endOf('day');
     var lastWeek = moment(today).subtract(7, 'days');
     var currentUserId = req.session.userId;
-
+    //SomeObjects.find({$or : [{a: 3}, {b: 4}]});
+    //{ $or: [ { quantity: { $lt: 20 } }, { price: 10 } ] }
     var query = {
-        forOne: currentUserId,
+        $or: [{
+            forOne: currentUserId
+        }, {
+            forMany: currentUserId
+        }],
         created: {
             $gte: lastWeek.toDate(),
             $lt: today.toDate()
@@ -198,12 +204,16 @@ function getMyNotifications(req, res) {
     Notify.find(query).sort({
         created: -1
     }).exec(function(err, notifications) {
-        console.log(notifications);
         return res.json(200, notifications);
     });
 }
 
+function removeNotification(query) {
+    Notify.find(query).remove().exec();
+}
+
 module.exports = {
+    remove: removeNotification,
     put: notify,
     CODES: CODES,
     getMyNotifications: getMyNotifications

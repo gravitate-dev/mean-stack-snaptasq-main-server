@@ -9,7 +9,7 @@ angular.module('snaptasqApp')
         //io.connect({transports: ['websocket']});
         var ioSocket = io({
             // Send auth token on connection, you will need to DI the Auth service above
-            'query': 'token=' + Auth.getToken() + "&uid=102",
+            'query': 'token=' + Auth.getToken(),
             transports: ['websocket'],
             //path: '/socket.io-client'
             path: '/socket.io/socket.io.js'

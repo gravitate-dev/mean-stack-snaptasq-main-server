@@ -1,12 +1,17 @@
 <div class="navbar navbar-default navbar-static-top" ng-class="{'navbar-full-opacity': !isMainPage }" ng-controller="NavbarCtrl">
     <div class="container">
         <div class="navbar-header">
-            <button class="navbar-toggle" type="button" ng-click="isNotCollapsed = !isNotCollapsed">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+            <div class="pull-right visible-xs">
+                <button>a</button>
+                <button>b</button>
+                <button>c</button>
+                <button class="navbar-toggle" type="button" ng-click="isNotCollapsed = !isNotCollapsed">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
             <a href="/" class="navbar-brand" style="color:white;font-size:20px;font-weight:bold;" popover-placement="right" popover-popup-delay="1000" popover="A Santa Clara University Project" popover-trigger="mouseenter"><img src="assets/logos/scuLogo.png" width="32px" style="padding-right:5px;" />snaptasq</a>
         </div>
         <div collapse="isNotCollapsed" class="navbar-collapse collapse" id="navbar-main">

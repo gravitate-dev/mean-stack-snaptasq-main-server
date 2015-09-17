@@ -282,6 +282,17 @@ exports.requestFriendship = function(req, res) {
                                 name: frnd.name
                             }
                         });
+                        //also remove the friend request
+                        Notify.remove({
+                            "code": "friend.request",
+                            "forOne": user._id,
+                            "source": frnd._id
+                        });
+                        Notify.remove({
+                            "code": "friend.request",
+                            "forOne": friendId,
+                            "source": user._id
+                        });
                         return res.send(200, "You are now friends.");
                     });
                     // Notify friend, that i am your friend

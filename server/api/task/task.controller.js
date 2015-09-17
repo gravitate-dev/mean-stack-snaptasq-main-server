@@ -169,11 +169,13 @@ exports.create = function(req, res) {
             if (err) {
                 return handleError(res, err);
             }
+            var friendIds = _.pluck(user.friends, "id");
             Notify.put({
                 forOne: currentUserId,
-                forMany: [],
+                forMany: friendIds,
                 hrefId: task._id,
                 code: Notify.CODES.taskOwner.created,
+                pic: user.pic,
                 params: {
                     task: task.name,
                     name: user.name
@@ -282,6 +284,7 @@ exports.applyToTask = function(req, res) {
                             forMany: [],
                             hrefId: task._id,
                             code: Notify.CODES.taskOwner.newApplicant,
+                            pic: user.pic,
                             params: {
                                 task: task.name,
                                 name: user.name
@@ -294,6 +297,7 @@ exports.applyToTask = function(req, res) {
                             forMany: [],
                             hrefId: task._id,
                             code: Notify.CODES.taskApplicant.created,
+                            pic: user.pic,
                             params: {
                                 task: task.name,
                                 ownerName: task.ownerName
@@ -335,6 +339,7 @@ exports.startTask = function(req, res) {
                             forMany: [],
                             hrefId: task._id,
                             code: Notify.CODES.taskOwner.taskerStarted,
+                            pic: task.tasker.pic,
                             params: {
                                 task: task.name,
                                 name: task.tasker.name
@@ -382,6 +387,7 @@ exports.finishTask = function(req, res) {
                     forMany: [],
                     hrefId: task._id,
                     code: Notify.CODES.taskOwner.taskerFinished,
+                    pic: task.tasker.pic,
                     params: {
                         task: task.name,
                         name: task.tasker.name
@@ -401,6 +407,7 @@ exports.finishTask = function(req, res) {
                     forMany: applicantIds,
                     hrefId: task._id,
                     code: Notify.CODES.taskApplicant.taskerCompleted,
+                    pic: task.tasker.pic,
                     params: {
                         task: task.name,
                         chosenName: task.tasker.name,
@@ -472,6 +479,7 @@ exports.setTasker = function(req, res) {
                         forMany: applicantIds,
                         hrefId: task._id,
                         code: Notify.CODES.taskApplicant.taskerChosen,
+                        pic: task.ownerPic,
                         params: {
                             task: task.name,
                             chosenName: user.name,
