@@ -5,6 +5,7 @@ var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var authTypes = ['facebook'];
 var config = require('../../config/environment');
+var _ = require('lodash');
 
 var friendSchema = new Schema({
     id: Schema.Types.ObjectId,
@@ -226,6 +227,90 @@ UserSchema
             next();
     });
 
+
+// i need to remove task references
+var Task = require('../task/task.model');
+var Notify = require('../notify/notify.model');
+var Community = require('../community/community.model');
+/**
+ * Pre-remove hook
+ */
+UserSchema
+    .pre('remove', function(next) {
+        var myId = this._id;
+        var myFriendsIds = _.pluck(this.friends, 'id');
+        var appliedTasks = this.otherTasks;
+        var myGroupsIds = _.pluck(this.groups, 'id');
+        Task.find({
+            ownerId: myId
+        }, function(err, tasks) {
+            //get all the ids
+            var ids = _.pluck(tasks, "_id");
+            ids.push(myId);
+
+            Notify.find({
+                source: {
+                    $in: ids
+                }
+            }).remove().exec(function(err, docs) {
+                Task.find({
+                    ownerId: myId
+                }).remove().exec(function(err, docs) {
+                    //i also need to remove all friendships ever made
+                    User.update({
+                        _id: {
+                            $in: myFriendsIds
+                        }
+                    }, {
+                        $pull: {
+                            'friends': {
+                                id: myId
+                            }
+                        }
+                    }, {
+                        multi: true
+                    }, function(err) {
+                        if (err) console.error(err);
+                        Task.update({
+                            _id: {
+                                $in: appliedTasks
+                            }
+                        }, {
+                            $pull: {
+                                'applicants': {
+                                    id: myId
+                                }
+                            }
+                        }, {
+                            multi: true
+                        }, function(err) {
+                            if (err) console.error(err);
+                            Community.update({
+                                _id: {
+                                    $in: myGroupsIds
+                                }
+                            }, {
+                                $pull: {
+                                    'users': {
+                                        id: myId
+                                    }
+                                }
+                            }, {
+                                multi: true
+                            }, function(err) {
+                                if (err) console.error(err);
+                                next();
+                            });
+                        });
+
+                    });
+                });
+
+            });
+        });
+        //next();
+    });
+
 /**
  * Methods
  */
@@ -279,4 +364,5 @@ UserSchema.pre('save', function(next) {
 
 
 //exports.UserTask = mongoose.model('UserTask', taskSchemaForUser);
-module.exports = mongoose.model('User', UserSchema);
+var User = mongoose.model('User', UserSchema);
+module.exports = User;

@@ -1,5 +1,6 @@
 'use strict';
 var config = require('../../config/environment');
+var _ = require('lodash');
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
@@ -17,7 +18,10 @@ var TaskSchema = new Schema({
     ownerPic: String,
     description: String,
     tasker: {
-        id: Schema.Types.ObjectId,
+        id: {
+            type: Schema.Types.ObjectId,
+            index: true
+        },
         name: String,
         pic: {
             type: String,
@@ -101,6 +105,22 @@ TaskSchema.pre('save', function(next) {
     this.updated = new Date();
     next();
 });
+
+
+var NotifySchema = require('../notify/notify.model');
+/**
+ * Pre-remove hook remove all the applied referenes and all the notifications
+ */
+TaskSchema
+    .pre('remove', function(next) {
+        console.log(this._id.toString(), "is what im gonna find against")
+        NotifySchema.find({
+            source: this._id
+        }).remove(function() {
+            console.log("Removed notifications about this task");
+        });
+
+    });
 
 //TaskSchema.plugin(autoIncrement.plugin, 'Task');
 module.exports = mongoose.model('Task', TaskSchema);

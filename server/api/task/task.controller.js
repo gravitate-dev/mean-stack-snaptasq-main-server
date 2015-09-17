@@ -661,6 +661,17 @@ exports.destroy = function(req, res) {
     });
 };
 
+//delete All Owned Tasks
+exports.destroyAllOwnedTasksForCurrentUser = function(req, res, next) {
+    var currentUserId = req.session.userId;
+    if (currentUserId == undefined) return res.send(401, "Please login");
+    Task.find({
+        ownerId: currentUserId
+    }).remove(function() {
+        next();
+    });
+};
+
 function handleError(res, err) {
     return res.send(500, err);
 }

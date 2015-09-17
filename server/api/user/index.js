@@ -8,6 +8,8 @@ var config = require('../../config/environment');
 var auth = require('../../auth/auth.service');
 var recaptcha = require('../../config/recaptcha');
 var beta = require('../beta/beta.controller');
+var task = require('../task/task.controller');
+
 
 var router = express.Router();
 
@@ -15,7 +17,6 @@ router.get('/', auth.hasRole('admin'), controller.index);
 router.post('/me/permission', controller.hasFbPermission);
 router.post('/search', controller.search);
 //TODO: check to see if this is secure
-router.delete('/:id/deleteMyAccount', auth.isAuthenticated(), controller.deleteMyAccount);
 router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 router.get('/me', auth.isAuthenticated(), controller.me);
 router.post('/:id/sendVerificationEmail', auth.isAuthenticated(), recaptcha.check, controller.sendVerificationEmail)
@@ -28,8 +29,7 @@ router.post('/', recaptcha.check, controller.create);
 router.post('/applyBetaCode', auth.isAuthenticated(), beta.isValidCode, controller.applyBetaCode, beta.redeem);
 router.post('/:id/requestFriendship', auth.isAuthenticated(), controller.requestFriendship);
 router.post('/:id/removeFriendship', auth.isAuthenticated(), controller.removeFriendship);
-
-
+router.delete('/:id/deleteMyAccount', auth.isAuthenticated(), controller.deleteMyAccount);
 
 
 module.exports = router;
