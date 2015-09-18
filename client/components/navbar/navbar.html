@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="/" class="navbar-brand" style="color:white;font-size:20px;font-weight:bold;" popover-placement="right" popover-popup-delay="1000" popover="A Santa Clara University Project" popover-trigger="mouseenter"><img src="assets/logos/snaptasq_icon.png" width="32px" style="padding-right:5px;" />snaptasq</a>
+            <a href="/" class="navbar-brand" style="color:white;font-size:20px;font-weight:bold;" popover-placement="right" popover-popup-delay="1000" popover="A Santa Clara University Project" popover-trigger="mouseenter"><img src="assets/logos/snaptasq_icon.png" width="32px" style="padding-right:5px;" /><span class="hidden-xs">snaptasq</span></a>
             <ul ng-if="!isLoggedIn()" class="nav navbar-nav visible-xs" style="padding-left:15px;">
                 <li style="float:left;" class="underlined" ng-class="{active: isActive('/signin')}"><a href="/signin" style="text-transform:uppercase;">Log In</a></li>
                 <li style="float:left;" ng-if="!isLoggedIn()" class="underlined" ng-class="{active: isActive('/signin')}">
@@ -19,10 +19,10 @@
                 </li>
             </ul>
             <span id="notifications-bar-mobile" class="visible-xs pull-right">
-                <button ng-if="isLoggedIn()" ng-click="_goToPath('/tasqs');" class="nav-notification-button btn btn-primary"><i class="fa fa-pencil"></i></button>
-                <button ng-if="isLoggedIn()" ng-click="_goToPath('/communities');" class="nav-notification-button btn btn-primary"><i class="fa fa-home"></i></button>
-                <button ng-if="isLoggedIn()" ng-click="_goToPath('/community/friends');" class="nav-notification-button btn btn-primary"><i class="fa fa-globe"></i></button>
-                <button ng-if="isLoggedIn()" ng-click="_goToPath('/notifications');" class="nav-notification-button btn btn-primary"><i class="fa fa-bell"></i></button>
+                <button ng-if="isLoggedIn()" ng-click="_goToPath('/tasqs');" ng-class="{'btn-primary': isActive('/tasqs')}" class="nav-notification-button btn"><i class="fa fa-pencil"></i></button>
+                <button ng-if="isLoggedIn()" ng-click="_goToPath('/communities');" ng-class="{'btn-primary': isActive('/communities')}" class="nav-notification-button btn"><i class="fa fa-home"></i></button>
+                <button ng-if="isLoggedIn()" ng-click="_goToPath('/community/friends');" ng-class="{'btn-primary': isActive('/community/friends')}" class="nav-notification-button btn"><i class="fa fa-globe"></i></button>
+                <button ng-if="isLoggedIn()" ng-click="_goToPath('/notifications');" ng-class="{'btn-primary': isActive('/notifications')}" class="nav-notification-button btn"><i class="fa fa-bell"></i></button>
             </span>
         </div>
         <div collapse="isNotCollapsed" class="tabbable-line navbar-collapse collapse" id="navbar-main">
