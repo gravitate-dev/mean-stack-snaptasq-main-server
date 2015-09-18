@@ -197,12 +197,15 @@ li:hover {
   border-radius: 4px;
 }
 
+/* To prevent the jiggling */
+li.underlined {
+  border-bottom: 4px solid rgba(0,0,0,0);
+}
 li.underlined.open, li.underlined:hover {
   border-bottom: 4px solid rgba(114,185,247,.75);
 }
 
 li.underlined.active {
   border-bottom: 4px solid #428bca;
-
   position: relative;
 }

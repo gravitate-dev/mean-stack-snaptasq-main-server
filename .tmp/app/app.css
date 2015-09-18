@@ -8258,6 +8258,10 @@ li:hover {
   margin-bottom: 8px;
   border-radius: 4px; }
 
+/* To prevent the jiggling */
+li.underlined {
+  border-bottom: 4px solid transparent; }
+
 li.underlined.open, li.underlined:hover {
   border-bottom: 4px solid rgba(114, 185, 247, 0.75); }
 
