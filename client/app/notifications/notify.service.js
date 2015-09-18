@@ -7,7 +7,13 @@ angular.module('snaptasqApp')
                 method: 'GET',
                 isArray: true,
                 params: {}
-            }
+            },
+            hideById: {
+                method: 'POST',
+                params: {
+                    'controller': 'hideById'
+                }
+            },
         });
         return {
 
@@ -40,6 +46,17 @@ angular.module('snaptasqApp')
                 }.bind(this));*/
 
                 return deferred.promise;
+            },
+
+            hideNotification: function(id, cb) {
+                var cb = cb || angular.noop;
+                Ntfy.hideById({
+                    id: id
+                }, {}, function(data) {
+                    if (cb) {
+                        return cb(data);
+                    }
+                });
             }
         };
     });

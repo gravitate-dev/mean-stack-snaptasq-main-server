@@ -1,10 +1,10 @@
 <div class="dropdown" style="margin-left:0px;">
     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-click="onOpenNotificaions()">
-        <i class="fa fa-bell"></i><span class="badge" style="pointer-events:none;" ng-if="readNotificationsCount!=undefined && readNotificationsCount < notifications.length">{{notifications.length - readNotificationsCount}}</span>
+        <i class="fa fa-globe"></i><span class="badge" style="pointer-events:none;" ng-if="readNotificationsCount!=undefined && readNotificationsCount < notifications.length">{{notifications.length - readNotificationsCount}}</span>
     </button>
     <ul class="notifications dropdown-menu" style="position:absolute;right:0px;" role="menu" aria-labelledby="dropdownMenu1">
-        <div class="notification-heading">
-            <a href="/notifications"><h4 class="menu-title">Notifications</h4><h4 class="menu-title pull-right">View all<i class="fa fa-circle-arrow-right"></i></h4></a>
+        <div ng-click="_goToPath('/notifications');" class="notification-heading" style="cursor:pointer;">
+            <h4 class="menu-title"><a href="/notifications">View All Notifications</a></h4>
         </div>
         <li class="divider"></li>
         <div class="notifications-wrapper">
@@ -15,8 +15,8 @@
                     <div class="row">
                         <div class="col-md-2 col-sm-2 col-xs-2"><img ng-src="{{item.pic}}" class="img-responsive" /></div>
                         <div class="col-md-10 col-sm-10 col-xs-10">
-                            <h4 ng-if="item.forOne==myId" class="item-title">{{item.messageOne}}</h4>
-                            <h4 ng-if="item.forOne!=myId" class="item-title">{{item.message}}</h4>
+                            <h4 ng-if="myId && item.forOne==myId" class="item-title">{{item.messageOne}}</h4>
+                            <h4 ng-if="myId && item.forOne!=myId" class="item-title">{{item.message}}</h4>
                             <p class="item-info" am-time-ago="item.created"></p>
                         </div>
                     </div>
@@ -24,7 +24,7 @@
             </a>
         </div>
         <li class="divider"></li>
-        <div class="notification-footer"><a href="/notifications"><h4 class="menu-title">View all<i class="fa fa-circle-arrow-right"></i></h4></a></div>
+        <div class="notification-footer"></div>
     </ul>
 
 </div>

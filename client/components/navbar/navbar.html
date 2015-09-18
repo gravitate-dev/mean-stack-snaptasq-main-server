@@ -9,8 +9,8 @@
             </button>
             <a href="/" class="navbar-brand" style="color:white;font-size:20px;font-weight:bold;" popover-placement="right" popover-popup-delay="1000" popover="A Santa Clara University Project" popover-trigger="mouseenter"><img src="assets/logos/snaptasq_icon.png" width="32px" style="padding-right:5px;" /><span ng-class="{'hidden-xs':isLoggedIn()}">snaptasq</span></a>
             <ul ng-if="!isLoggedIn()" class="nav navbar-nav visible-xs" style="padding-left:15px;">
-                <li style="display: inline-block;" class="underlined" ng-class="{active: isActive('/signin')}"><a href="/signin" style="text-transform:uppercase;">Log In</a></li>
-                <li style="display: inline-block;" ng-if="!isLoggedIn()" class="underlined" ng-class="{active: isActive('/signin')}">
+                <li style="display: inline-block;" ng-class="{active: isActive('/signin')}"><a href="/signin" style="text-transform:uppercase;">Log In</a></li>
+                <li style="display: inline-block;" ng-if="!isLoggedIn()" ng-class="{active: isActive('/signin')}">
                     <div style="margin-top: 5px;padding-bottom:4px;padding-right: 5px;margin-left:15px;">
                         <a href="/signin?action=register">
                             <button id="signUpButton" class="btn btn-success" style="background:black;border:0;" style="text-transform:uppercase;">Sign Up</button>
@@ -22,15 +22,15 @@
                 <button ng-if="isLoggedIn()" ng-click="_goToPath('/tasqs');" ng-class="{'btn-primary': isActive('/tasqs')}" class="nav-notification-button btn"><i class="fa fa-pencil"></i></button>
                 <button ng-if="isLoggedIn()" ng-click="_goToPath('/communities');" ng-class="{'btn-primary': isActive('/communities')}" class="nav-notification-button btn"><i class="fa fa-home"></i></button>
                 <button ng-if="isLoggedIn()" ng-click="_goToPath('/community/friends');" ng-class="{'btn-primary': isActive('/community/friends')}" class="nav-notification-button btn"><i class="fa fa-globe"></i></button>
-                <button ng-if="isLoggedIn()" ng-click="_goToPath('/notifications');" ng-class="{'btn-primary': isActive('/notifications')}" class="nav-notification-button btn"><i class="fa fa-bell"></i></button>
+                <button ng-if="isLoggedIn()" ng-controller="NavBarNotificationsCtrl" ng-click="readNotificationsCount=notifications.length;_goToPath('/notifications');" ng-class="{'btn-primary': isActive('/notifications')}" class="nav-notification-button btn"><i class="fa fa-bell"></i><span class="badge" style="pointer-events:none;" ng-if="readNotificationsCount!=undefined && readNotificationsCount < notifications.length">{{notifications.length - readNotificationsCount}}</span></button>
             </span>
         </div>
         <div collapse="isNotCollapsed" class="tabbable-line navbar-collapse collapse" id="navbar-main">
-            <ul class="nav navbar-nav col-sm-7 col-md-7">
+            <ul class="nav navbar-nav col-sm-8 col-md-8">
                 <li class="dropdown hide-when-collapsed-navbar" ng-if="isLoggedIn() && isAdmin()">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">Admin<b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li ng-repeat="item in menuAdmin" ng-class="underlined {active: isActive(item.link)}">
+                        <li ng-repeat="item in menuAdmin" class="underlined" ng-class="{active: isActive(item.link)}">
                             <a ng-href="{{item.link}}" ng-if="isLoggedIn() && (!item.reqBeta || !isUserBetaLocked)" ng-bind-html="item.title">&nbsp;<span class="badge" ng-if="item.count()>0">{{item.count()}}</span></a>
                         </li>
                     </ul>
@@ -54,8 +54,8 @@
                     <a href="/settings">Account</a>
                 </li>
                 <li ng-if="isLoggedIn()" class="underlined show-only-when-collapsed-navbar" ng-class="{active: isActive('/logout')}"><a href="" ng-click="logout()">Logout</a></li>
-                <li ng-if="!isLoggedIn()" class="underlined" ng-class="{active: isActive('/signin')}"><a href="/signin" style="text-transform:uppercase;">Log In</a></li>
-                <li ng-if="!isLoggedIn()" ng-class="{active: isActive('/signin')}">
+                <li ng-if="!isLoggedIn()" class="underlined hide-when-collapsed-navbar" ng-class="{active: isActive('/signin')}"><a href="/signin" style="text-transform:uppercase;">Log In</a></li>
+                <li ng-if="!isLoggedIn()" class="hide-when-collapsed-navbar" ng-class="{active: isActive('/signin')}">
                     <div style="margin-top: 10px;padding-right: 5px;margin-left:15px;">
                         <a href="/signin?action=register">
                             <button id="signUpButton" class="btn btn-success" style="background:black;border:0;" style="text-transform:uppercase;">Sign Up</button>

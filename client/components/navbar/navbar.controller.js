@@ -144,5 +144,11 @@ angular.module('snaptasqApp')
         $scope.onOpenNotificaions = function() {
             $scope.readNotificationsCount = $scope.notifications.length;
         }
+        $scope._goToPath = function(url, $event) {
+            if (!angular.isUndefined($event)) {
+                $event.stopPropagation();
+            }
+            $location.path(url);
+        }
 
     });

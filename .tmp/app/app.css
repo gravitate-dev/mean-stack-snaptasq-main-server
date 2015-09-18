@@ -7592,10 +7592,6 @@ ul.c-controls li a:hover {
 .c-toggle {
   font-size: 1.7em; }
 
-.name {
-  font-size: 1.5em;
-  font-weight: 700; }
-
 .c-info {
   padding: 5px 10px;
   font-size: 1.25em; }
@@ -8442,5 +8438,14 @@ li.underlined.active {
 
 .badge-inverse:hover {
   background-color: #1a1a1a; }
+
+.name {
+  font-size: 1.5em;
+  font-weight: 700; }
+
+@media (max-width: 991px) {
+  .name {
+    font-size: 1em;
+    font-weight: 700; } }
 
 /*# sourceMappingURL=app.css.map */

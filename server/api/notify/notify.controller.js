@@ -208,6 +208,40 @@ function getMyNotifications(req, res) {
     });
 }
 
+function hideById(req, res) {
+    var id = req.param('id');
+    var currentUserId = req.session.userId;
+    if (currentUserId == undefined) return res.send(401, "Please login again");
+    if (id == undefined) return res.send(400, "Missing parameter id. The notification id you want to remove.");
+
+    var query = {
+        _id: id
+    };
+    var operation = {
+        $pull: {
+            'forMany': {
+                id: currentUserId
+            }
+        }
+    };
+    var opts = {};
+    /* There are two places where the notification will show to me.
+     * It will show it to my ID in forOne and forMany. I will remove me from both.
+     **/
+    Notify.update(query, operation, opts, function(err) {
+        Notify.findOne({
+            _id: id,
+            forOne: currentUserId
+        }, function(err, doc) {
+            if (doc) {
+                doc.forOne = undefined;
+                doc.save();
+            }
+            return res.send(200, "Success");
+        });
+    });
+}
+
 function removeNotification(query) {
     Notify.find(query).remove().exec();
 }
@@ -216,5 +250,6 @@ module.exports = {
     remove: removeNotification,
     put: notify,
     CODES: CODES,
-    getMyNotifications: getMyNotifications
+    getMyNotifications: getMyNotifications,
+    hideById: hideById
 }

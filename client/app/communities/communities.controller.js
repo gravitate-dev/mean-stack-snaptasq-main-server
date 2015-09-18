@@ -15,7 +15,7 @@ angular.module('snaptasqApp')
                     return;
                 }
                 if ($scope.isurl_fb(newvalue) && !$scope._me.isConnectedWithFb) {
-                    Notification.error("you must first connect with facebook to join a facebook community. Go to your account to connect.");
+                    Notification.error("<a href='/settings'>You must first connect with facebook to join a facebook community. Go to your account to connect, here.</a>");
                     return;
                 }
                 $scope.searchForCommunities(newvalue);
@@ -174,6 +174,8 @@ angular.module('snaptasqApp')
     })
     .controller('CommunityFriendCtrl', function($scope, _me, Community, Task, Auth, User, $routeParams, Notification, notifications) {
         //cant cache this as i get my friends!
+        $scope._bgcolorGrey();
+        $scope._noFooter();
         User.removeCache();
         $scope.group = {};
         _me.$promise.then(function(me) {
