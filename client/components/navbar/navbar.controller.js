@@ -40,13 +40,18 @@ angular.module('snaptasqApp')
                     $scope.menu = [];
                     if (Auth.isBetaUnlocked()) {
                         $scope.menu.push({
-                            'title': 'Tasqs',
+                            'title': '<i class="fa fa-pencil"></i>&nbsp;Tasqs',
                             'link': '/tasqs',
                             reqLogin: true
                         });
                         $scope.menu.push({
-                            'title': 'Communities',
+                            'title': '<i class="fa fa-home"></i>&nbsp;Communities',
                             'link': '/communities',
+                            reqLogin: true
+                        });
+                        $scope.menu.push({
+                            'title': '<i class="fa fa-globe"></i>&nbsp;Activity',
+                            'link': '/community/friends',
                             reqLogin: true
                         });
                     } else {

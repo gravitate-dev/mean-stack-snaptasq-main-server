@@ -190,9 +190,19 @@ li:hover {
 
 /* Styling for navbar notification buttons */
 .nav-notification-button {
-  margin-right: 15px;
+  margin-right: 5px;
   padding: 9px 10px;
-  margin-top: 8px;
+  margin-top: 4px;
   margin-bottom: 8px;
   border-radius: 4px;
+}
+
+li.underlined.open, li.underlined:hover {
+  border-bottom: 4px solid rgba(114,185,247,.75);
+}
+
+li.underlined.active {
+  border-bottom: 4px solid #428bca;
+
+  position: relative;
 }

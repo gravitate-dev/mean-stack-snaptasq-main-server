@@ -9,32 +9,23 @@
             </button>
             <a href="/" class="navbar-brand" style="color:white;font-size:20px;font-weight:bold;" popover-placement="right" popover-popup-delay="1000" popover="A Santa Clara University Project" popover-trigger="mouseenter"><img src="assets/logos/scuLogo.png" width="32px" style="padding-right:5px;" />snaptasq</a>
             <span id="notifications-bar-mobile" ng-if="isLoggedIn()" class="visible-xs pull-right">
-            <a href="/notifications"><button class="nav-notification-button btn btn-primary"><i class="fa fa-globe"></i>&nbsp;<span class="badge">5</span></button>
-            </a>
-            <a href="/notifications/friendRequest">
-                <button class="nav-notification-button btn btn-primary"><i class="fa fa-user"></i>&nbsp;<span class="badge">2</span></button>
-            </a>
-            <a href="/notifications/taskOwner">
-                <button class="nav-notification-button btn btn-primary"><i class="fa fa-tasks"></i>&nbsp;<span class="badge">3</span></button>
-            </a>
+                <button ng-click="_goToPath('/tasqs');" class="nav-notification-button btn btn-primary"><i class="fa fa-pencil"></i></button>
+                <button ng-click="_goToPath('/communities');" class="nav-notification-button btn btn-primary"><i class="fa fa-home"></i></button>
+                <button ng-click="_goToPath('/community/friends');" class="nav-notification-button btn btn-primary"><i class="fa fa-globe"></i></button>
             </span>
         </div>
-        <div collapse="isNotCollapsed" class="navbar-collapse collapse" id="navbar-main">
+        <div collapse="isNotCollapsed" class="tabbable-line navbar-collapse collapse" id="navbar-main">
             <ul class="nav navbar-nav col-sm-7 col-md-7">
                 <li class="dropdown hide-when-collapsed-navbar" ng-if="isLoggedIn() && isAdmin()">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">Admin<b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li ng-repeat="item in menuAdmin" ng-class="{active: isActive(item.link)}">
-                            <a ng-href="{{item.link}}" ng-if="isLoggedIn() && (!item.reqBeta || !isUserBetaLocked)">{{item.title}}&nbsp;<span class="badge" ng-if="item.count()>0">{{item.count()}}</span></a>
+                        <li ng-repeat="item in menuAdmin" ng-class="underlined {active: isActive(item.link)}">
+                            <a ng-href="{{item.link}}" ng-if="isLoggedIn() && (!item.reqBeta || !isUserBetaLocked)" ng-bind-html="item.title">&nbsp;<span class="badge" ng-if="item.count()>0">{{item.count()}}</span></a>
                         </li>
                     </ul>
                 </li>
-                <li ng-repeat="item in menuAdmin" class="show-only-when-collapsed-navbar" ng-class="{active: isActive(item.link)}">
-                    <a ng-href="{{item.link}}" ng-if="isLoggedIn() && (!item.reqBeta || !isUserBetaLocked)">{{item.title}}&nbsp;<span class="badge" ng-if="item.count()>0">{{item.count()}}</span></a>
-                </li>
-
-                <li id="myMenu" ng-repeat="item in menu" class="ng-cloak" ng-class="{active: isActive(item.link)}">
-                    <a ng-href="{{item.link}}">{{item.title}}</a>
+                <li id="myMenu" ng-repeat="item in menu" class="underlined ng-cloak hidden-xs" ng-class="{active: isActive(item.link)}">
+                    <a ng-href="{{item.link}}" ng-bind-html="item.title"></a>
                 </li>
                 <li ng-show="isLoggedIn()">
                     <!-- this is the notifications -->
@@ -45,19 +36,22 @@
                 <li id="loggedOutMenu" ng-if="!isLoggedIn()" class="ng-cloak">
                     <a ng-href="/signin?action=register" style="position:relative;top:10px;text-transform:uppercase;font-weight:bold;padding:5px;"><span style="border:2px solid black;border-radius:5px;padding:5px;">Become a beta tester</span></a>
                 </li>
-                <li ng-if="isLoggedIn()" class="show-only-when-collapsed-navbar" ng-class="{active: isActive('/settings')}">
+                <li ng-repeat="item in menuAdmin" class="show-only-when-collapsed-navbar" ng-class="{active: isActive(item.link)}">
+                    <a ng-href="{{item.link}}" ng-if="isLoggedIn() && (!item.reqBeta || !isUserBetaLocked)">{{item.title}}&nbsp;<span class="badge" ng-if="item.count()>0">{{item.count()}}</span></a>
+                </li>
+                <li ng-if="isLoggedIn()" class="underlined show-only-when-collapsed-navbar" ng-class="{active: isActive('/settings')}">
                     <a href="/user/view/{{myId}}"><img style="height:20px;padding-right:5px;" ng-if="_me.pic" class="ng-cloak" ng-src="{{_me.pic}}" />Profile</a>
                 </li>
-                <li ng-if="isLoggedIn()" class="show-only-when-collapsed-navbar" ng-class="{active: isActive('/settings')}">
+                <li ng-if="isLoggedIn()" class="underlined show-only-when-collapsed-navbar" ng-class="{active: isActive('/settings')}">
                     <a href="/settings">Account</a>
                 </li>
-                <li ng-if="isLoggedIn()" class="show-only-when-collapsed-navbar" ng-class="{active: isActive('/logout')}"><a href="" ng-click="logout()">Logout</a></li>
+                <li ng-if="isLoggedIn()" class="underlined show-only-when-collapsed-navbar" ng-class="{active: isActive('/logout')}"><a href="" ng-click="logout()">Logout</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
                 <!-- dont apply classes to this guy for sizes-->
-                <li ng-hide="isLoggedIn()" ng-class="{active: isActive('/login')}"><a href="/signin" style="text-transform:uppercase;">Log In</a></li>
-                <li>
+                <li ng-hide="isLoggedIn()" class="underlined" ng-class="{active: isActive('/login')}"><a href="/signin" style="text-transform:uppercase;">Log In</a></li>
+                <li class="underlined">
                     <div style="margin-top: 10px;padding-right: 5px;margin-left:15px;">
                         <a href="/signin?action=register">
                             <button id="signUpButton" class="btn btn-success" style="background:black;border:0;" ng-hide="isLoggedIn()" style="text-transform:uppercase;">Sign Up</button>
@@ -67,9 +61,9 @@
                 <li class="dropdown hide-when-collapsed-navbar" ng-if="isLoggedIn()">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"><span><img style="height:20px;padding-right:5px;" ng-if="_me.pic" class="ng-cloak" ng-src="{{_me.pic}}"/>{{ accountName }} <span ng-if="_badgeAlerts.size()>0" class="badge">{{_badgeAlerts._size}}</span></span><b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li ng-class="{active: isActive('/user/'+myId)}"><a href="/user/view/{{myId}}">Profile</a></li>
-                        <li ng-class="{active: isActive('/settings')}"><a href="/settings">Account</a></li>
-                        <li ng-class="{active: isActive('/logout')}"><a href="" ng-click="logout()">Logout</a></li>
+                        <li class="underlined" ng-class="{active: isActive('/user/'+myId)}"><a href="/user/view/{{myId}}">Profile</a></li>
+                        <li class="underlined" ng-class="{active: isActive('/settings')}"><a href="/settings">Account</a></li>
+                        <li class="underlined" ng-class="{active: isActive('/logout')}"><a href="" ng-click="logout()">Logout</a></li>
                     </ul>
                 </li>
             </ul>
