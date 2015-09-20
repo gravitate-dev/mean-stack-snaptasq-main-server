@@ -203,7 +203,6 @@ angular.module('snaptasqApp')
                     Notification.error(fail);
                 });
             })($scope.group);
-
         }
 
 

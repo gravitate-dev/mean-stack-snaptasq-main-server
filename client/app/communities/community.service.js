@@ -61,6 +61,13 @@ angular.module('snaptasqApp')
                     controller: ""
                 }
             },
+            getInviteableFriends: {
+                method: 'GET',
+                isArray: true,
+                params: {
+                    controller: "inviteableFriends"
+                }
+            },
             getTasks: {
                 method: 'GET',
                 isArray: true,
@@ -161,6 +168,17 @@ angular.module('snaptasqApp')
                 var opts = opts || {};
                 opts.id = id;
                 Comm.getTasks(opts, {}, function(data) {
+                    deferred.resolve(data);
+                    return cb(data);
+                });
+                return deferred.promise;
+            },
+            getInviteableFriends: function(id, cb, opts) {
+                var cb = cb || angular.noop;
+                var deferred = $q.defer();
+                var opts = opts || {};
+                opts.id = id;
+                Comm.getInviteableFriends(opts, {}, function(data) {
                     deferred.resolve(data);
                     return cb(data);
                 });

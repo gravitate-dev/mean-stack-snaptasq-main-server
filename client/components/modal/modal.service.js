@@ -319,7 +319,7 @@ angular.module('snaptasqApp')
                                 task: task,
                                 dismissable: true,
                                 title: 'Share Tasq To Community',
-                                htmlInclude: 'app/communities/modal/share.community.html',
+                                htmlInclude: 'app/communities/modals/share.community.modal.html',
                                 buttons: [{
                                     classes: 'btn-default',
                                     text: 'Cancel',
@@ -331,6 +331,45 @@ angular.module('snaptasqApp')
                         }, 'modal-info');
 
                         shareCommunityModal.result.then(function(event) {
+                            cb.apply(event, args);
+                        });
+                    };
+                },
+                /**
+                 * Create a function to open an invite friends to community modal (ex. ng-click='myModalFn(name, arg1, arg2...)')
+                 * @param  {Function} cb - callback, ran when the friend is invited
+                 * @return {Function}     - the function to open the modal (ex. myModalFn)
+                 */
+                inviteFriendToCommunity: function(cb) {
+                    cb = cb || angular.noop;
+
+                    /**
+                     * Open a friend invite to community modal
+                     * @param  {String} group   - group you are inviting friend to
+                     * @param  {All}           - any additional args are passed staight to reg callback
+                     */
+                    return function() {
+                        var args = Array.prototype.slice.call(arguments),
+                            group = args.shift(),
+                            inviteFriendModal;
+
+                        inviteFriendModal = openModal({
+                            modal: {
+                                group: group,
+                                dismissable: true,
+                                title: 'Share Tasq To Community',
+                                htmlInclude: 'app/communities/modals/invitefriends.community.modal.html',
+                                buttons: [{
+                                    classes: 'btn-default',
+                                    text: 'Cancel',
+                                    click: function(e) {
+                                        inviteFriendModal.dismiss(e);
+                                    }
+                                }]
+                            }
+                        }, 'modal-info');
+
+                        inviteFriendModal.result.then(function(event) {
                             cb.apply(event, args);
                         });
                     };

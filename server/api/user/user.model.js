@@ -88,7 +88,10 @@ var UserSchema = new Schema({
     }],
     link: String, //this will be set with fb comes in
     groups: [{
-        id: Schema.Types.ObjectId,
+        id: {
+            type: Schema.Types.ObjectId,
+            index: true
+        },
         name: String,
         pic: String,
         source: String

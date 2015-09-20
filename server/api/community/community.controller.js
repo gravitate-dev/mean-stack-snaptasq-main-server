@@ -527,12 +527,30 @@ exports.getTasks = function(req, res) {
     });
 }
 
-/**
- * Add Task To Community by a taskID and groupID
- * 
- * @param {[id]} groupId to add the tasq too
- * @param {[taskId]} taskId of the tasq to add
- */
+exports.myInvitableFriends = function(req, res) {
+        var groupId = req.param('id');
+        if (groupId == undefined) return res.send(400, "Missing parameter id. The Group ID");
+
+        var query = {};
+        if (req.dsl) query = req.dsl;
+        query['groups.id'] = {
+            $not: groupId
+        };
+        //query['status'] = { '$not' : "completed"};
+        User.find(query, function(err, users) {
+            if (err) {
+                console.error(err);
+                return handleError(res, err);
+            }
+            return res.json(200, users);
+        });
+    }
+    /**
+     * Add Task To Community by a taskID and groupID
+     * 
+     * @param {[id]} groupId to add the tasq too
+     * @param {[taskId]} taskId of the tasq to add
+     */
 exports.addTaskToCommunity = function(req, res) {
     var groupId = req.param('id');
     var taskId = req.param('taskId');
