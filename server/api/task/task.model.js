@@ -114,13 +114,12 @@ var NotifySchema = require('../notify/notify.model');
  */
 TaskSchema
     .pre('remove', function(next) {
-        console.log(this._id.toString(), "is what im gonna find against")
+        //console.log(this._id.toString(), "is what im gonna find against")
         NotifySchema.find({
             source: this._id
         }).remove(function() {
-            console.log("Removed notifications about this task");
+            next();
         });
-
     });
 
 //TaskSchema.plugin(autoIncrement.plugin, 'Task');
