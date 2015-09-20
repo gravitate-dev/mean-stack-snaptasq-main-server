@@ -68,8 +68,29 @@ angular.module('snaptasqApp')
                     controller: "tasks"
                 }
             },
+            addTask: {
+                method: 'POST',
+                params: {
+                    controller: "addTask"
+                }
+            },
         });
         return {
+            addTask: function(id, taskId, cb, cbfail) {
+                var cb = cb || angular.noop;
+                var deferred = $q.defer();
+
+                $http.post('/api/communities/' + id + '/addTask', {
+                    taskId: taskId
+                }).success(function(data) {
+                    deferred.resolve(data);
+                    return cb(data);
+                }).error(function(err) {
+                    deferred.reject(err);
+                    return cbfail(err);
+                });
+                return deferred.promise;
+            },
             getUserCommunties: function(id, cb) {
                 var cb = cb || angular.noop;
                 var deferred = $q.defer();
@@ -89,6 +110,13 @@ angular.module('snaptasqApp')
                     return cb(data);
                 }).error(function(err) {
                     return cb(undefined);
+                });
+            },
+            myFriendsCommunities: function(cb) {
+                $http.post('/api/communities/friends').success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    return cb([]);
                 });
             },
             delete: function(id, cb) {
@@ -112,14 +140,18 @@ angular.module('snaptasqApp')
                 });
                 return deferred.promise;
             },
-            getById: function(id, cb) {
+            getById: function(id, cb, cbfail) {
                 var cb = cb || angular.noop;
+                var cbfail = cbfail || cb || angular.noop;
                 var deferred = $q.defer();
                 Comm.getById({
                     id: id
                 }, {}, function(data) {
                     deferred.resolve(data);
                     return cb(data);
+                }, function(fail) {
+                    deferred.reject(fail);
+                    return cbfail(fail);
                 });
                 return deferred.promise;
             },
@@ -165,7 +197,6 @@ angular.module('snaptasqApp')
 
                 $http.get('/api/communities/' + id + '/amIMember').then(function(response) {
                     deferred.resolve(response);
-                    console.log(response);
                     return cb(true);
                 }, function(fail) {
                     deferred.reject(fail);

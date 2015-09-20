@@ -1,4 +1,4 @@
-angular.module('snaptasqApp').directive('communitytaskslist', function($parse, $location, Community, SnapListResultManager) {
+angular.module('snaptasqApp').directive('communitytaskslist', function($parse, $location, Community, SnapListResultManager, Modal) {
     return {
         restrict: 'ACE',
         // Replace the div with our template
@@ -50,6 +50,16 @@ angular.module('snaptasqApp').directive('communitytaskslist', function($parse, $
                 }
             };
             $scope.loadMore();
+            $scope.group = {};
+            Community.getById($scope.id, function(item) {
+                $scope.group = item;
+            });
+            $scope.shareMyTasqHere = function() {
+                Modal.view.pickMyTaskForCommunity(function(data) {
+                    console.log(data);
+                })($scope.group);
+            }
+
         },
         link: function($scope, $element, $attributes) {
             $scope.options = $scope.$eval($attributes.options);

@@ -16,9 +16,10 @@ exports.register = function(socket) {
 }
 
 function onSave(socket, doc, cb) {
-    socket.emit('task:save', doc);
+    console.log("Emitting onsave", 'task:' + doc._id + ':save');
+    socket.emit('task:' + doc._id + ':save', doc);
 }
 
 function onRemove(socket, doc, cb) {
-    socket.emit('task:remove', doc);
+    socket.emit('task:' + doc._id + ':remove', doc);
 }

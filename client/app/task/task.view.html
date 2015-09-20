@@ -50,7 +50,8 @@
             </div>
         </div>
         <div class="row" ng-if="task.ownerId==_me._id && task.applicants.length==0">
-            <div class="col-md-12 lead">No one has applied yet. Try sharing your task via the share buttons.</div>
+            <div class="col-md-12 lead">No one has applied yet. Try sharing your tasq via the share buttons. The <a href="#" class="btn" style="background-color:#fcd11a;color:white" ng-click="shareTasq(task);"><i class="fa fa-share-alt"></i></a> share button can be used to share
+                this tasq to your communities.</div>
         </div>
         <div class="row">
             <div ng-if="task.location" class="col-md-12 col-sm-12 col-xs-12" style="padding-right:30px;padding-left:30px;">
@@ -85,7 +86,7 @@
 
             <!-- Pinterest Share Button -->
             <!-- btnz share pinterest -->
-            <a href="#" class="col-md-3 col-sm-3 col-xs-3 btn" style="background-color:#fcd11a;color:white" ng-click="_share('pintrest','Help '+task.ownerName+' with '+task.name+' link: '+currentUrl,task.description)"><i class="fa fa-share-alt"></i> Snap</a>
+            <a href="#" class="col-md-3 col-sm-3 col-xs-3 btn" style="background-color:#fcd11a;color:white" ng-click="shareTasq(task);"><i class="fa fa-share-alt"></i> Snap</a>
 
 
 

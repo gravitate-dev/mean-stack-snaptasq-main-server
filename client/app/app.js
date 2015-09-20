@@ -34,6 +34,10 @@ var app = angular.module('snaptasqApp', ['ngAudio', 'infinite-scroll', 'angucomp
         $httpProvider.interceptors.push('authInterceptor');
         notificationsConfigProvider.setAcceptHTML(true);
 
+    }).config(function(NotificationProvider) {
+        NotificationProvider.setOptions({
+            replaceMessage: true
+        });
     }).run(function($FB, ezfb) {
         //$FB.init('764169247036130');
         ezfb.init({

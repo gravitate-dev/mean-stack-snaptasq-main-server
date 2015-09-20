@@ -10,10 +10,6 @@ angular.module('snaptasqApp').directive('myfriendlist', function($parse, $locati
         templateUrl: 'components/snaplist/me/myfriendlist/myfriendlist.template.html',
         controller: function($scope) {
             $scope.items = [];
-            $scope.notification = {
-                count: 0,
-                href: '/notifications/friends'
-            };
 
             $scope.limitCount = 25;
             $scope.showMore = function() {

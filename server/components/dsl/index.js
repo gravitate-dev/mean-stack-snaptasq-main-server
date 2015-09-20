@@ -39,9 +39,12 @@ exports.processSearch = function(req, res, next) {
         }
     }
     */
-    var name = req.param('name');;
+    var name = req.param('name');
     if (name != undefined) {
-        if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) return res.json(500, []);
+        if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) {
+            console.error("Invalid name in dsl, ", name);
+            return res.json(500, []);
+        }
         //then add it
         query.name = new RegExp('^' + name, "i");
     }

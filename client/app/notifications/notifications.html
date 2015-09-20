@@ -2,17 +2,17 @@
     <div class="row">
         <div class="col-xs-12">
             <div tabset>
-                <section tab select="type=''">
+                <section tab select="setType();">
                     <div tab-heading>
                         <i class="fa fa-pencil"></i>&nbsp;All
                     </div>
                 </section>
-                <section tab select="type='friendRequest'">
+                <section tab select="setType('friendRequest');">
                     <div tab-heading>
                         <i class="fa fa-user-plus"></i>&nbsp;Friend
                     </div>
                 </section>
-                <section tab select="type='taskOwner'">
+                <section tab select="setType('taskOwner');">
                     <div tab-heading>
                         <i class="fa fa-info-circle"></i>&nbsp;Tasqs
                     </div>
@@ -30,7 +30,7 @@
                         </div>
                         <div class="clearfix"></div>
                     </li>
-                    <li class="list-group-item" ng-repeat="item in items | orderBy:'-created'" ng-click="_goToPath(item.href)">
+                    <li class="list-group-item" ng-repeat="item in items | orderBy:'-created' | filter:{category:type}" ng-click="_goToPath(item.href)">
                         <div class="row">
                             <div class="col-md-2 col-sm-2 col-xs-3"><img ng-src="{{item.pic}}" style="height:50px;width:50px;" /></div>
                             <div class="col-md-9 col-sm-9 col-xs-8">

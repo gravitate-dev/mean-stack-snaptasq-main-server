@@ -174,6 +174,11 @@ angular.module('snaptasqApp')
             Modal.view.applicants(function(data) {})(task);
         }
 
+        $scope.shareTasq = function(task) {
+            Modal.view.shareToCommunity(function(data) {
+                console.log(task);
+            })(task);
+        }
         KeyEventService.register($scope).escape(function() {
             //$scope.deselectCurrentItem();
         });
@@ -185,12 +190,8 @@ angular.module('snaptasqApp')
                 }
             }
         });
-
-        $scope.display = {
-            mode: "list"
-        };
     })
-    .controller('TaskCtrl', function($scope, _me, notifications, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
+    .controller('TaskCtrl', function($scope, _me, socket, notifications, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
         $scope._bgcolorGrey();
         $scope._noFooter();
         $scope.currentUrl = $location.absUrl();
@@ -205,12 +206,12 @@ angular.module('snaptasqApp')
         $scope.loadTaskData = function() {
             if ($scope.id == undefined)
                 return;
+            socket.syncUpdateToId('task', $scope.id, function(task) {
+                $scope.task = task;
+            });
             Task.getById($scope.id, function(data) {
                 $scope.task = data;
                 $scope.task.locationCopy = _.clone(data.location, true);
-
-                // change seo before we call ready
-
             }, function(err) {
                 notifications.showError({
                     message: "This tasq no longer exists, because it was deleted by the owner."
@@ -224,7 +225,9 @@ angular.module('snaptasqApp')
             }
         });
         $scope.loadTaskData();
-
+        $scope.$on("$destroy", function() {
+            socket.unsyncUpdatesToId('task', $scope.id);
+        });
     })
     .controller('TasksCtrl', function($scope, _me, notifications, Notification, $location, $window, $routeParams, Auth, Task, $timeout, $interval, User, TaskMock, KeyEventService, TaskMarshaler, Modal, $rootScope) {
         $scope._bgcolorGrey();

@@ -21,7 +21,7 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
             console.error("user has no property fb.id in linkFriendsOnSnaptasqToMeAsync");
             return cb(user);
         }
-        graph.get('/' + user.fb.id + '/friends', {
+        graph.get('/' + user.fb.id + '/friends?limit=500', {
             access_token: accessToken
         }, function(err, response) {
             if (err) {
@@ -29,17 +29,6 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                 return cb(user);
             }
             if (response.data) {
-                /*var f = {
-                    id: "realsnaptasquserid",
-                    name: "Deleted Friend",
-                    externalId: "1337",
-                    source:"facebook"
-                };
-                user.friends = [];
-                user.friends.push(f);
-                */
-
-                //console.log(response.data);
                 var fbFriendCount = response.data.length;
                 var fbFriends = _.filter(user.friends, function(item) {
                     return item.source === 'facebook';
@@ -81,7 +70,10 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                         $in: notAddedYetIds
                     }
                 }, function(err, newFwends) {
-                    if (err) return cb(user);
+                    if (err) {
+                        console.error(err);
+                        return cb(user);
+                    }
                     if (!newFwends) return cb(user);
                     _.each(newFwends, function(friend) {
                         var addFriendOkay = true;
@@ -91,15 +83,25 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                                 break;
                             }
                         }
-                        var f = {
-                            id: friend._id,
-                            name: friend.name,
-                            externalId: friend.fb.id,
-                            pic: friend.pic,
-                            source: "facebook"
-                        };
-                        if (addFriendOkay)
+                        // check to see if i have already added the friend via other providers
+
+                        if (addFriendOkay) {
+                            var i = user.friends.length;
+                            while (i-- > 0) {
+                                if (user.friends[i].id.equals(friend._id)) {
+                                    user.friends.splice(i, 1);
+                                };
+                            }
+                            var f = {
+                                id: friend._id,
+                                name: friend.name,
+                                externalId: friend.fb.id,
+                                pic: friend.pic,
+                                source: "facebook"
+                            };
                             user.friends.push(f);
+                        }
+                        //now i should remove duplicates
                     });
                     //console.log("After putting friends in ",user.friends.length);
                     return cb(user);
@@ -115,7 +117,7 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                     externalId: String, //this is like their fbID
                     source:{type: String, default: "snaptasq"} //soource is where you got the friend, it can be facebook, snaptasq, twitter, etc
                 });
-                    */
+*/
             } else {
                 console.log("Error in linkFriendsOnSnaptasqToMeAsync no data returned");
                 return cb(user);
@@ -162,24 +164,22 @@ function createNewUserWithFacebook(user, req, accessToken, refreshToken, profile
         },
         forgotPassCode: uuid.v4()
     };
+    user = new User(usr);
+    user.fb = {
+        username: profile.displayName || profile.username,
+        json: profile._json,
+        link: profile._json.link,
+        id: profile.id,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        profileUrl: profile.profileUrl,
+        gender: profile.gender
+    };
     try {
         var email = profile.emails[0].value;
-        usr.email = email;
+        user.email = email;
         user.fb.email = email;
     } catch (e) {}
-    user = new User(usr);
-    try {
-        user.fb.username = profile.displayName || profile.username;
-        user.fb.json = profile._json;
-        user.link = profile._json.link;
-        user.fb.id = profile.id;
-        user.fb.accessToken = accessToken;
-        user.fb.refreshToken = refreshToken;
-        user.fb.profileUrl = profile.profileUrl;
-        user.fb.gender = profile.gender;
-    } catch (e) {
-        console.log(e);
-    }
     getFbPicFromProfileObj(user, req, accessToken, profile, function(user) {
         linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, function(user) {
             user.save(function(err) {
@@ -194,20 +194,29 @@ function linkFacebookAccountToExistingUser(user, req, accessToken, refreshToken,
     user.name = profile.displayName || profile.username;
     user.isConnectedWithFb = true;
     user.hasConnectedWithFbOnce = true;
-    user.fb.email = profile.emails[0].value;
-    user.fb.username = profile.displayName || profile.username;
-    user.fb.json = profile._json;
-    user.link = profile._json.link;
-    user.fb.id = profile.id;
-    user.fb.accessToken = accessToken;
-    user.fb.refreshToken = refreshToken;
-    user.fb.profileUrl = profile.profileUrl;
-    user.fb.gender = profile.gender;
+    user.fb = {
+        username: profile.displayName || profile.username,
+        json: profile._json,
+        link: profile._json.link,
+        id: profile.id,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        profileUrl: profile.profileUrl,
+        gender: profile.gender
+    };
+    try {
+        var email = profile.emails[0].value;
+        //user.email = email;
+        user.fb.email = email;
+    } catch (e) {}
 
     getFbPicFromProfileObj(user, req, accessToken, profile, function(user) {
         linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, function(user) {
             user.save(function(err) {
-                if (err) done(err);
+                if (err) {
+                    console.error(err);
+                    return done(err);
+                }
                 return done(err, user);
             });
         });

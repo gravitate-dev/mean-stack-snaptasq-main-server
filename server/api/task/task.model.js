@@ -60,6 +60,7 @@ var TaskSchema = new Schema({
             index: true
         },
         name: String,
+        pic: String,
     }],
     applicants: [{
         id: Schema.Types.ObjectId,

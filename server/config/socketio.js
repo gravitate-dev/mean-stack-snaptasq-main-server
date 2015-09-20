@@ -17,7 +17,8 @@ function onConnect(socket) {
     });
 
     // Insert sockets below
-    //require('../api/task/task.socket').register(socket);
+    //require('../api/user/user.socket').register(socket);
+    require('../api/task/task.socket').register(socket);
     require('../api/notify/notify.socket').register(socket);
 }
 

@@ -1,6 +1,6 @@
 <div class="dropdown" style="margin-left:0px;">
     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-click="onOpenNotificaions()">
-        <i class="fa fa-globe"></i><span class="badge" style="pointer-events:none;" ng-if="readNotificationsCount!=undefined && readNotificationsCount < notifications.length">{{notifications.length - readNotificationsCount}}</span>
+        <i class="fa fa-bell"></i><span class="badge" style="pointer-events:none;" ng-if="readNotificationsCount!=undefined && readNotificationsCount < notifications.length">{{notifications.length - readNotificationsCount}}</span>
     </button>
     <ul class="notifications dropdown-menu" style="position:absolute;right:0px;" role="menu" aria-labelledby="dropdownMenu1">
         <div ng-click="_goToPath('/notifications');" class="notification-heading" style="cursor:pointer;">

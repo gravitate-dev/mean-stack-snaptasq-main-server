@@ -100,14 +100,34 @@ exports.getCommunitiesByUser = function(req, res) {
     */
     // Get a single comm
 exports.show = function(req, res) {
-    Community.findById(req.params.id, function(err, comm) {
+    var currentUserId = req.session.userId;
+    var groupId = req.param('id');
+    if (groupId == undefined) return res.send(400, "Missing parameter id. The group ID");
+    Community.findById(groupId, function(err, comm) {
         if (err) {
             return handleError(res, err);
         }
         if (!comm) {
-            return res.send(404);
+            //if a user requested this make sure to leave the group
+            if (currentUserId != undefined) {
+                User.update({
+                    _id: currentUserId
+                }, {
+                    $pull: {
+                        'groups': {
+                            id: groupId
+                        }
+                    }
+                }, function(err) {
+                    return res.send(404, "Group doesnt exist");
+                });
+            } else {
+                return res.send(404, "Group doesnt exist");
+            }
+
+        } else {
+            return res.json(comm);
         }
-        return res.json(comm);
     });
 };
 
@@ -162,6 +182,65 @@ exports.update = function(req, res) {
         });
     });
 };
+
+
+exports.search = function(req, res) {
+        var name = req.param('name');
+        if (name == undefined) return res.send(400, "Missing parameter, name");
+        if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) return res.send(400, "Name contains invalid characters");
+        Community.find({
+                name: new RegExp('^' + name, "i")
+            }, '-challenges')
+            .sort({
+                'updated': -1
+            })
+            .limit(30)
+            .exec(function(err, comms) {
+                if (err) return res.send(500, err);
+                return res.json(200, comms);
+            });
+    }
+    /**
+     * EXPENSIVE OPERATION
+     * Get Communities that my Friends are in
+     * @return {[communities]}     [An array of communities my friends are in]
+     */
+exports.getMyFriendsCommunities = function(req, res) {
+    var currentUserId = req.session.userId;
+    if (currentUserId == undefined) return res.send(401, "Please login again");
+    User.findById(currentUserId, function(err, me) {
+        var friendIds = _.pluck(me.friends, 'id');
+        User.find({
+            _id: {
+                $in: friendIds
+            },
+            groups: {
+                $exists: true,
+                $not: {
+                    $size: 0
+                }
+            }
+        }, function(err, users) {
+            if (err) {
+                return handleError(res, err)
+            }
+            if (!users) return res.json(200, []);
+            var groups = _.pluck(users, 'groups');
+            groups = _.reduce(groups, function(result, arr) {
+                return result.concat(arr)
+            }, []);
+            groups = _.uniq(groups, function(item) {
+                return item.id;
+            });
+            //also i need to replace the _id with the id
+            _.each(groups, function(item) {
+                item._id = item.id;
+            });
+
+            return res.json(200, groups);
+        });
+    });
+}
 
 // Deletes a comm from the DB.
 exports.destroy = function(req, res) {
@@ -439,7 +518,7 @@ exports.getTasks = function(req, res) {
     var query = {};
     if (req.dsl) query = req.dsl;
     query['communitiesIn.id'] = groupId;
-
+    //query['status'] = { '$not' : "completed"};
     Task.find(query, function(err, tasks) {
         if (err) {
             return handleError(res, err);
@@ -448,6 +527,56 @@ exports.getTasks = function(req, res) {
     });
 }
 
+/**
+ * Add Task To Community by a taskID and groupID
+ * 
+ * @param {[id]} groupId to add the tasq too
+ * @param {[taskId]} taskId of the tasq to add
+ */
+exports.addTaskToCommunity = function(req, res) {
+    var groupId = req.param('id');
+    var taskId = req.param('taskId');
+    var currentUserId = req.session.userId;
+    if (groupId == undefined) return res.send(400, "Missing id. The Group ID you want to add the tasq too");
+    if (taskId == undefined) return res.send(400, "Missing taskId. The ID of the Tasq you want to add");
+    Community.findById(groupId, function(err, comm) {
+        if (err) {
+            return handleError(res, err);
+        }
+        if (!comm) {
+            return res.send(404, "Group no longer exists");
+        }
+        // check to see if the user is in the group or not
+        User.findById(currentUserId, function(err, user) {
+            if (err) return handleError(res, err);
+            if (!user) return res.send(404, "Please login again");
+            if (_isUserAlreadyInGroup(comm, user)) {
+                Task.findById(taskId, function(err, task) {
+                    var taskObj = {
+                        id: task._id
+                    };
+                    for (var i = 0; i < task.communitiesIn.length; i++) {
+                        if (task.communitiesIn[i].id.equals(comm._id)) {
+                            return res.send(409, "This task is already shared to this community");
+                        }
+                    }
+                    var commObj = {
+                        id: comm._id,
+                        name: comm.name,
+                        pic: comm.pic
+                    };
+                    task.communitiesIn.push(commObj);
+                    task.save(function(err) {
+                        if (err) return handleError(res, err);
+                        return res.send(200, "Tasq shared to " + comm.name);
+                    });
+                });
+            } else {
+                return res.send(403, "You can only share tasqs to communities you are in");
+            }
+        });
+    });
+}
 
 /** Used only from inside code. never by rest URLS directly **/
 /** Consumes the req, res**/

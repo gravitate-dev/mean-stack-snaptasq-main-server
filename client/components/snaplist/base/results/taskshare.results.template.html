@@ -1,0 +1,17 @@
+<div class="col-md-2 col-sm-2 col-xs-2" style="float:left;padding-left:5px;">
+    <div>
+        <img ng-src="{{item.ownerPic}}" class="img-circle" style="height:50px;width:50px;" />
+    </div>
+</div>
+<div class="col-md-10 col-sm-10 col-xs-10">
+    <div>
+        <strong id="owner_name">{{item.ownerName}}</strong>&nbsp;&middot;&nbsp;<span am-time-ago="item.created"></span>&nbsp;&middot;&nbsp;<span id="payout" ng-if="item.payout">${{item.payout}}</span><span ng-if="!item.payout">free</span>
+    </div>
+    <div class="badge" ng-class="{'badge-success':item.status=='completed','badge-info':item.status!='completed'}">{{item.status | capslock}}<span ng-if="item.tasker.name">&nbsp;<a href="/user/view/{{item.tasker.id}}" style="color:white;">by {{item.tasker.name}}</a></span></span>
+    </div>
+    <div>{{item.name}}</div>
+    <div ng-if="!item.tasker.name"><a href="/tasq/view/{{item._id}}">tasq is open</a></div>
+    <div ng-if="task.tasker.name"><a href="" ng-click="_goToPath('/user/view/'+task.tasker.id,$event);">tasq {{task.status}} by {{task.tasker.name}}</a></div>
+    <button ng-disabled="item.shared" ng-class="{'btn-primary':item.shared==false,'btn-success':item.shared==true}" class="btn pull-right" ng-click="onClick(item);"><span ng-if="item.shared==false">share</span><span ng-if="item.shared==true">already shared</span></button>
+</div>
+<div class="clearfix"></div>

@@ -19,7 +19,9 @@
  router.post('/:id/requestJoin/snaptasq', auth.isAuthenticated(), controller.requestJoin);
  router.post('/:id/requestJoin/facebook', auth.isAuthenticated(), user.getFbAccessToken, controller.requestJoin);
  router.post('/:id/leaveGroup', auth.isAuthenticated(), controller.leaveGroup);
+ router.post('/:id/addTask', auth.isAuthenticated(), controller.addTaskToCommunity);
  router.post('/search', controller.search);
+ router.post('/friends', controller.getMyFriendsCommunities);
  router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 
  //no need to use DSL

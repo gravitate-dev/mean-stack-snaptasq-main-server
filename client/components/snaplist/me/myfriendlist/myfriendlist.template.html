@@ -1,6 +1,8 @@
 <div class="panel panel-default">
     <div ng-if="listTitle" snaplist-title="'my friends'" notification="notification"></div>
-    <div snaplist-button="{href:'/users/find',text:'add more friends',icon:'fa fa-plus'}"></div>
+    <a href="/users/find">
+        <div snaplist-button="{text:'add more friends',icon:'fa fa-plus'}"></div>
+    </a>
     <div snaplist-search="searchFilter.text"></div>
     <ul class="list-group" infinite-scroll='showMore()' infinite-scroll-distance='2'>
         <li class="list-group-item ng-cloak" ng-if="(items | filter:{'name':searchFilter.text}).length==0">

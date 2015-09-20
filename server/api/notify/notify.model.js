@@ -25,7 +25,8 @@ var NotifySchema = new Schema({
     }, //friend,community,taskOwner,taskApplicant
     created: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        expireAfterSeconds: 2592000 //1 month before it expires
     },
     updated: {
         type: Date,

@@ -5,6 +5,11 @@ angular.module('snaptasqApp')
         $scope._noFooter();
         $scope.type = $routeParams.type;
         $scope.myId = undefined;
+
+        /* This sets the filter i use for my notifications */
+        $scope.setType = function(type) {
+            $scope.type = type;
+        }
         _me.$promise.then(function(me) {
             $scope._me = me;
             $scope.myId = me._id;
@@ -14,8 +19,17 @@ angular.module('snaptasqApp')
                 $scope.items = notifications;
                 $scope.readNotificationsCount = notifications.length;
                 socket.syncUpdates('notify', $scope.items);
+                //$scope.setupListener();
             }, $scope.type);
         });
+        /*
+        $scope.setupListener = function(){
+            $scope.$watch('items.length',function(newVal,oldVal){
+                console.log("WUT");
+            });
+        }
+        */
+
 
         $scope.refreshNotifications = function() {
             Notify.get(function(notifications) {
@@ -29,4 +43,8 @@ angular.module('snaptasqApp')
                 $scope.refreshNotifications();
             });
         }
+
+        $scope.$on("$destroy", function() {
+            socket.unsyncUpdates('notify');
+        });
     })

@@ -36,6 +36,7 @@ angular.module('snaptasqApp')
 
         $scope.reloadMenu = function() {
             Auth.isLoggedInAsync(function(isLoggedIn) {
+                $scope.isUserBetaLocked = !Auth.isBetaUnlocked();
                 if (isLoggedIn) {
                     $scope.menu = [];
                     if (Auth.isBetaUnlocked()) {
@@ -111,6 +112,11 @@ angular.module('snaptasqApp')
         $scope.isNotCollapsed = true;
         $scope.isLoggedIn = Auth.isLoggedIn;
         $scope.isUserBetaLocked = !Auth.isBetaUnlocked();
+        /*undefined;
+                Auth.isBetaUnlockedAsync(function(isUnlocked){
+                    $scope.isUserBetaLocked = isUnlocked;
+                });
+        */
         $scope.isAdmin = Auth.isAdmin;
         $scope._me = Auth.getCurrentUser();
 
@@ -140,6 +146,10 @@ angular.module('snaptasqApp')
             $scope.notifications = notifications;
             $scope.readNotificationsCount = notifications.length;
             socket.syncUpdates('notify', $scope.notifications);
+        });
+
+        $scope.$on("$destroy", function() {
+            socket.unsyncUpdates('notify');
         });
         $scope.onOpenNotificaions = function() {
             $scope.readNotificationsCount = $scope.notifications.length;

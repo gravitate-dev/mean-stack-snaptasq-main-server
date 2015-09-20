@@ -70,6 +70,41 @@ angular.module('snaptasqApp')
                 });
             },
 
+
+            /**
+             * Register listeners to sync an item with updates on a model
+             *
+             * Takes the destItem we want to sync, the model name that socket updates are sent from,
+             * and an optional callback function after the item is updated.
+             *
+             * @param {String} modelName
+             * @param {Object} destItem
+             * @param {Function} cb
+             */
+            syncUpdateToId: function(modelName, id, cb) {
+                cb = cb || angular.noop;
+
+                /**
+                 * Syncs item creation/updates on 'model:save'
+                 */
+                socket.on(modelName + ':' + id + ':save', function(item) {
+                    cb(item);
+                });
+
+                /**
+                 * Syncs removed items on 'model:remove'
+                 */
+                /*socket.on(modelName + ':remove', function(item) {
+                    cb(undefined);
+                });
+                */
+            },
+
+            unsyncUpdatesToId: function(modelName, id) {
+                socket.removeAllListeners(modelName + ':' + id + ':save');
+                socket.removeAllListeners(modelName + ':' + id + ':remove');
+            },
+
             /**
              * Removes listeners for a models updates on the socket
              *

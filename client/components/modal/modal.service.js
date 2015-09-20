@@ -239,7 +239,7 @@ angular.module('snaptasqApp')
                                 task: task,
                                 dismissable: true,
                                 title: 'Applicants',
-                                htmlInclude: 'app/task/components/applicants.modal.html',
+                                htmlInclude: 'app/task/modals/applicants.modal.html',
                                 buttons: [{
                                     classes: 'btn-default',
                                     text: 'ok',
@@ -251,6 +251,86 @@ angular.module('snaptasqApp')
                         }, 'modal-info');
 
                         registerModal.result.then(function(event) {
+                            cb.apply(event, args);
+                        });
+                    };
+                },
+
+
+                /**
+                 * Create a function to open a task picker, it is currently used to pick a task to share to a community (ex. ng-click='myModalFn(name, arg1, arg2...)')
+                 * @param  {Function} cb - callback, ran when the task is picked
+                 * @param  {object}  group - the group to share too
+                 * @return {Function}     - the function to open the modal (ex. myModalFn)
+                 */
+                pickMyTaskForCommunity: function(cb) {
+                    cb = cb || angular.noop;
+
+                    /**
+                     * Open a delete confirmation modal
+                     * @param  {All}           - any additional args are passed staight to reg callback
+                     */
+                    return function() {
+                        var args = Array.prototype.slice.call(arguments),
+                            community = args.shift(),
+                            pickTaskModal;
+
+                        pickTaskModal = openModal({
+                            modal: {
+                                community: community,
+                                dismissable: true,
+                                title: 'Pick Tasq',
+                                htmlInclude: 'app/task/modals/picktask.modal.html',
+                                buttons: [{
+                                    classes: 'btn-default',
+                                    text: 'Cancel',
+                                    click: function(e) {
+                                        pickTaskModal.dismiss(e);
+                                    }
+                                }]
+                            }
+                        }, 'modal-info');
+
+                        pickTaskModal.result.then(function(event) {
+                            cb.apply(event, args);
+                        });
+                    };
+                },
+                /**
+                 * Create a function to open a share to community modal (ex. ng-click='myModalFn(name, arg1, arg2...)')
+                 * @param  {Function} cb - callback, ran when the community is picked
+                 * @return {Function}     - the function to open the modal (ex. myModalFn)
+                 */
+                shareToCommunity: function(cb) {
+                    cb = cb || angular.noop;
+
+                    /**
+                     * Open a delete confirmation modal
+                     * @param  {String} task   - task to share
+                     * @param  {All}           - any additional args are passed staight to reg callback
+                     */
+                    return function() {
+                        var args = Array.prototype.slice.call(arguments),
+                            task = args.shift(),
+                            shareCommunityModal;
+
+                        shareCommunityModal = openModal({
+                            modal: {
+                                task: task,
+                                dismissable: true,
+                                title: 'Share Tasq To Community',
+                                htmlInclude: 'app/communities/modal/share.community.html',
+                                buttons: [{
+                                    classes: 'btn-default',
+                                    text: 'Cancel',
+                                    click: function(e) {
+                                        shareCommunityModal.dismiss(e);
+                                    }
+                                }]
+                            }
+                        }, 'modal-info');
+
+                        shareCommunityModal.result.then(function(event) {
                             cb.apply(event, args);
                         });
                     };

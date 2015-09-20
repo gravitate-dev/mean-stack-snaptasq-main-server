@@ -219,6 +219,25 @@ angular.module('snaptasqApp')
             },
 
             /**
+             * Check if a user has unlocked the beta trial
+             *
+             * @return {Boolean}
+             */
+            isBetaUnlockedAsync: function(cb) {
+                if (currentUser.hasOwnProperty('$promise')) {
+                    currentUser.$promise.then(function() {
+                        cb(true);
+                    }).catch(function() {
+                        cb(false);
+                    });
+                } else if (!currentUser.hasOwnProperty('requiresBeta')) {
+                    cb(true);
+                } else {
+                    cb(false);
+                }
+            },
+
+            /**
              * Waits for currentUser to resolve before checking if user is logged in
              */
             isLoggedInAsync: function(cb) {

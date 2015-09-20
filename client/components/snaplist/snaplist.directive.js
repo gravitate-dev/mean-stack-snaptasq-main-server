@@ -42,7 +42,14 @@ angular.module('snaptasqApp')
             replace: false,
             scope: {},
             templateUrl: 'components/snaplist/base/results/results.directive.html',
-            controller: function($scope) {},
+            controller: function($scope) {
+                $scope._goToPath = function(url, $event) {
+                    if (!angular.isUndefined($event)) {
+                        $event.stopPropagation();
+                    }
+                    $location.path(url);
+                }
+            },
             link: function(scope, element, attrs) {}
         };
     }).directive('snaplistResultsTask', function($location) {
@@ -54,6 +61,28 @@ angular.module('snaptasqApp')
             },
             templateUrl: 'components/snaplist/base/results/task.results.template.html',
             controller: function($scope) {
+                $scope._goToPath = function(url, $event) {
+                    if (!angular.isUndefined($event)) {
+                        $event.stopPropagation();
+                    }
+                    $location.path(url);
+                }
+            },
+            link: function(scope, element, attrs) {}
+        };
+    }).directive('snaplistResultsTaskShare', function($location) {
+        return {
+            restrict: 'ACE',
+            replace: false,
+            scope: {
+                item: "=snaplistResultsTaskShare",
+                click: "=snaplistclick"
+            },
+            templateUrl: 'components/snaplist/base/results/taskshare.results.template.html',
+            controller: function($scope) {
+                $scope.onClick = function(item) {
+                    $scope.click(item);
+                }
                 $scope._goToPath = function(url, $event) {
                     if (!angular.isUndefined($event)) {
                         $event.stopPropagation();

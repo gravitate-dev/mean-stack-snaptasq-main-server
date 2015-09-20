@@ -35,17 +35,49 @@ angular.module('snaptasqApp')
             if ($scope.isurl_fb(name)) {
                 $scope.joinFacebookUrl(name);
             } else {
-                Community.searchByName(name, function(users) {
-                    if (angular.isUndefined(users) || _.isEmpty(users)) {
-                        $scope.noResults = true;
-                        $scope.searchResults = [];
-                    } else {
-                        $scope.noResults = false;
-                        $scope.searchResults = users;
-                    }
-                });
+                /**
+                 * When blank, i will search for my friends communities
+                 * When not blank i will search by name
+                 */
+                if (_.isEmpty(name)) {
+                    Community.myFriendsCommunities(function(data) {
+                        if (angular.isUndefined(data) || data.length == 0) {
+                            $scope.noResults = true;
+                            $scope.searchResults = [];
+                        } else {
+                            $scope.noResults = false;
+                            $scope.searchResults = _.filter(data, function(item) {
+                                return item._id != undefined;
+                            });
+                        }
+                    });
+                } else {
+                    Community.searchByName(name, function(data) {
+                        if (angular.isUndefined(data) || _.isEmpty(data)) {
+                            $scope.noResults = true;
+                            $scope.searchResults = [];
+                        } else {
+                            $scope.noResults = false;
+                            $scope.searchResults = _.filter(data, function(item) {
+                                return item._id != undefined;
+                            });
+                        }
+                    });
+                }
             }
         }
+
+        Community.myFriendsCommunities(function(data) {
+            if (angular.isUndefined(data) || data.length == 0) {
+                $scope.noResults = true;
+                $scope.searchResults = [];
+            } else {
+                $scope.noResults = false;
+                $scope.searchResults = _.filter(data, function(item) {
+                    return item._id != undefined;
+                });
+            }
+        });
 
         $scope.joinFacebookUrl = function(url) {
             $scope.freezeInput = true;
@@ -61,7 +93,7 @@ angular.module('snaptasqApp')
                             $timeout(function() {
                                 $scope.freezeInput = false;
                                 $location.path('/community/view/' + comm._id);
-                            }, 2000);
+                            }, 100);
                         }
                     }, function(failure) {
                         $scope.freezeInput = false;
@@ -80,14 +112,9 @@ angular.module('snaptasqApp')
         $scope._noFooter();
         $scope.communityFilter = {};
         $scope.friendlistFilter = {};
-        /*
-        Auth.hasFacebookPermission('user_friends',function(hasPermission){
-            console.log(hasPermission);
-            if (!hasPermission){
-                $location.path('/communities/permission');
-            }
+        _me.$promise.then(function(me) {
+            $scope._me = me;
         });
-*/
 
     })
     .controller('CommunityFacebookConnect', function($scope, _me, $http, Auth, $window) {
@@ -128,6 +155,8 @@ angular.module('snaptasqApp')
         };
 
         $scope.init();
+
+
         $scope.requestJoin = function() {
             if (angular.isUndefined($scope._me)) {
                 return Notification.error({
@@ -148,10 +177,17 @@ angular.module('snaptasqApp')
                 });
                 $scope.init();
             }, function(fail) {
-                Notification.error({
-                    message: "Sorry you can not join this group.",
-                    replaceMessage: true
-                });
+                if ($scope.group.url) {
+                    Notification.warning({
+                        message: "You must first join the group on facebook first. <a style='text-decoration:underline;color: #0000EE;' href='" + $scope.group.url + "' target='_tab'>Here is a link</a>",
+                        replaceMessage: true
+                    });
+                } else {
+                    Notification.error({
+                        message: "Sorry, you can not join this group.",
+                        replaceMessage: true
+                    });
+                }
             })
         }
 

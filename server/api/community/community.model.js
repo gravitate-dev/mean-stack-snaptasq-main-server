@@ -29,21 +29,13 @@ var CommunitySchema = new Schema({
     name: String,
     users: [{
         id: {
-            type: Schema.Types.ObjectId,
-            index: true
+            type: Schema.Types.ObjectId
         },
         name: String,
         pic: {
             type: String,
             default: config.host.url + "assets/logos/no_avatar_group.png"
         }
-    }],
-    tasks: [{
-        id: {
-            type: Schema.Types.ObjectId,
-            index: true
-        },
-        name: String,
     }],
     url: String,
     identifier: String,

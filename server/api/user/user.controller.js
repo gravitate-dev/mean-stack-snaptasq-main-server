@@ -554,25 +554,6 @@ exports.deleteMyAccount = function(req, res) {
         return res.send(500, "The id that was sent did not match the userId");
     }
 
-    /*
-    User.findById(currentUserId,function(err, user){
-        if (err) return validationError(res,err);
-        if (!user) return res.send(404,"User does not exist");
-        
-        removeAllTasksOwnedByUser(user,Function(){
-            removeAllTasksAppliedByUser(user,function(){
-                removeAllFriendsByUser(user,function(){
-                    removeAllFriendRequestsByUser(user,function(){
-                        removeAllCommunitiesByUser(user,function(){
-
-                        })
-                    })
-                })
-            })
-        });
-
-    });
-    */
     // its written this way to trigger the remove hooks
     User.findById(currentUserId, function(err, user) {
         if (err) return res.send(500, err);
@@ -581,14 +562,7 @@ exports.deleteMyAccount = function(req, res) {
             return res.send(204);
         });
     });
-    /*
-    User.findByIdAndRemove(currentUserId, function(err, user) {
-        if (err) return res.send(500, err);
-        //destroy session then ok
-        req.session.destroy();
-        return res.send(204);
-    });
-*/
+
 };
 
 /**
