@@ -529,20 +529,30 @@ exports.getTasks = function(req, res) {
 
 exports.myInvitableFriends = function(req, res) {
         var groupId = req.param('id');
+        var currentUserId = req.session.userId;
         if (groupId == undefined) return res.send(400, "Missing parameter id. The Group ID");
+        if (currentUserId == undefined) return res.send(403, "Please login again");
 
-        var query = {};
-        if (req.dsl) query = req.dsl;
-        query['groups.id'] = {
-            $not: groupId
-        };
-        //query['status'] = { '$not' : "completed"};
-        User.find(query, function(err, users) {
+        User.findById(currentUserId, function(err, me) {
             if (err) {
-                console.error(err);
                 return handleError(res, err);
             }
-            return res.json(200, users);
+            var friendIds = _.pluck(me.friends, 'id');
+            var query = {};
+            if (req.dsl) query = req.dsl;
+            query['groups.id'] = {
+                $ne: groupId
+            };
+            query['_id'] = {
+                $in: friendIds
+            };
+            User.find(query, function(err, users) {
+                if (err) {
+                    console.error(err, query);
+                    return handleError(res, err);
+                }
+                return res.json(200, users);
+            });
         });
     }
     /**

@@ -11,7 +11,9 @@ angular.module('snaptasqApp').directive('communityuserslist', function($parse, $
         templateUrl: 'components/snaplist/community/communityuserslist/communityuserslist.template.html',
         controller: function($scope) {
             $scope.items = [];
+            $scope.group = {};
             Community.getById($scope.id, function(group) {
+                $scope.group = group;
                 $scope.items = group.users;
             });
             $scope.limitCount = 25;
