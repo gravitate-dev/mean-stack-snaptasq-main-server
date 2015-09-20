@@ -230,7 +230,7 @@ exports.getMyFriendsCommunities = function(req, res) {
                 return result.concat(arr)
             }, []);
             groups = _.uniq(groups, function(item) {
-                return item.id;
+                return item.id.toString();
             });
             //also i need to replace the _id with the id
             _.each(groups, function(item) {
