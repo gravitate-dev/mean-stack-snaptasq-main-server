@@ -11,7 +11,7 @@
         </li>
         <li class="list-group-item" style="word-break: break-word;" ng-repeat="item in items | filter:{'name':searchFilter.text} | limitTo:limitCount | orderBy:'name'">
             <div class="pull-left">
-                <img ng-src="{{item.pic}}" alt="{{item.name}}" class="img-circle" style="height:50px;width:50px;" />
+                <img ng-src="{{item.pic}}" alt="{{item.name}}" class="" style="height:50px;width:50px;" />
             </div>
             <div class="col-xs-9 col-sm-9">
                 <div class="name"><a href="{{'/user/view/'+item.id}}">{{item.name}}</a></div>

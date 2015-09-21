@@ -6,7 +6,7 @@
         <!-- default group my friends will always be shown -->
         <li class="list-group-item" style="word-break: break-word;">
             <div class="col-md-3 col-sm-3 col-xs-3">
-                <img src="assets/logos/snaptasq.png" style="max-width:64px;" alt="my friends" class="img-responsive img-circle" />
+                <img src="assets/logos/snaptasq.png" style="max-width:64px;" alt="my friends" class="img-responsive " />
             </div>
             <div class="col-md-9 col-sm-9 col-xs-9">
                 <span class="name">my friend's tasqs</span>
@@ -18,7 +18,7 @@
         <!-- then the normal items -->
         <li class="list-group-item" style="word-break: break-word;" ng-repeat="item in items | filter:{'name':searchFilter.text} | limitTo:limitCount | orderBy:'name'">
             <div class="col-md-3 col-sm-3 col-xs-3">
-                <img ng-src="{{item.pic}}" alt="{{item.name}}" style="max-width:64px;" class="img-responsive img-circle" />
+                <img ng-src="{{item.pic}}" alt="{{item.name}}" style="max-width:64px;" class="img-responsive " />
             </div>
             <div class="col-md-9 col-sm-9 col-xs-9">
                 <div class="name">{{item.name}}</div>
