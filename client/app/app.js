@@ -190,28 +190,6 @@ var app = angular.module('snaptasqApp', ['ngAudio', 'infinite-scroll', 'angucomp
 
 app.controller('GlobalCtrl', function GlobalCtrl($anchorScroll, $http, $interval, $location, $q, $rootScope, $scope, $templateCache, $timeout, Auth, BadgeAlerts, localStorageService, notifications, socket, User) {
     //socket.connect();
-    $scope.metaColor = "#00FF00";
-    $scope.$on('changedMeta', function($event, data) {
-        console.log(data);
-        $scope.metaColor = data;
-    });
-    socket.socket.on('lol', function(data) {
-            console.log(data);
-        })
-        /*var socket = io.connect({transports: ['websocket']});
-        socket.on('news', function (data) {
-            console.log(data);
-            socket.emit('my other event', { my: 'data' });
-        });
-
-        socket.on('connect_error', function(e) {
-            socket.io.reconnection(false);
-        });
-    
-        socket.socket.on('lol', function(item) {
-            console.log(item);
-        });
-        */
     $timeout(function() {
         /* CLOSE NAVBAR ON CLICK */
         /* Javascript queueing */
