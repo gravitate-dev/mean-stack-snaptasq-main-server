@@ -8311,7 +8311,8 @@ li.underlined.active {
 
 .snaplist-result-img-container {
   float: left;
-  width: 50px; }
+  width: 50px;
+  padding-right: 3px; }
 
 .snaplist-result-img {
   height: 50px;

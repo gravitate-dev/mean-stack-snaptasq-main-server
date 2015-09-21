@@ -23,21 +23,28 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="panel panel-default">
-                <ul class="list-group" id="contact-list" style="cursor:pointer;">
-                    <li class="list-group-item ng-cloak" ng-if="(items | orderBy:'-created' | filter:{category:type}).length==0">
+                <ul class="list-group">
+                    <li class="list-group-item ng-cloak" style="cursor:default;" ng-if="(items | filter:{category:type}).length==0">
                         <div class="col-xs-12 col-sm-12 text-center">
                             <span class="name">no notifications</span>
                         </div>
                         <div class="clearfix"></div>
                     </li>
-                    <li class="list-group-item" ng-repeat="item in items | orderBy:'-created' | filter:{category:type}" ng-click="_goToPath(item.href)">
+                    <!-- <li class="list-group-item ng-cloak" style="cursor:default;" ng-if="(items | filter:{category:type}).length>1">
                         <div class="row">
-                            <div style="float:left;padding-left:5px;display:inline-block;width:45px;"><img ng-src="{{item.pic}}" style="height:50px;width:50px;" /></div>
+                            <span class="name"><button ng-click="hideAllNotifications()"class="btn btn-warning pull-right" style="margin-right:5px;">dismiss all {{(items | filter:{category:type}).length}} notifications</button></span>
+                        </div>
+                        <div class="clearfix"></div>
+                    </li> -->
+                    <li class="list-group-item" style="cursor:default;" ng-repeat="item in items | orderBy:'-created' | filter:{category:type}">
+                        <div class="row">
+                            <div class="snaplist-result-img-container"><img ng-src="{{item.pic}}" class="snaplist-result-img" style="padding-left:5px;" /></div>
                             <div class="col-md-9 col-sm-9 col-xs-8">
-                                <h4 ng-if="myId && item.forOne==myId" class="item-title">{{item.messageOne}}<button ng-click="hideNotification($event,item)" class="btn btn-warning pull-right">dismiss</button></h4>
-                                <h4 ng-if="myId && item.forOne!=myId" class="item-title">{{item.message}}<button ng-click="hideNotification($event,item)" class="btn btn-warning pull-right">dismiss</button></h4>
+                                <h4 ng-if="myId && item.forOne==myId" class="item-title"><a href="" ng-click="_goToPath(item.href)">{{item.messageOne}}</a></h4>
+                                <h4 ng-if="myId && item.forOne!=myId" class="item-title">{{item.message}}</h4>
                                 <p class="item-info" am-time-ago="item.created"></p>
                             </div>
+                            <button ng-if="item.category=='friendRequest'" ng-click="hideNotification($event,item)" style="margin-right:5px;" class="btn btn-warning pull-right">dismiss</button>
                         </div>
                     </li>
                 </ul>
