@@ -190,9 +190,11 @@ var app = angular.module('snaptasqApp', ['ngAudio', 'infinite-scroll', 'angucomp
 
 app.controller('GlobalCtrl', function GlobalCtrl($anchorScroll, $http, $interval, $location, $q, $rootScope, $scope, $templateCache, $timeout, Auth, BadgeAlerts, localStorageService, notifications, socket, User) {
     //socket.connect();
-
-
-
+    $scope.metaColor = "#00FF00";
+    $scope.$on('changedMeta', function($event, data) {
+        console.log(data);
+        $scope.metaColor = data;
+    });
     socket.socket.on('lol', function(data) {
             console.log(data);
         })
