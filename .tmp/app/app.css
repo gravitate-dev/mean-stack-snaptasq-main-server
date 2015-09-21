@@ -8455,5 +8455,8 @@ li.underlined.active {
   .name {
     font-size: 1em;
     font-weight: 700; } }
+html {
+  overflow-y: scroll;
+  /*always show the scrollbar*/ }
 
 /*# sourceMappingURL=app.css.map */

@@ -235,3 +235,7 @@ margin-bottom: 10px;
       font-weight: 700;
     }
 }
+
+html {
+  overflow-y:scroll; /*always show the scrollbar*/
+}
