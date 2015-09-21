@@ -44,7 +44,7 @@
                                 <h4 ng-if="myId && item.forOne!=myId" class="item-title">{{item.message}}</h4>
                                 <p class="item-info" am-time-ago="item.created"></p>
                             </div>
-                            <button ng-if="item.category=='friendRequest'" ng-click="hideNotification($event,item)" style="margin-right:5px;" class="btn btn-warning pull-right">dismiss</button>
+                            <button ng-if="item.category=='friendRequest'" ng-click="hideNotification($event,item)" style="margin-right:5px;" class="btn btn-warning pull-right">ignore</button>
                         </div>
                     </li>
                 </ul>
