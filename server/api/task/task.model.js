@@ -54,6 +54,21 @@ var TaskSchema = new Schema({
         type: Number,
         default: 0
     },
+    historicalPrices: [{
+        price: Number,
+        created: {
+            type: Date,
+            default: Date.now
+        }
+    }],
+    historicalTaskers: [{
+        id: Schema.Types.ObjectId,
+        name: String,
+        created: {
+            type: Date,
+            default: Date.now
+        }
+    }],
     communitiesIn: [{
         id: {
             type: Schema.Types.ObjectId,

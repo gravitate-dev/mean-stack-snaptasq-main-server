@@ -12,6 +12,7 @@
  router.post('/', auth.hasRole('admin'), controller.create);
  router.get('/', auth.isAuthenticated(), controller.index);
  router.get('/:id/tasks', auth.isAuthenticated(), dsl.processSearch, controller.getTasks);
+ router.get('/:id/members', auth.isAuthenticated(), dsl.processSearch, controller.getMembers);
  router.get('/:id/inviteableFriends', auth.isAuthenticated(), dsl.processSearch, controller.myInvitableFriends);
 
  //router.get('/me', auth.isAuthenticated(), controller.getMine);

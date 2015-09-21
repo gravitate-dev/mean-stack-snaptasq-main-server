@@ -44,7 +44,7 @@ angular.module('snaptasqApp').directive('communitytaskslist', function($parse, $
                 if (manager.canLoadMore()) {
                     manager.isLoadingMore = true;
                     var opts = $scope.getOpts();
-                    Community.getTasksForGroupId($scope.id, function(data) {
+                    Community.getTasks($scope.id, function(data) {
                         $scope.items = manager.handleResults(data);
                     }, opts);
                 }
@@ -59,7 +59,6 @@ angular.module('snaptasqApp').directive('communitytaskslist', function($parse, $
                     console.log(data);
                 })($scope.group);
             }
-
         },
         link: function($scope, $element, $attributes) {
             $scope.options = $scope.$eval($attributes.options);

@@ -229,9 +229,13 @@ exports.getMyFriendsCommunities = function(req, res) {
             groups = _.reduce(groups, function(result, arr) {
                 return result.concat(arr)
             }, []);
-            groups = _.uniq(groups, function(item) {
-                return item.id.toString();
-            });
+            console.log(groups);
+            if (!_.isEmpty(groups)) {
+                groups = _.uniq(groups, function(item) {
+                    if (item.id == undefined) return false;
+                    return item.id.toString();
+                });
+            }
             //also i need to replace the _id with the id
             _.each(groups, function(item) {
                 item._id = item.id;
@@ -471,13 +475,14 @@ function _removeUserFromComm(req, res, comm, user) {
             name: user.name,
             pic: user.pic
         };
-        comm.users = _.filter(comm.users, function(item) {
-            return !user._id.equals(item.id);
-        });
-        comm.save(function(err, comm) {
-            if (err) return handleError(res, err);
-            return res.json(200, comm);
-        });
+        return res.json(200, comm);
+        /*        comm.users = _.filter(comm.users, function(item) {
+                    return !user._id.equals(item.id);
+                });
+                comm.save(function(err, comm) {
+                    if (err) return handleError(res, err);
+                    return res.json(200, comm);
+                });*/
     });
 }
 
@@ -502,12 +507,13 @@ function _addUserToComm(req, res, comm, user) {
             name: user.name,
             pic: user.pic
         };
-
-        comm.users.push(usr);
+        return res.json(200, comm);
+        /*comm.users.push(usr);
         comm.save(function(err, comm) {
             if (err) return handleError(res, err);
             return res.json(200, comm);
         });
+    */
     });
 }
 
@@ -524,6 +530,21 @@ exports.getTasks = function(req, res) {
             return handleError(res, err);
         }
         return res.json(200, tasks);
+    });
+}
+
+exports.getMembers = function(req, res) {
+    var groupId = req.param('id');
+    if (groupId == undefined) return res.send(400, "Missing parameter id. The Group ID");
+    var query = {};
+    if (req.dsl) query = req.dsl;
+    query['groups.id'] = groupId;
+    User.find(query, function(err, users) {
+        if (err) {
+            console.error(err, query);
+            return handleError(res, err);
+        }
+        return res.json(200, users);
     });
 }
 

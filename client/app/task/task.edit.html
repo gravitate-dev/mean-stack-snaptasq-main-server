@@ -25,6 +25,7 @@
                     <div class="form-group" ng-class="{ 'has-success': form.name.$valid && submitted,
                 'has-error': form.name.$invalid && submitted }">
                         <label popover-placement="right" popover="It is reccomended you learn how to set price points accurately, clicking the link won't clear your task information" popover-trigger="mouseenter">reward price</label>
+                        <div class="pull-right"><small>(don't include costs for the tasker, it is assumed you will cover them)</small></div>
                         <input id="payout" scroll-on-click-mobile="-15px" class="form-control" blur-currency="" type="text" style="display:inline;" ng-model="task.payout" popover-placement="right" popover="By offering as little as 5$ it greatly increases the chances of success"
                         required/>
                         <div class="price-bar-container" style="margin-top:5px;">

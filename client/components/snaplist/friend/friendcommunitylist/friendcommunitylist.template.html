@@ -1,8 +1,6 @@
 <div class="panel panel-default">
     <div ng-if="listTitle" snaplist-title="'communities'"></div>
-    <a href="/communities/find">
-        <div snaplist-button="{text:'invite to community',icon:'fa fa-plus'}"></div>
-    </a>
+    <!-- <div snaplist-button="{text:'invite to community',icon:'fa fa-plus'}"></div> -->
     <div snaplist-search="searchFilter.text"></div>
     <ul class="list-group" infinite-scroll='showMore()' infinite-scroll-distance='2'>
         <!-- default group my friends will always be shown -->

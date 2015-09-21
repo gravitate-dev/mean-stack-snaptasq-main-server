@@ -75,6 +75,13 @@ angular.module('snaptasqApp')
                     controller: "tasks"
                 }
             },
+            getMembers: {
+                method: 'GET',
+                isArray: true,
+                params: {
+                    controller: "members"
+                }
+            },
             addTask: {
                 method: 'POST',
                 params: {
@@ -162,7 +169,19 @@ angular.module('snaptasqApp')
                 });
                 return deferred.promise;
             },
-            getTasksForGroupId: function(id, cb, opts) {
+
+            getMembers: function(id, cb, opts) {
+                var cb = cb || angular.noop;
+                var deferred = $q.defer();
+                var opts = opts || {};
+                opts.id = id;
+                Comm.getMembers(opts, {}, function(data) {
+                    deferred.resolve(data);
+                    return cb(data);
+                });
+                return deferred.promise;
+            },
+            getTasks: function(id, cb, opts) {
                 var cb = cb || angular.noop;
                 var deferred = $q.defer();
                 var opts = opts || {};

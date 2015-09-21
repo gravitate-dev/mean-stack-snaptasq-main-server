@@ -165,6 +165,9 @@ exports.create = function(req, res) {
 
         newTask.ownerName = user.name;
         newTask.ownerPic = user.pic;
+        newTask.historicalPrices.push({
+            price: newTask.payout
+        });
         Task.create(newTask, function(err, task) {
             if (err) {
                 return handleError(res, err);
@@ -195,17 +198,20 @@ exports.update = function(req, res) {
             return res.send(404);
         }
         task.location = undefined;
-        var updated = _.merge(task, req.body);
+        var updatedTask = _.merge(task, req.body);
         var currentUserId = req.session.userId;
-        updated.ownerId = currentUserId;
+        updatedTask.ownerId = currentUserId;
+        updatedTask.historicalPrices.push({
+            price: updatedTask.payout
+        });
         User.findOne({
             _id: currentUserId
         }, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, user) { // don't ever give out the password or salt
             if (err) return res.status(500).json(err);
             if (!user) return res.json(401);
-            updated.ownerName = user.name;
-            updated.ownerPic = user.pic;
-            updated.save(function(err) {
+            updatedTask.ownerName = user.name;
+            updatedTask.ownerPic = user.pic;
+            updatedTask.save(function(err) {
                 if (err) {
                     return handleError(res, err);
                 }
@@ -465,6 +471,10 @@ exports.setTasker = function(req, res) {
                 task.endTime = undefined;
                 task.totalTime = undefined;
                 task.status = "in progress";
+                task.historicalTaskers.push({
+                    id: user._id,
+                    name: user.name
+                });
                 task.save(function(err) {
                     if (err) {
                         return handleError(res, err);
