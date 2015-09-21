@@ -13,10 +13,10 @@
             <div class="clearfix"></div>
         </li>
         <li class="list-group-item" style="cursor:pointer;word-break: break-word;" ng-repeat="item in items | filter:{'name':searchFilter.text} | limitTo:limitCount | orderBy:'name'" ng-click="_goToPath('/user/view/'+item.id)">
-            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-                <img ng-src="{{item.pic}}" alt="{{item.name}}" class="" style="height:50px;width:50px;" />
+            <div class="snaplist-result-img-container">
+                <img ng-src="{{item.pic}}" alt="{{item.name}}" class="snaplist-result-img" />
             </div>
-            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+            <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
                 <span class="name"><a href="{{'/user/view/'+item.id}}">{{item.name}}</a></span>
             </div>
             <div class="clearfix"></div>

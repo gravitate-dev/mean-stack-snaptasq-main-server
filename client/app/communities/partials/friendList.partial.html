@@ -27,7 +27,7 @@
         </li>
         <li class="list-group-item" ng-repeat="item in _me.friends | filter:{'name':friendFilter}" ng-click="_goToPath('/user/view/'+item.id)">
             <div class="pull-left">
-                <img src="{{item.pic}}" alt="{{item.name}}" class="img-circle" style="height:50px;width:50px;" />
+                <img src="{{item.pic}}" alt="{{item.name}}" style="height:50px;width:50px;" />
             </div>
             <div class="col-xs-9 col-sm-9">
                 <span class="name">{{item.name}}</span>

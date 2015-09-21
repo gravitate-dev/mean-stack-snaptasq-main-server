@@ -8309,6 +8309,14 @@ li.underlined.active {
   border-top-left-radius: 0px;
   border-top-right-radius: 0px; }
 
+.snaplist-result-img-container {
+  float: left;
+  width: 50px; }
+
+.snaplist-result-img {
+  height: 50px;
+  width: 50px; }
+
 .small-map .angular-google-map-container {
   height: 100px; }
 

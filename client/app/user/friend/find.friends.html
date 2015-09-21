@@ -17,7 +17,7 @@
                 </li>
                 <li class="list-group-item" ng-repeat="item in searchResults" ng-click="_goToPath('/user/view/'+item._id)" style="cursor:pointer;">
                     <div style="width:50px;float:left;">
-                        <img src="{{item.pic}}" alt="{{item.name}}" class="img-responsive img-circle" />
+                        <img src="{{item.pic}}" alt="{{item.name}}" class="img-responsive " />
                     </div>
                     <div class="col-xs-9 col-sm-9 col-md-9">
                         <span class="name"><a href="{{'/user/view/'+item._id}}">{{item.name}}</a></span>
