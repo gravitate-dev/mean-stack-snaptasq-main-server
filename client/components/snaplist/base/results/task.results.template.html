@@ -8,7 +8,6 @@
     <div class="badge" ng-class="{'badge-success':item.status=='completed','badge-info':item.status!='completed'}">{{item.status | capslock}}<span ng-if="item.tasker.name">&nbsp;<a href="/user/view/{{item.tasker.id}}" style="color:white;">by {{item.tasker.name}}</a></span></span>
     </div>
     <div>{{item.name}}</div>
-    <div ng-if="!item.tasker.name"><a href="/tasq/view/{{item._id}}">tasq is open</a></div>
     <div ng-if="task.tasker.name"><a href="" ng-click="_goToPath('/user/view/'+task.tasker.id,$event);">tasq {{task.status}} by {{task.tasker.name}}</a></div>
 </div>
 <div class="clearfix"></div>
