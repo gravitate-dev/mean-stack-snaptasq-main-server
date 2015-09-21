@@ -47,4 +47,38 @@ angular.module('snaptasqApp')
         $scope.$on("$destroy", function() {
             socket.unsyncUpdates('notify');
         });
+    }).controller('NotificationsEmbeddedCtrl', function($scope, socket, $routeParams, Notify) {
+        $scope._bgcolorGrey();
+        $scope._noFooter();
+        $scope.type = $routeParams.type;
+
+        /* This sets the filter i use for my notifications */
+        $scope.setType = function(type) {
+            $scope.type = type;
+        }
+        $scope.notifications = [];
+        $scope.readNotificationsCount = undefined;
+        Notify.get(function(notifications) {
+            $scope.items = notifications;
+            $scope.readNotificationsCount = notifications.length;
+            socket.syncUpdates('notify', $scope.items);
+            //$scope.setupListener();
+        }, $scope.type);
+
+        $scope.refreshNotifications = function() {
+            Notify.get(function(notifications) {
+                $scope.items = notifications;
+                $scope.readNotificationsCount = notifications.length;
+            }, $scope.type);
+        }
+        $scope.hideNotification = function($event, item) {
+            $event.stopPropagation();
+            Notify.hideNotification(item._id, function(data) {
+                $scope.refreshNotifications();
+            });
+        }
+
+        $scope.$on("$destroy", function() {
+            socket.unsyncUpdates('notify');
+        });
     })

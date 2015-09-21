@@ -214,6 +214,8 @@ angular.module('snaptasqApp')
         User.removeCache();
         $scope.group = {};
         _me.$promise.then(function(me) {
+            $scope._me = me;
+            $scope.myId = me._id; //this is used by the Embedded Notificatons Ctrl
             $scope.group = {
                 name: "my friends on snaptasq",
                 users: me.friends,
