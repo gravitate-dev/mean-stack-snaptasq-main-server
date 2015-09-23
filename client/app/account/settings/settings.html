@@ -1,4 +1,15 @@
 <div class="container top-buffer">
+    <section ng-if="_me.personalBetaCodes.length>0" class="panel panel-info">
+        <div class="panel-heading">
+            Friend Invite Codes for Beta
+        </div>
+        <div class="panel-body">
+            <p>Give these codes to your friends so they can register. These codes will only work once, and never expire.</p>
+            <ul>
+                <li style="cursor:default;" ng-repeat="code in _me.personalBetaCodes">{{code}}</li>
+            </ul>
+        </div>
+    </section>
     <section ng-if="_me.requiresBeta && _beta" name="enter-beta-code" class="panel panel-danger">
         <div class="panel-heading">
             <i class="fa fa-warning"></i>&nbsp;Enter a beta code! <span class="badge">1</span>

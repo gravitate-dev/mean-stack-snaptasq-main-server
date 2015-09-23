@@ -15,11 +15,9 @@ angular.module('snaptasqApp')
 
         $scope.checkbeta = function(form) {
 
-            User.applyBetaCode({}, {
-                id: form.betaCode.$viewValue
-            }, function(success) {
+            User.applyBetaCode(form.betaCode.$viewValue, function(success) {
                 notifications.showSuccess({
-                    message: success.message
+                    message: success
                 });
                 BadgeAlerts.remove(BadgeAlerts.MISSING_BETA_CODE);
 
@@ -27,15 +25,7 @@ angular.module('snaptasqApp')
                     $window.location.reload();
                 }, 1000);
             }, function(error) {
-                if (error.status == 429) {
-                    //rate limit
-                    $scope.buttonDisable = true;
-                    $timeout(function() {
-                        $scope.buttonDisable = false;
-                    }, 10000);
-
-                }
-                Notification.error(error.data);
+                Notification.error(error);
             });
         }
     });

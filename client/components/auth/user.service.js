@@ -6,12 +6,6 @@ angular.module('snaptasqApp')
         var Usr = $resource('/api/users/:id/:controller', {
             id: '@_id'
         }, {
-            applyBetaCode: {
-                method: 'POST',
-                params: {
-                    controller: 'applyBetaCode'
-                }
-            },
             changePassword: {
                 method: 'PUT',
                 params: {
@@ -57,6 +51,17 @@ angular.module('snaptasqApp')
             }
         });
         return {
+            applyBetaCode: function(id, cb, cberror) {
+                var cb = cb || angular.noop;
+                var cberror = cberror || angular.noop;
+                $http.post('/api/users/applyBetaCode', {
+                    id: id
+                }).success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    return cberror(err);
+                });
+            },
             removeFriendship: function(id, cb, cberror) {
                 var cb = cb || angular.noop;
                 var cberror = cberror || angular.noop;
@@ -117,7 +122,6 @@ angular.module('snaptasqApp')
                 cacheMe.removeAll();
             },
             get: Usr.get, //this guy is cached
-            applyBetaCode: Usr.applyBetaCode,
             changePassword: Usr.changePassword,
             resetChangePassword: Usr.resetChangePassword,
             create: Usr.create,

@@ -96,6 +96,8 @@ var UserSchema = new Schema({
         pic: String,
         source: String
     }],
+    /** These codes are to invite friends to use the beta **/
+    personalBetaCodes: [String],
     otherTasks: [Schema.Types.ObjectId],
     canFriend: [Schema.Types.ObjectId],
     doNotAutoFriend: [Schema.Types.ObjectId], //these are people you dont want to auto friend. This happens when a user unfriends a facebook friend

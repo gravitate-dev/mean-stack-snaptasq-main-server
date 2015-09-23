@@ -32,7 +32,7 @@
     </section>
 
     <section name="view-codes" class="panel panel-seondary">
-        <div class="row well" ng-repeat="code in betaCodes">
+        <div class="row well" ng-repeat="code in betaCodes | filter:{isCodeRoot:true}">
             <div class="col-md-4">
                 <h2>{{code.name}}</h2>
             </div>

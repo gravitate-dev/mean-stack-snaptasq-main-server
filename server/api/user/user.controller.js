@@ -9,7 +9,9 @@ var jwt = require('jsonwebtoken');
 var uuid = require('uuid');
 var graph = require('fbgraph');
 var sha1 = require('sha1');
+var Beta = require('../beta/beta.controller');
 var _ = require('lodash');
+var mongoose = require('mongoose');
 
 var validationError = function(res, err) {
     return res.json(422, err);
@@ -20,7 +22,7 @@ var validationError = function(res, err) {
  * restriction: 'admin'
  */
 exports.index = function(req, res) {
-    User.find({}, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, users) {
+    User.find({}, '-salt -hashedPassword -verification.code -forgotPassCode -personalBetaCodes', function(err, users) {
         if (err) return res.send(500, err);
         res.json(200, users);
     });
@@ -174,6 +176,11 @@ exports.hasFbPermission = function(req, res) {
         });
     });
 };
+
+/**
+ * Applies a beta code
+ * This gets req.beta from beta.isValidCode
+ */
 exports.applyBetaCode = function(req, res, next) {
     var currentUserId = req.session.userId;
     if (currentUserId == undefined) {
@@ -183,13 +190,15 @@ exports.applyBetaCode = function(req, res, next) {
         _id: currentUserId
     }, function(err, user) {
         if (err) validationError(res, err);
-        if (!user) return res.status(500).json({
-            message: "Please login again"
-        });
-        if (!user.requiresBeta) return res.status(200).json({
-            message: "Success, you have already entered a beta code!"
-        });
+        if (!user) return res.send(401, "Please login again");
+        if (!user.requiresBeta) return res.send(400, "Success, you have already entered a beta code!");
         user.requiresBeta = false;
+        if (req.beta.isCodeRoot) {
+            //generate two more beta codes then save them to the user object
+            user.personalBetaCodes.push(Beta.generatePersonalInviteCode(user));
+            user.personalBetaCodes.push(Beta.generatePersonalInviteCode(user));
+        }
+
         user.save(function(err) {
             if (err) return validationError(res, err);
             return next();
@@ -208,6 +217,7 @@ exports.removeFriendship = function(req, res) {
         var currentUserId = req.session.userId;
         var friendId = req.param('id');
         if (friendId == undefined) return res.send(400, "Missing parameter, id. The friends user id");
+        if (mongoose.Types.ObjectId.isValid(friendId) == false) return res.send(400, "Invalid friend ID");
         if (currentUserId == undefined) {
             return res.send(401, "Please login first"); //they need to relogin
         }
@@ -771,7 +781,7 @@ exports.search = function(req, res) {
         if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) return res.send(400, "Name contains invalid characters");
         User.find({
                 name: new RegExp('^' + name, "i")
-            }, '-salt -hashedPassword -verification.code -forgotPassCode')
+            }, '-salt -hashedPassword -verification.code -forgotPassCode -personalBetaCodes -doNotAutoFriend')
             .sort({
                 'updated': -1
             })

@@ -2,7 +2,7 @@
 var _ = require('lodash');
 var Beta = require('./beta.model');
 var User = require('../user/user.model');
-
+var uuid = require('uuid');
 var RateLimiter = require('limiter').RateLimiter;
 // Allow 150 requests per hour (the Twitter search limit). Also understands 
 // 'second', 'minute', 'day', or a number of milliseconds 
@@ -22,10 +22,7 @@ exports.index = function(req, res) {
 exports.isValidCode = function(req, res, next) {
     limiter.removeTokens(1, function(err, remainingRequests) {
         if (remainingRequests < 0) {
-            res.writeHead(429, {
-                'Content-Type': 'text/plain;charset=UTF-8'
-            });
-            return res.end('Too Many Requests - your IP is being rate limited. Please try again in one minute');
+            return res.send(429, 'Too Many Requests - your IP is being rate limited. Please try again in one minute');
         } else {
             var betaCode = req.body.id;
             Beta.findOne({
@@ -35,6 +32,20 @@ exports.isValidCode = function(req, res, next) {
                 if (!beta) return res.send(500, "This beta code has is no longer valid. Check your spelling.");
                 if (beta.status != "active") return res.send(500, "This beta code has is no longer valid. It is set to inactive");
                 if (beta.maxUses <= beta.uses) return res.send(500, "This beta code is no longer valid. It has been used up by " + beta.maxUses + " people already.");
+                if (beta.isCodeRoot == false) {
+                    //if the beta code is not root, then we will need to remove it from the user that has it
+                    User.update({
+                        personalBetaCodes: betaCode
+                    }, {
+                        $pull: {
+                            'personalBetaCodes': betaCode
+                        }
+                    }, function(err) {});
+                    /*User.findOne({personalBetaCodes:betaCode},function(err,user){
+
+                    });*/
+                }
+                req.beta = beta;
                 return next(); //res.status(200).send("OK");
             });
         }
@@ -83,39 +94,39 @@ exports.redeem = function(req, res, next) {
     Beta.findOne({
         "name": betaCode
     }, function(err, beta) {
-        if (!beta) return res.status(500).json({
-            message: "beta not found for id " + betaCode
-        });
-        if (beta.status != "active") return res.status(500).json({
-            message: "Beta code is inactive really"
-        });
-        if (beta.maxUses <= beta.uses) return res.status(500).json({
-            message: "Beta code has reached max uses. (" + beta.maxUses + " uses)"
-        });
-        /*
-        // Commented out because it doesnt work!
-        _.each(beta.usedByIp,function(item){
-          if (item==ipAddress){
-            console.log("u used the coad already");
-            return res.status(500).json({message: "This code is used by you already. Try a different device."});
-          }
-        });
-        beta.usedByIp.push(ipAddress);
-        */
+        if (!beta) return res.send(400, "Invalid beta code");
+        if (beta.status != "active") return res.send(400, "Beta code invalid");
+        if (beta.maxUses <= beta.uses) return res.send(400, "Beta code has reached its max uses");
         beta.uses += 1;
         beta.save(function(err) {
             if (err) return validationError(res, err);
-            return res.status(200).json({
-                message: "Success, welcome to the beta."
-            });
+            return res.send(200, "Success, welcome to the beta");
         });
-
     });
 };
 
-// Creates a beta task, requires admin
+
+/**
+ * Creates a personal beta code, this does not spawn more codes as its not root
+ */
+exports.generatePersonalInviteCode = function(userObj) {
+        var code = uuid.v4();
+        var beta = {
+            name: code,
+            ownerName: userObj.name,
+            ownerId: userObj._id,
+            status: "active",
+            maxUses: 1,
+            isCodeRoot: false
+        };
+        var newBeta = new Beta(beta);
+        Beta.create(newBeta, function(err, beta) {});
+        return code;
+    }
+    // Creates a beta code, requires admin
 exports.create = function(req, res) {
     var newBeta = new Beta(req.body);
+    newBeta.isCodeRoot = true;
     if (newBeta.maxUses > 100) {
         return res.status(500).json({
             message: "maxUses can have a max of 100"
@@ -123,10 +134,11 @@ exports.create = function(req, res) {
     }
     var currentUserId = req.session.userId;
     if (currentUserId == 0 || !currentUserId) {
-        return res.status(500).json({
+        return res.status(401).json({
             message: "Please relogin first"
         });
     }
+    newBeta.ownerId = currentUserId;
     Beta.create(newBeta, function(err, beta) {
         if (err) {
             return handleError(res, err);

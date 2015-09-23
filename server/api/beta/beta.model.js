@@ -5,6 +5,8 @@ var mongoose = require('mongoose'),
 
 var BetaSchema = new Schema({
     name: String,
+    ownerName: String,
+    ownerId: Schema.Types.ObjectId,
     created: {
         type: Date,
         default: Date.now
@@ -27,7 +29,11 @@ var BetaSchema = new Schema({
     },
     usedByIp: [{
         type: String
-    }]
+    }],
+    isCodeRoot: {
+        type: Boolean,
+        default: false
+    }
 });
 
 // Validation

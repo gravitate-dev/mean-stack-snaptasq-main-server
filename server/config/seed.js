@@ -73,10 +73,12 @@ Community.find({}).remove(function() {
 Beta.find({}).remove(function() {
     Beta.create({
         maxUses: 1,
-        name: "SNAPTEST"
+        name: "SNAPTEST",
+        isCodeRoot: true,
     }, {
         maxUses: 99,
-        name: "wawa"
+        name: "wawa",
+        isCodeRoot: true,
     });
 });
 
