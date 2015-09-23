@@ -152,7 +152,15 @@ angular.module('snaptasqApp')
             socket.unsyncUpdates('notify');
         });
         $scope.onOpenNotificaions = function() {
+            //this should also save the last notification
             $scope.readNotificationsCount = $scope.notifications.length;
+            $scope.notifications = _.sortBy($scope.notifications, function(o) {
+                return o.created;
+            })
+            if (!_.isEmpty($scope.notifications)) {
+                console.log($scope.notifications[$scope.notifications.length - 1].created)
+            }
+            console.log($scope.notifications.length);
         }
         $scope._goToPath = function(url, $event) {
             if (!angular.isUndefined($event)) {
