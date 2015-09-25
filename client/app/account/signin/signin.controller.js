@@ -118,9 +118,6 @@ angular.module('snaptasqApp')
         var handleTaskPostAuthenticate = function(user) {
             // in order to refresh the badges we do this here
             $rootScope.$broadcast('user.state_change', {});
-            $timeout(function() {
-                $window.location.reload();
-            }, 100)
             if (user.requiresBeta && $scope._beta) {
                 $location.path('/beta');
             } else {

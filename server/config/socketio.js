@@ -49,14 +49,14 @@ module.exports = function(socketio) {
 
         socket.connectedAt = new Date();
 
+        socket.on('disconnect', function() {
+            onDisconnect(socket);
+            //console.info('[%s] DISCONNECTED', socket.address);
+        });
         // now socket.decoded_token has the user info
         if (socket.decoded_token != undefined) {
             socket.uid = socket.decoded_token._id;
             // Call onDisconnect.
-            socket.on('disconnect', function() {
-                onDisconnect(socket);
-                //console.info('[%s] DISCONNECTED', socket.address);
-            });
 
             // Call onConnect.
             onConnect(socket);
