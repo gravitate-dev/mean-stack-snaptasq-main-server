@@ -204,7 +204,7 @@ function getMyNotifications(req, res) {
     Notify.find(query).sort({
         created: -1
     }).exec(function(err, notifications) {
-        return res.json(200, notifications);
+        return res.status(200).json(notifications);
     });
 }
 

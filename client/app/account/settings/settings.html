@@ -36,30 +36,70 @@
         </div>
         <div class="panel-body">
             <form class="form" name="form" ng-submit="changePassword(form)" novalidate>
-
                 <div class="form-group">
                     <label>Current Password</label>
-
                     <input type="password" name="password" class="form-control" ng-model="user.oldPassword" mongoose-error/>
                     <p class="help-block" ng-show="form.password.$error.mongoose">
                         {{ errors.other }}
                     </p>
                 </div>
-
                 <div class="form-group">
                     <label>New Password</label>
-
                     <input type="password" name="newPassword" class="form-control" ng-model="user.newPassword" ng-minlength="3" required/>
                     <a href="/forgot">Forgot your password?</a>
                     <p class="help-block" ng-show="(form.newPassword.$error.minlength || form.newPassword.$error.required) && (form.newPassword.$dirty || submitted)">
                         Password must be at least 3 characters.
                     </p>
                 </div>
-
                 <p class="help-block"> {{ message }} </p>
-
                 <button class="btn btn-primary" type="submit">Save changes</button>
             </form>
+        </div>
+    </section>
+    <section ng-controller="PhoneNumberModalCtrl" class="panel panel-info">
+        <div class="panel-heading">
+            Text Notifications
+        </div>
+        <div class="panel-body">
+            <div ng-if="_me.phone.verified==false">
+                <p>If you would like to be notified by text message if you are chosen to help out. Enter your phone number below.</p>
+                <form ng-if="canEnterVerificationCode==false" class="top-buffer">
+                    <input type="text" ng-model="phoneNumber" ui-mask="(999) 999-9999" />&nbsp;
+                    <button class="btn btn-primary" ng-click="sendCode(phoneNumber)">ok</button>
+                    <div class="text-error" style="color:red;">{{error}}</div>
+                </form>
+                <form ng-if="canEnterVerificationCode" class="top-buffer">
+                    <p class="lead">Enter the verification code we sent you below</p>
+                    <input type="text" ng-model="verifyCode" ui-mask="****" />&nbsp;
+                    <button class="btn btn-primary" ng-click="redeemCode(verifyCode);">redeem</button>&nbsp;
+                    <button class="btn btn-danger" ng-click="goBack();">cancel</button>
+
+                    <div class="text-error" style="color:red;">{{error}}</div>
+                </form>
+            </div>
+            <div ng-if="_me.phone.verified==true">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div style="display:inline-block;">
+                            <div class="onoffswitch">
+                                <input ng-disabled="changingNotificationSetting" type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked ng-model="textNotificationEnable" ng-click="toggleTextNotifications();">
+                                <label class="onoffswitch-label" for="myonoffswitch">
+                                    <span class="onoffswitch-inner"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <p class="lead" style="display:inline-block;vertical-align:top;">text notifiations</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <p class="lead">
+                            <button class="btn btn-primary" ng-click="showEnterPhoneNumber()">Change #</button>&nbsp;Current number {{_me.phone.number | tel}} </p>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
     <section name="delete-account" class="panel panel-danger">

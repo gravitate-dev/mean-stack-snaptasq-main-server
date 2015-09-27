@@ -19,11 +19,14 @@ router.post('/search', controller.search);
 //TODO: check to see if this is secure
 router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 router.get('/me', auth.isAuthenticated(), controller.me);
-router.post('/:id/sendVerificationEmail', auth.isAuthenticated(), recaptcha.check, controller.sendVerificationEmail)
+router.post('/sendVerificationEmail', auth.isAuthenticated(), recaptcha.check, controller.sendVerificationEmail)
+router.post('/sendVerificationText', auth.isAuthenticated(), controller.sendVerificationText);
+router.post('/verify/phoneNumber', auth.isAuthenticated(), controller.redeemPhoneVerifyCode);
 router.post('/sendForgotPasswordEmail', recaptcha.check, controller.sendForgotPasswordEmail)
-router.get('/verify/:code', controller.verifyEmailCompleted)
+router.get('/verify/email/:code', controller.verifyEmailCompleted);
 router.put('/resetChangePassword', controller.resetChangePassword);
 router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
+router.put('/set', auth.isAuthenticated(), controller.setField);
 router.get('/:id', auth.isAuthenticated(), controller.show);
 router.post('/', recaptcha.check, controller.create);
 router.post('/applyBetaCode', auth.isAuthenticated(), beta.isValidCode, controller.applyBetaCode, beta.redeem);

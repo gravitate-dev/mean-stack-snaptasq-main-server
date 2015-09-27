@@ -75,7 +75,7 @@ exports.resendVerification = function(req, res, emailaddress, code) {
     email.addTo(emailaddress);
     email.subject = "Please Verify Your Email Address";
     email.from = 'admin@snaptasq.com';
-    email.html = '<a href="' + config.host.url + 'api/users/verify/' + code + '">' + config.host.url + 'api/users/verify/' + code + '</a>';
+    email.html = '<a href="' + config.host.url + 'api/users/verify/email/' + code + '">' + config.host.url + 'api/users/verify/email/' + code + '</a>';
     // add filter settings one at a time 
     email.addFilter('templates', 'enable', 1);
     email.addFilter('templates', 'template_id', 'f28918ba-475d-4f32-8269-6983ee424362');
@@ -186,7 +186,7 @@ exports.resendVerificationSilent = function(emailaddress, code) {
 exports.index = function(req, res) {
   Email.find(function (err, emails) {
     if(err) { return handleError(res, err); }
-    return res.json(200, emails);
+    return res.status(200).json(emails);
   });
 };
 
@@ -203,7 +203,7 @@ exports.show = function(req, res) {
 exports.create = function(req, res) {
   Email.create(req.body, function(err, email) {
     if(err) { return handleError(res, err); }
-    return res.json(201, email);
+    return res.status(201).json(email);
   });
 };
 
@@ -216,7 +216,7 @@ exports.update = function(req, res) {
     var updated = _.merge(email, req.body);
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.json(200, email);
+      return res.status(200).json(email);
     });
   });
 };

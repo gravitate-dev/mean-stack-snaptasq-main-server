@@ -36,7 +36,7 @@ exports.index = function(req, res) {
         if (err) {
             return handleError(res, err);
         }
-        return res.json(200, comms);
+        return res.status(200).json(comms);
     });
 };
 
@@ -58,7 +58,7 @@ exports.search = function(req, res) {
         .limit(30)
         .exec(function(err, comms) {
             if (err) return res.send(500, err);
-            return res.json(200, comms);
+            return res.status(200).json(comms);
         });
 }
 
@@ -85,7 +85,7 @@ exports.getCommunitiesByUser = function(req, res) {
                 return handleError(res, err);
             }
             if (!usr) return res.send(404, "User does not exist");
-            return res.json(200, usr.groups);
+            return res.status(200).json(usr.groups);
         });
     }
     /*
@@ -94,7 +94,7 @@ exports.getCommunitiesByUser = function(req, res) {
             if (err) {
                 return handleError(res, err);
             }
-            return res.json(200, comms);
+            return res.status(200).json(comms);
         });
     };
     */
@@ -138,7 +138,7 @@ exports.create = function(req, res) {
         if (err) {
             return handleError(res, err);
         }
-        return res.json(201, comm);
+        return res.status(201).json(comm);
     });
 };
 
@@ -178,7 +178,7 @@ exports.update = function(req, res) {
             if (err) {
                 return handleError(res, err);
             }
-            return res.json(200, comm);
+            return res.status(200).json(comm);
         });
     });
 };
@@ -197,7 +197,7 @@ exports.search = function(req, res) {
             .limit(30)
             .exec(function(err, comms) {
                 if (err) return res.send(500, err);
-                return res.json(200, comms);
+                return res.status(200).json(comms);
             });
     }
     /**
@@ -224,7 +224,7 @@ exports.getMyFriendsCommunities = function(req, res) {
             if (err) {
                 return handleError(res, err)
             }
-            if (!users) return res.json(200, []);
+            if (!users) return res.status(200).json([]);
             var groups = _.pluck(users, 'groups');
             groups = _.reduce(groups, function(result, arr) {
                 return result.concat(arr)
@@ -241,7 +241,7 @@ exports.getMyFriendsCommunities = function(req, res) {
                 item._id = item.id;
             });
 
-            return res.json(200, groups);
+            return res.status(200).json(groups);
         });
     });
 }
@@ -475,13 +475,13 @@ function _removeUserFromComm(req, res, comm, user) {
             name: user.name,
             pic: user.pic
         };
-        return res.json(200, comm);
+        return res.status(200).json(comm);
         /*        comm.users = _.filter(comm.users, function(item) {
                     return !user._id.equals(item.id);
                 });
                 comm.save(function(err, comm) {
                     if (err) return handleError(res, err);
-                    return res.json(200, comm);
+                    return res.status(200).json(comm);
                 });*/
     });
 }
@@ -507,11 +507,11 @@ function _addUserToComm(req, res, comm, user) {
             name: user.name,
             pic: user.pic
         };
-        return res.json(200, comm);
+        return res.status(200).json(comm);
         /*comm.users.push(usr);
         comm.save(function(err, comm) {
             if (err) return handleError(res, err);
-            return res.json(200, comm);
+            return res.status(200).json(comm);
         });
     */
     });
@@ -529,7 +529,7 @@ exports.getTasks = function(req, res) {
         if (err) {
             return handleError(res, err);
         }
-        return res.json(200, tasks);
+        return res.status(200).json(tasks);
     });
 }
 
@@ -544,7 +544,7 @@ exports.getMembers = function(req, res) {
             console.error(err, query);
             return handleError(res, err);
         }
-        return res.json(200, users);
+        return res.status(200).json(users);
     });
 }
 
@@ -572,7 +572,7 @@ exports.myInvitableFriends = function(req, res) {
                     console.error(err, query);
                     return handleError(res, err);
                 }
-                return res.json(200, users);
+                return res.status(200).json(users);
             });
         });
     }

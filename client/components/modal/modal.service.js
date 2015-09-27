@@ -8,6 +8,8 @@ angular.module('snaptasqApp')
          * @param  {String} modalClass - (optional) class(es) to be applied to the modal
          * @return {Object}            - the instance $modal.open() returns
          */
+        var currentModal = undefined;
+
         function openModal(scope, modalClass) {
             var modalScope = $rootScope.$new();
             scope = scope || {};
@@ -23,12 +25,19 @@ angular.module('snaptasqApp')
                 windowClass: modalClass,
                 scope: modalScope
             });
+            currentModal = modal;
 
             return modal;
         }
 
         // Public API here
         return {
+            closeCurrent: function() {
+                if (currentModal != undefined && currentModal.dismiss != undefined) {
+                    currentModal.dismiss();
+                }
+
+            },
 
             /* Confirmation modals */
             confirm: {
@@ -168,7 +177,7 @@ angular.module('snaptasqApp')
                 }
             },
             /* Signup modals */
-            create: {
+            input: {
 
                 /**
                  * Create a function to open a registration modal (ex. ng-click='myModalFn(name, arg1, arg2...)')
@@ -211,6 +220,91 @@ angular.module('snaptasqApp')
 
                         registerModal.result.then(function(event) {
                             reg.apply(event, args);
+                        });
+                    };
+                },
+
+                /**
+                 * Create a function to open a phonenumber prompt (ex. ng-click='myModalFn(name, arg1, arg2...)')
+                 * @param  {Function} cb - callback, ran when a valid phone number is entered
+                 * @return {Function}     - the function to open the modal (ex. myModalFn)
+                 */
+                phoneNumberApplicant: function(cb) {
+                    cb = cb || angular.noop;
+
+
+                    /*$rootScope.beepBoop = function(){
+                      console.log("HELLO THERE");
+                    }*/
+
+                    /**
+                     * Open a delete confirmation modal
+                     * @param  {String} name   - name or info to show on modal
+                     * @param  {All}           - any additional args are passed staight to reg callback
+                     */
+                    return function() {
+                        var args = Array.prototype.slice.call(arguments),
+                            phoneModal;
+
+                        phoneModal = openModal({
+                            modal: {
+                                dismissable: true,
+                                title: 'Would you like text notification?',
+                                htmlInclude: 'app/account/phoneNumber/modals/enterPhoneApplicant.modal.html',
+                                buttons: [{
+                                    classes: 'btn-default',
+                                    text: 'No thank you',
+                                    click: function(e) {
+                                        phoneModal.close(e);
+                                    }
+                                }]
+                            }
+                        }, 'modal-info');
+
+                        phoneModal.result.then(function(event) {
+                            cb.apply(event, args);
+                        });
+                    };
+                },
+                /**
+                 * Create a function to open a phonenumber prompt (ex. ng-click='myModalFn(name, arg1, arg2...)')
+                 * @param  {Function} cb - callback, ran when a valid phone number is entered
+                 * @return {Function}     - the function to open the modal (ex. myModalFn)
+                 */
+                phoneNumberOwner: function(cb) {
+                    cb = cb || angular.noop;
+
+
+                    /*$rootScope.beepBoop = function(){
+                      console.log("HELLO THERE");
+                    }*/
+
+                    /**
+                     * Open a delete confirmation modal
+                     * @param  {String} name   - name or info to show on modal
+                     * @param  {All}           - any additional args are passed staight to reg callback
+                     */
+                    return function() {
+                        var args = Array.prototype.slice.call(arguments),
+                            phoneModal;
+
+                        phoneModal = openModal({
+                            modal: {
+                                dismissable: true,
+                                title: 'Would you like text notification?',
+                                htmlInclude: 'app/account/phoneNumber/modals/enterPhoneOwner.modal.html',
+                                buttons: [{
+                                    classes: 'btn-default',
+                                    text: 'No thank you',
+                                    click: function(e) {
+                                        phoneModal.close(e);
+                                    }
+                                }]
+                            }
+                        }, 'modal-info');
+
+                        phoneModal.result.then(function(event) {
+                            cb.apply(event, args);
                         });
                     };
                 }

@@ -16,7 +16,7 @@ exports.register = function(socket) {
 }
 
 function onSave(socket, doc, cb) {
-    console.log("Emitting onsave", 'task:' + doc._id + ':save');
+    //console.log("Emitting onsave", 'task:' + doc._id + ':save');
     socket.emit('task:' + doc._id + ':save', doc);
 }
 

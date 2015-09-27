@@ -24,12 +24,6 @@ angular.module('snaptasqApp')
                     controller: ""
                 }
             },
-            sendVerificationEmail: {
-                method: 'POST',
-                params: {
-                    controller: 'sendVerificationEmail'
-                }
-            },
             sendForgotPasswordEmail: {
                 method: 'POST',
                 params: {
@@ -51,6 +45,51 @@ angular.module('snaptasqApp')
             }
         });
         return {
+            set: function(field, value, cb, cberror) {
+                var cb = cb || angular.noop;
+                var cberror = cberror || angular.noop;
+                $http.put('/api/users/set', {
+                    field: field,
+                    value: value
+                }).success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    return cberror(err);
+                });
+            },
+            sendVerificationText: function(number, cb, cberror) {
+                var cb = cb || angular.noop;
+                var cberror = cberror || angular.noop;
+                $http.post('/api/users/sendVerificationText', {
+                    number: number
+                }).success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    return cberror(err);
+                });
+            },
+            sendVerificationEmail: function(captcha, cb, cberror) {
+                var cb = cb || angular.noop;
+                var cberror = cberror || angular.noop;
+                $http.post('/api/users/sendVerificationEmail', {
+                    captcha: captcha
+                }).success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    return cberror(err);
+                });
+            },
+            redeemVerificationText: function(code, cb, cberror) {
+                var cb = cb || angular.noop;
+                var cberror = cberror || angular.noop;
+                $http.post('/api/users/verify/phoneNumber', {
+                    code: code
+                }).success(function(data) {
+                    return cb(data);
+                }).error(function(err) {
+                    return cberror(err);
+                });
+            },
             applyBetaCode: function(id, cb, cberror) {
                 var cb = cb || angular.noop;
                 var cberror = cberror || angular.noop;
@@ -125,7 +164,6 @@ angular.module('snaptasqApp')
             changePassword: Usr.changePassword,
             resetChangePassword: Usr.resetChangePassword,
             create: Usr.create,
-            sendVerificationEmail: Usr.sendVerificationEmail,
             sendForgotPasswordEmail: Usr.sendForgotPasswordEmail,
             deleteMyAccount: Usr.deleteMyAccount,
         }

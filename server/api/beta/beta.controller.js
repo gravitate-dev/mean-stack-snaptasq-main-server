@@ -14,7 +14,7 @@ exports.index = function(req, res) {
         if (err) {
             return handleError(res, err);
         }
-        return res.json(200, betas);
+        return res.status(200).json(betas);
     });
 
 };
@@ -143,7 +143,7 @@ exports.create = function(req, res) {
         if (err) {
             return handleError(res, err);
         }
-        return res.json(201, beta);
+        return res.status(201).json(beta);
     });
 }
 

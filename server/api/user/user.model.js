@@ -96,6 +96,27 @@ var UserSchema = new Schema({
         pic: String,
         source: String
     }],
+    phone: {
+        newNumber: String, //this is the temp number before it gets changed to number
+        number: String,
+        verified: {
+            type: Boolean,
+            default: false
+        },
+        ignorePrompt: {
+            type: Boolean,
+            default: false
+        }, //ignore the popup dialog modal
+        verifyCode: String,
+        enableNotifications: {
+            type: Boolean,
+            default: true
+        },
+        attempts: {
+            type: Number,
+            default: 0
+        }
+    },
     /** These codes are to invite friends to use the beta **/
     personalBetaCodes: [String],
     otherTasks: [Schema.Types.ObjectId],

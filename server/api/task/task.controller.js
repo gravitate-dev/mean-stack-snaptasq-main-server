@@ -3,30 +3,30 @@ var _ = require('lodash');
 var Task = require('./task.model');
 var User = require('../user/user.model');
 var Emailer = require('../email/email.controller');
+var Texter = require('../texter/texter.controller');
 var config = require('../../config/environment');
 var Notify = require('../notify/notify.controller');
 var moment = require('moment');
 var RateLimiter = require('limiter').RateLimiter;
 var limiterSetTasker = new RateLimiter(10, 'hour', true);
 var limiterStartTaskNotify = new RateLimiter(4, 'hour', true);
-
+// technically i never return any USER json so these are unneded but i have them here anyways
+var SCHEMA_USER_HIDE_FROM_ME = '-salt -hashedPassword -verification.code -forgotPassCode -phone.verifyCode -phone.attempts';
+var SCHEMA_USER_HIDE_FROM_OTHERS = '-salt -hashedPassword -verification.code -forgotPassCode -phone.verifyCode -phone.number -phone.newNumber -personalBetaCodes -doNotAutoFriend';
 // Get list of tasks
 exports.index = function(req, res) {
     Task.find({}, '-__v', function(err, tasks) {
         if (err) {
             return handleError(res, err);
         }
-        return res.json(200, tasks);
+        return res.status(200).json(tasks);
     });
-
 };
-
-
 exports.getMyAppliedTasks = function(req, res) {
     var currentUserId = req.session.userId;
     User.findOne({
         _id: currentUserId
-    }, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, user) { // don't ever give out the password or salt
+    }, SCHEMA_USER_HIDE_FROM_ME, function(err, user) {
         if (!user || err) return handleError(res, err);
         if (!user.otherTasks) return handleError(res, err);
         var query = {};
@@ -34,18 +34,14 @@ exports.getMyAppliedTasks = function(req, res) {
         query['_id'] = {
             $in: user.otherTasks
         };
-        Task.find(query, '-__v')
-            .sort({
-                'created': -1
-            })
-            .limit(10)
-            .exec(function(err, tasks) {
-                if (err) return handleError(res, err);
-                return res.json(200, tasks);
-            });
+        Task.find(query, '-__v').sort({
+            'created': -1
+        }).limit(10).exec(function(err, tasks) {
+            if (err) return handleError(res, err);
+            return res.status(200).json(tasks);
+        });
     });
 }
-
 exports.countResponsibleTasks = function(req, res) {
     var currentUserId = req.session.userId;
     var query = {};
@@ -59,43 +55,33 @@ exports.countResponsibleTasks = function(req, res) {
         return res.status(200).send("" + count);
     });
 }
-
 exports.getTasksResponsible = function(req, res) {
     var currentUserId = req.session.userId;
     var query = {};
     if (req.dsl) query = req.dsl;
     query['tasker.id'] = currentUserId;
-    Task.find(query, '-__v')
-        .sort({
-            'created': -1
-        })
-        .limit(10)
-        .exec(function(err, tasks) {
-            if (err) return handleError(res, err);
-            return res.json(200, tasks);
-        });
+    Task.find(query, '-__v').sort({
+        'created': -1
+    }).limit(10).exec(function(err, tasks) {
+        if (err) return handleError(res, err);
+        return res.status(200).json(tasks);
+    });
 }
-
 exports.getMyTasks = function(req, res) {
-    var currentUserId = req.session.userId;
-
-    var query = {};
-    if (req.dsl) query = req.dsl;
-    query.ownerId = currentUserId;
-    Task.find(query, '-__v')
-        .sort({
+        var currentUserId = req.session.userId;
+        var query = {};
+        if (req.dsl) query = req.dsl;
+        query.ownerId = currentUserId;
+        Task.find(query, '-__v').sort({
             'created': -1
-        })
-        .limit(10)
-        .exec(function(err, tasks) {
+        }).limit(10).exec(function(err, tasks) {
             if (err) return handleError(res, err);
-            return res.json(200, tasks);
+            return res.status(200).json(tasks);
         });
-}
-
-/**
-This gets another users tasks not Really a friend
-**/
+    }
+    /**
+    This gets another users tasks not Really a friend
+    **/
 exports.getUsersTasksByUserId = function(req, res) {
     //TODO check if they are friends
     var currentUserId = req.session.userId;
@@ -104,21 +90,17 @@ exports.getUsersTasksByUserId = function(req, res) {
     var query = {};
     if (req.dsl) query = req.dsl;
     query.ownerId = id;
-    Task.find(query, '-__v')
-        .sort({
-            'created': -1
-        })
-        .limit(10)
-        .exec(function(err, tasks) {
-            if (err) return handleError(res, err);
-            return res.json(200, tasks);
-        });
+    Task.find(query, '-__v').sort({
+        'created': -1
+    }).limit(10).exec(function(err, tasks) {
+        if (err) return handleError(res, err);
+        return res.status(200).json(tasks);
+    });
 }
-
 exports.getMyFriendsTasks = function(req, res) {
         User.findOne({
             _id: req.session.userId
-        }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) { // don't ever give out the password or salt
+        }, SCHEMA_USER_HIDE_FROM_OTHERS, function(err, user) { // don't ever give out the password or salt
             if (err) return next(err);
             if (!user) return res.send(401);
             var myFriendsIds = _.pluck(user.friends, "id");
@@ -127,15 +109,12 @@ exports.getMyFriendsTasks = function(req, res) {
             query.ownerId = {
                 $in: myFriendsIds
             };
-            Task.find(query, '-__v')
-                .sort({
-                    'created': -1
-                })
-                .limit(10)
-                .exec(function(err, tasks) {
-                    if (err) return handleError(res, err);
-                    return res.json(200, tasks);
-                });
+            Task.find(query, '-__v').sort({
+                'created': -1
+            }).limit(10).exec(function(err, tasks) {
+                if (err) return handleError(res, err);
+                return res.status(200).json(tasks);
+            });
             //from me i want to get all my tasks owned by my friends
         });
     }
@@ -162,7 +141,6 @@ exports.create = function(req, res) {
     }, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, user) { // don't ever give out the password or salt
         if (err) return res.status(500).json(err);
         if (!user) return res.json(401);
-
         newTask.ownerName = user.name;
         newTask.ownerPic = user.pic;
         newTask.historicalPrices.push({
@@ -184,7 +162,7 @@ exports.create = function(req, res) {
                     name: user.name
                 }
             });
-            return res.json(201, task);
+            return res.status(201).json(task);
         });
     });
 };
@@ -215,12 +193,11 @@ exports.update = function(req, res) {
                 if (err) {
                     return handleError(res, err);
                 }
-                return res.json(200, task);
+                return res.status(200).json(task);
             });
         });
     });
 };
-
 exports.isTaskOwner = function(req, res, next) {
         Task.findById(req.params.id, function(err, task) {
             if (err) {
@@ -250,8 +227,7 @@ exports.applyToTask = function(req, res) {
         var currentUserId = req.session.userId;
         var canApply = true;
         _.each(task.applicants, function(item) {
-            if (item.id.equals(currentUserId))
-                canApply = false;
+            if (item.id.equals(currentUserId)) canApply = false;
         });
         if (!canApply) {
             return res.status(400).send("You already applied to help");
@@ -261,19 +237,17 @@ exports.applyToTask = function(req, res) {
             }, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, user) { // don't ever give out the password or salt
                 if (err) return res.status(500).json(err);
                 if (!user) return res.json(401);
-                if (user.fb && user.fb.id)
-                    task.applicants.push({
-                        id: user._id,
-                        name: user.name,
-                        pic: user.pic,
-                        fbId: user.fb.id
-                    });
-                else
-                    task.applicants.push({
-                        id: user._id,
-                        name: user.name,
-                        pic: user.pic
-                    });
+                if (user.fb && user.fb.id) task.applicants.push({
+                    id: user._id,
+                    name: user.name,
+                    pic: user.pic,
+                    fbId: user.fb.id
+                });
+                else task.applicants.push({
+                    id: user._id,
+                    name: user.name,
+                    pic: user.pic
+                });
                 user.otherTasks.push(req.params.id);
                 user.save(function(err) {
                     if (err) {
@@ -296,7 +270,6 @@ exports.applyToTask = function(req, res) {
                                 name: user.name
                             }
                         });
-
                         // Task Applicant, new task applied to
                         Notify.put({
                             forOne: user._id,
@@ -309,15 +282,13 @@ exports.applyToTask = function(req, res) {
                                 ownerName: task.ownerName
                             }
                         });
-
-                        return res.json(200, task);
+                        return res.status(200).json(task);
                     });
                 });
             });
         }
     });
 };
-
 /**
  * A Tasker can signal they are starting the task with this api call
  **/
@@ -337,7 +308,6 @@ exports.startTask = function(req, res) {
                 if (err) {
                     return handleError(res, err);
                 }
-
                 limiterStartTaskNotify.removeTokens(1, function(err, remainingRequests) {
                     if (remainingRequests > 0) {
                         Notify.put({
@@ -351,19 +321,27 @@ exports.startTask = function(req, res) {
                                 name: task.tasker.name
                             }
                         });
+                        User.findById(task.ownerId, function(err, user) {
+                            //ignore error if happens
+                            if (user) {
+                                var taskUri = config.host.url + "tasq/view/" + task._id;
+                                if (user.phone.number != undefined && user.phone.enableNotifications == true) {
+                                    Texter.sendTaskerStartedTaskOwner(user.phone.number, taskUri, task.name, task.tasker.name);
+                                }
+                            }
+                        });
                     } else {
                         // the notification will not be put because spam detected
                         console.error("startTask was clicked too often by userID", currentUserId);
                     }
                 });
-                return res.json(200, task);
+                return res.status(200).json(task);
             });
         } else {
             return res.send(500, "You are not the current tasker anymore");
         }
     });
 };
-
 /**
  * A Tasker can signal they finished the task
  **/
@@ -399,13 +377,11 @@ exports.finishTask = function(req, res) {
                         name: task.tasker.name
                     }
                 });
-
                 // Task Applicants, task completed
                 var applicantIds = _.pluck(task.applicants, 'id');
                 applicantIds = _.filter(applicantIds, function(id) {
                     return !id.equals(task.tasker.id);
                 });
-
                 // one is the tasker
                 // many are the applicants minus tasker
                 Notify.put({
@@ -420,7 +396,7 @@ exports.finishTask = function(req, res) {
                         ownerName: task.ownerName
                     }
                 });
-                return res.json(200, task);
+                return res.status(200).json(task);
             });
         } else {
             return res.send(500, "You are not the current tasker anymore");
@@ -435,7 +411,7 @@ exports.finishTask = function(req, res) {
  * @requires, the task must be owned by the caller
  * @param id: taskId
  * @param applicantId: User id who should be the tasker
-
+ 
  * @pre: checked by isTaskOwner for null task, and task ownership
  **/
 exports.setTasker = function(req, res) {
@@ -443,20 +419,18 @@ exports.setTasker = function(req, res) {
     if (taskId == undefined) return res.send(400, "Missing parameter id. For the TaskID");
     var chosenApplicantId = req.param('applicantId');
     //Not checking for undefined because i allow undefined, when the tasker is set to none.
-
     Task.findById(taskId, function(err, task) {
         var didApplicantApplyToTask = false;
         if (chosenApplicantId != undefined) {
             _.each(task.applicants, function(item) {
-                if (item.id.equals(chosenApplicantId))
-                    didApplicantApplyToTask = true;
+                if (item.id.equals(chosenApplicantId)) didApplicantApplyToTask = true;
             });
             if (!didApplicantApplyToTask) {
                 return res.status(500).send("This person is not applying for your task");
             }
             User.findOne({
                 _id: chosenApplicantId
-            }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) { // don't ever give out the password or salt
+            }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) {
                 if (err) return res.status(500).json(err);
                 if (!user) return res.send(404, "User does not exist");
                 task.tasker = {
@@ -465,8 +439,7 @@ exports.setTasker = function(req, res) {
                     pic: user.pic,
                     fbId: user.fb.id
                 };
-                if (user.fb && user.fb.id)
-                    task.tasker.fbId = user.fb.id;
+                if (user.fb && user.fb.id) task.tasker.fbId = user.fb.id;
                 task.startTime = undefined;
                 task.endTime = undefined;
                 task.totalTime = undefined;
@@ -502,13 +475,15 @@ exports.setTasker = function(req, res) {
                         if (remainingRequests > 0) {
                             var taskUri = config.host.url + "tasq/view/" + task._id;
                             Emailer.sendRequestTaskerHelp(null, null, user.email, taskUri, task.name, task.ownerName, task.ownerPic);
+                            if (user.phone.number != undefined && user.phone.enableNotifications == true) {
+                                Texter.sendRequestTaskerHelp(user.phone.number, taskUri, task.name, task.ownerName);
+                            }
                         }
-                        return res.json(200, task);
+                        return res.status(200).json(task);
                     });
                 });
             });
         } else {
-
             if (task.tasker.id == undefined) {
                 //do nothing, tasker was already unassigned!
                 console.error("Tasker already unset", task.name);
@@ -548,8 +523,6 @@ exports.setTasker = function(req, res) {
         }
     });
 };
-
-
 /**
  * Removes a given applicant from a task
  * @param task: the task
@@ -565,7 +538,6 @@ function removeApplicantFromTaskById(task, applicantId) {
     }
     return task;
 }
-
 // yes i know duplicate function. i can refactor lator.
 //TODO: refactor this along with its cousin removeApplicantsFromTaskById
 function isAppliantToTask(task, applicantId) {
@@ -578,11 +550,9 @@ function isAppliantToTask(task, applicantId) {
 }
 
 function isUserTasker(task, userId) {
-    if (task.tasker.id == undefined)
-        return false;
+    if (task.tasker.id == undefined) return false;
     return task.tasker.id.equals(userId);
 }
-
 /**
  * Allowsa user to apply to help for a task
  **/
@@ -606,19 +576,16 @@ exports.unapplyToTask = function(req, res) {
         }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) { // don't ever give out the password or salt
             if (err) return res.status(500).json(err);
             if (!user) return res.send(404, "Not logged in");
-
             task = removeApplicantFromTaskById(task, user._id);
             for (var i = user.otherTasks.length - 1; i >= 0; i--) {
                 if (user.otherTasks[i].equals(req.params.id)) {
                     user.otherTasks.splice(i, 1);
                 }
             }
-
             user.save(function(err) {
                 if (err) {
                     return handleError(res, err);
                 }
-
                 var wasTaskerRemoved = false;
                 if (isUserTasker(task, user._id)) {
                     //this is when the TASKER quits
@@ -650,10 +617,9 @@ exports.unapplyToTask = function(req, res) {
                         // no notification if an applicant quits your task.
                         // by design
                     }
-                    return res.json(200, task);
+                    return res.status(200).json(task);
                 });
             });
-
         });
     });
 };
@@ -678,7 +644,6 @@ exports.destroy = function(req, res) {
         });
     });
 };
-
 //delete All Owned Tasks
 exports.destroyAllOwnedTasksForCurrentUser = function(req, res, next) {
     var currentUserId = req.session.userId;

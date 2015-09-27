@@ -124,29 +124,6 @@ angular.module('snaptasqApp')
             },
 
             /**
-             * Send verification Email
-             *
-             * @param  {Function} callback    - optional
-             * @return {Promise}
-             */
-            sendVerificationEmail: function(captcha, _callback, _callbackFail) {
-                var cb = _callback || angular.noop;
-                var bad = _callbackFail || angular.noop;
-                currentUser.$promise.then(function(user) {
-                    return User.sendVerificationEmail({
-                            id: user._id,
-                            captcha: captcha
-                        }, {},
-                        function(responseCode) {
-                            return cb(responseCode);
-                        },
-                        function(err) {
-                            return bad(err);
-                        }).$promise;
-                });
-            },
-
-            /**
              * Send forgot password Email
              *
              * @param  {Function} callback    - optional

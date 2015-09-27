@@ -1,5 +1,5 @@
 'use strict';
-var app = angular.module('snaptasqApp', ['ngAudio', 'infinite-scroll', 'angucomplete-alt' /*,'bcherny/formatAsCurrency'*/ , 'slick', 'angularMoment', 'LocalStorageModule', 'seo', 'FBAngular', 'ezfb', 'djds4rce.angular-socialshare', 'ngDisqus', 'ui-notification', 'pasvaz.bindonce', 'uiGmapgoogle-maps', 'ngAutocomplete', 'commentBox', 'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'btford.socket-io', 'ui.bootstrap', 'ngAnimate', 'ngNotificationsBar', 'vcRecaptcha'])
+var app = angular.module('snaptasqApp', ['ui.mask', 'ngAudio', 'infinite-scroll', 'angucomplete-alt' /*,'bcherny/formatAsCurrency'*/ , 'slick', 'angularMoment', 'LocalStorageModule', 'seo', 'FBAngular', 'ezfb', 'djds4rce.angular-socialshare', 'ngDisqus', 'ui-notification', 'pasvaz.bindonce', 'uiGmapgoogle-maps', 'ngAutocomplete', 'commentBox', 'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'btford.socket-io', 'ui.bootstrap', 'ngAnimate', 'ngNotificationsBar', 'vcRecaptcha'])
     .config(function($routeProvider) {
         $routeProvider.otherwise({
             redirectTo: '/'
@@ -419,6 +419,51 @@ app.filter("typeAheadNoResultsOnEmpty", function() {
                 });
             }
         };
+    }).filter('tel', function() {
+        return function(tel) {
+            if (!tel) {
+                return '';
+            }
+
+            var value = tel.toString().trim().replace(/^\+/, '');
+
+            if (value.match(/[^0-9]/)) {
+                return tel;
+            }
+
+            var country, city, number;
+
+            switch (value.length) {
+                case 10: // +1PPP####### -> C (PPP) ###-####
+                    country = 1;
+                    city = value.slice(0, 3);
+                    number = value.slice(3);
+                    break;
+
+                case 11: // +CPPP####### -> CCC (PP) ###-####
+                    country = value[0];
+                    city = value.slice(1, 4);
+                    number = value.slice(4);
+                    break;
+
+                case 12: // +CCCPP####### -> CCC (PP) ###-####
+                    country = value.slice(0, 3);
+                    city = value.slice(3, 5);
+                    number = value.slice(5);
+                    break;
+
+                default:
+                    return tel;
+            }
+
+            if (country == 1) {
+                country = "";
+            }
+
+            number = number.slice(0, 3) + '-' + number.slice(3);
+
+            return (country + " (" + city + ") " + number).trim();
+        };
     });
 
 
@@ -433,6 +478,9 @@ app.directive('blurCurrency', function($filter) {
             }
             value = parseFloat(value.toString().replace(/[^0-9_-]/g, ''));
             var formattedValue = $filter('currency')(value);
+            if (formattedValue != undefined) {
+                formattedValue = formattedValue.split('.')[0];
+            }
             el.val(formattedValue);
             return formattedValue;
         }

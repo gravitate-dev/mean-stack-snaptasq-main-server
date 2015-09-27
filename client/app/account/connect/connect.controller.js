@@ -30,7 +30,7 @@ angular.module('snaptasqApp')
         }, 1000)
 
         $scope.sendVerificationEmail = function(form) {
-            Auth.sendVerificationEmail(form.captchaResponse.$viewValue, function(success) {
+            User.sendVerificationEmail(form.captchaResponse.$viewValue, function(success) {
                 notifications.showSuccess({
                     message: 'Sent. Please check your inbox, ' + $scope.currentUser.email
                 });

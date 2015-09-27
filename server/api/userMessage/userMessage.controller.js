@@ -226,7 +226,7 @@ exports.replyToMessage = function(req, res) {
                     replyMsg.threadId = threadId;
                     replyMsg.save(function(err, umsg) {
                         if (err) return validationError(res, err);
-                        return res.json(200, umsg);
+                        return res.status(200).json(umsg);
                     });
                 })
             });
@@ -290,7 +290,7 @@ exports.getMessagesByThreadId = function(req, res) {
                     created: -1
                 })
                 .exec(function(err, umsgs) {
-                    return res.json(200, umsgs);
+                    return res.status(200).json(umsgs);
                 });
         }
     });
@@ -313,7 +313,7 @@ exports.replyToThread = function(req, res, next) {
 
 exports.getMessageThreadById = function(req, res) {
     //essentially just call  doesUserOwnAndSeeMessageThread then return this
-    return res.json(200, req.userThread);
+    return res.status(200).json(req.userThread);
 
 }
 exports.getMyMessagesFriendRequests = function(req, res) {
@@ -335,7 +335,7 @@ exports.getMyMessagesFriendRequests = function(req, res) {
                     created: -1
                 })
                 .exec(function(err, umsgsthreads) {
-                    return res.json(200, umsgsthreads);
+                    return res.status(200).json(umsgsthreads);
                 });
         }
     });
@@ -359,7 +359,7 @@ exports.getMyMessagesPrimary = function(req, res) {
                     created: -1
                 })
                 .exec(function(err, umsgsthreads) {
-                    return res.json(200, umsgsthreads);
+                    return res.status(200).json(umsgsthreads);
                 });
         }
     });
@@ -424,7 +424,7 @@ exports.getMessageById = function(req, res) {
     }, function(err, umsg) {
         if (err) return res.send(500, err);
         if (!umsg) return res.send(404, "Message not found");
-        return res.json(200, umsg);
+        return res.status(200).json(umsg);
     });
 }
 

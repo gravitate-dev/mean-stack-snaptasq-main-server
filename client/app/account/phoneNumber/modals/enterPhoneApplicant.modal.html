@@ -1,0 +1,15 @@
+<div ng-controller="PhoneNumberModalCtrl">
+    <p>Get notified when you are chosen to help out with this tasq. Enter your phone number below. This option can be turned off in your <a href="/settings">account page</a></p>
+    <form ng-if="canEnterVerificationCode==false" class="text-center top-buffer">
+        <input type="text" autofocus ng-model="phoneNumber" ui-mask="(999) 999-9999" />&nbsp;
+        <button class="btn btn-primary" ng-click="sendCode(phoneNumber)">ok</button>
+        <div class="text-error" style="color:red;">{{error}}</div>
+    </form>
+    <form ng-if="canEnterVerificationCode" class="text-center top-buffer">
+        <p class="lead">Enter the verification code we sent you below</p>
+        <input type="text" ng-model="verifyCode" ui-mask="****" />&nbsp;
+        <button class="btn btn-primary" ng-click="redeemCode(verifyCode);">redeem</button>&nbsp;
+        <button class="btn btn-danger" ng-click="goBack();">cancel</button>
+        <div class="text-error" style="color:red;">{{error}}</div>
+    </form>
+</div>

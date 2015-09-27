@@ -4,16 +4,26 @@ angular.module('snaptasqApp').controller('SettingsCtrl', function($scope, _me, T
     $scope._bgcolorGrey();
     $scope._noFooter();
     $scope.userCanFbConnect = false;
-
+    $scope.textNotificationEnable = undefined;
+    $scope.$on('phoneVerified', function(data) {
+        $scope.refreshMe();
+    });
     _me.$promise.then(function(me) {
         $scope.userCanFbConnect = !_me.isConnectedWithFb;
         $scope._me = me;
+        $scope.textNotificationEnable = me.phone.enableNotifications;
     });
-
+    $scope.refreshMe = function() {
+        User.removeCache();
+        User.get(function(me) {
+            $scope.userCanFbConnect = !_me.isConnectedWithFb;
+            $scope._me = me;
+            $scope.textNotificationEnable = me.phone.enableNotifications;
+        });
+    }
     $scope.loginOauth = function(provider) {
         $window.location.href = '/auth/' + provider;
     };
-
     $scope.showDeleteAccountModal = function() {
         Modal.confirm.delete(function(data) {
             Auth.deleteMyAccount(function(data) {
@@ -29,7 +39,6 @@ angular.module('snaptasqApp').controller('SettingsCtrl', function($scope, _me, T
                 });
             });
         })("your account");
-
     };
     $scope.changePassword = function(form) {
         $scope.submitted = true;
@@ -51,23 +60,21 @@ angular.module('snaptasqApp').controller('SettingsCtrl', function($scope, _me, T
             });
         }
     };
-
-    $scope.sendForgotPassword = function(form) {
-        Auth.sendVerificationEmail(form.captchaResponse.$viewValue, function(success) {
-            notifications.showSuccess({
-                message: 'Check your inbox! We sent you a reset password email to ' + $scope._me.email
-            });
-            grecaptcha.reset();
+    $scope.changingNotificationSetting = false;
+    $scope.toggleTextNotifications = function() {
+        $scope.changingNotificationSetting = true;
+        User.set("phone.enableNotifications", !$scope.textNotificationEnable, function(success) {
+            $scope.changingNotificationSetting = false;
+            $scope.textNotificationEnable = success;
         }, function(fail) {
-            //TODO: When email fails handle the case
-            if (fail.data.status && fail.data.status == "warn")
-                notifications.showWarning({
-                    message: fail.data.message
-                });
-            else
-                notifications.showError({
-                    message: fail.data.message
-                });
+            $scope.changingNotificationSetting = false;
+            // do nothing
         });
+    }
+    $scope.showEnterPhoneNumber = function() {
+        Modal.input.phoneNumberApplicant(function(data) {
+            // called when the user clicks no thank you
+            User.set("phone.ignorePrompt", true);
+        })();
     }
 });
