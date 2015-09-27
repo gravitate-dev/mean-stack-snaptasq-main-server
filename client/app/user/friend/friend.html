@@ -1,9 +1,68 @@
-<div class="container top-buffer">
-    <p ng-if="userDoesntExist==true">this user can not be found</p>
-    <section ng-if="userDoesntExist==false">
-        <div class="visible-xs col-xs-12">
-            <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12">
+<div ng-if="isMe!=undefined">
+    <!-- FRIEND PROFILE -->
+    <article ng-if="isMe==false" class="container top-buffer">
+        <p ng-if="userDoesntExist==true">this user can not be found</p>
+        <section ng-if="userDoesntExist==false">
+            <div class="visible-xs col-xs-12">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="well" style="background-color:white;margin:0px;">
+                            <div class="row" ng-if="user.name">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <div style="float:left;margin-right:10px;">
+                                        <img src="{{user.pic}}" class="" style="height:50px;width:50px;" />
+                                    </div>
+                                    <div ng-if="user.link">
+                                        <a href="{{user.link}}"><strong>{{user.name}}</strong></a>
+                                    </div>
+                                    <div ng-if="!user.link">
+                                        <strong>{{user.name}}</strong>
+                                    </div>
+                                    <div class="pull-right">
+                                        <div ng-if="isStranger==true && _me._id!=user._id">
+                                            <button ng-if="!isFriendRequestingMe && hasFriendRequestAlreadySent==true" class="btn btn-success" ng:disabled="true">friend request sent</button>
+                                            <button ng-if="!isFriendRequestingMe && hasFriendRequestAlreadySent==false" ng-click="addFriend(user);" class="btn btn-success">add friend</button>
+                                            <button ng-if="isFriendRequestingMe" ng-click="addFriend(user);" class="btn btn-success">accept friend request</button>
+                                        </div>
+                                        <div class="btn-group" dropdown ng-if="!isMe && isStranger==false">
+                                            <button id="split-button" type="submit" class="btn btn-primary btn-lg" dropdown-toggle>
+                                                Action <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <!--<li><a href="#">send poke</a></li>
+                                                                                                                                        <li role="separator" class="divider"></li>
+                                                -->
+                                                <li><a href="#" ng-click="unFriend(user);">unfriend</a></li>
+                                                <!-- <li><a href="#">block</a></li> -->
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div tabset>
+                            <section tab select="">
+                                <div tab-heading>
+                                    <i class="fa fa-pencil"></i>&nbsp;tasqs
+                                </div>
+                                <div ng-if="isStranger==true">
+                                    <div class="tasq-list-header">{{user.name | lowercase}}'s tasqs</div>
+                                    <div class="well" style="background-color:white;margin:0px;">tasqs only shown to friends</div>
+                                </div>
+                                <div ng-if="isStranger==false" friendtaskslist="id" list-title="true" filter="tasksFilter"></div>
+                            </section>
+                            <section tab select="">
+                                <div tab-heading>
+                                    <i class="fa fa-users"></i>&nbsp;groups
+                                </div>
+                                <div friendcommunitylist="id" list-title="false" filter="communityFilter"></div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rowtop-buffer bot-buffer2 hidden-xs">
+                <div class="col-md-6 col-sm-6">
                     <div class="well" style="background-color:white;margin:0px;">
                         <div class="row" ng-if="user.name">
                             <div class="col-md-12 col-sm-12 col-xs-12">
@@ -28,8 +87,8 @@
                                         </button>
                                         <ul class="dropdown-menu">
                                             <!--<li><a href="#">send poke</a></li>
-                                        <li role="separator" class="divider"></li>
-                                    -->
+                                                                                                                                <li role="separator" class="divider"></li>
+                                            -->
                                             <li><a href="#" ng-click="unFriend(user);">unfriend</a></li>
                                             <!-- <li><a href="#">block</a></li> -->
                                         </ul>
@@ -38,68 +97,80 @@
                             </div>
                         </div>
                     </div>
-                    <div tabset>
-                        <section tab select="">
-                            <div tab-heading>
-                                <i class="fa fa-user"></i>&nbsp;tasqs
+                    <div friendcommunitylist="id" list-title="true" filter="communityFilter"></div>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <div ng-if="isStranger==true">
+                        <div class="tasq-list-header">{{user.name | lowercase}}'s tasqs</div>
+                        <div class="well" style="background-color:white;margin:0px;">tasqs only shown to friends</div>
+                    </div>
+                    <div ng-if="isStranger==false" friendtaskslist="id" list-title="true" filter="tasksFilter"></div>
+                </div>
+            </div>
+        </section>
+    </article>
+    <!-- MY PROFILE -->
+    <article ng-if="isMe==true" class="container top-buffer">
+        <p ng-if="userDoesntExist==true">this user can not be found</p>
+        <section ng-if="userDoesntExist==false">
+            <div class="visible-xs col-xs-12">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="well" style="background-color:white;margin:0px;">
+                            <div class="row" ng-if="user.name">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <div style="float:left;margin-right:10px;">
+                                        <img src="{{user.pic}}" class="" style="height:50px;width:50px;" />
+                                    </div>
+                                    <div ng-if="user.link">
+                                        <a href="{{user.link}}"><strong>{{user.name}}</strong></a>
+                                    </div>
+                                    <div ng-if="!user.link">
+                                        <strong>{{user.name}}</strong>
+                                    </div>
+                                </div>
                             </div>
-                            <div friendtaskslist="id" list-title="false" filter="tasksFilter"></div>
-                        </section>
-                        <section tab select="">
-                            <div tab-heading>
-                                <i class="fa fa-inbox"></i>&nbsp;groups
-                            </div>
-                            <div friendcommunitylist="id" list-title="false" filter="communityFilter"></div>
-                        </section>
+                        </div>
+                        <div tabset>
+                            <section tab select="">
+                                <div tab-heading>
+                                    <i class="fa fa-pencil"></i>&nbsp;tasqs
+                                </div>
+                                <div mytaskslist="" list-title="true" filter="myTaskFilter"></div>
+                            </section>
+                            <section tab select="">
+                                <div tab-heading>
+                                    <i class="fa fa-users"></i>&nbsp;groups
+                                </div>
+                                <div mycommunitylist="_me.groups" list-title="false" list-filter="communityFilter"></div>
+                            </section>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="rowtop-buffer bot-buffer2 hidden-xs">
-            <div class="col-md-6 col-sm-6">
-                <div class="well" style="background-color:white;margin:0px;">
-                    <div class="row" ng-if="user.name">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div style="float:left;margin-right:10px;">
-                                <img src="{{user.pic}}" class="" style="height:50px;width:50px;" />
-                            </div>
-                            <div ng-if="user.link">
-                                <a href="{{user.link}}"><strong>{{user.name}}</strong></a>
-                            </div>
-                            <div ng-if="!user.link">
-                                <strong>{{user.name}}</strong>
-                            </div>
-                            <div class="pull-right">
-                                <div ng-if="isStranger==true && _me._id!=user._id">
-                                    <button ng-if="!isFriendRequestingMe && hasFriendRequestAlreadySent==true" class="btn btn-success" ng:disabled="true">friend request sent</button>
-                                    <button ng-if="!isFriendRequestingMe && hasFriendRequestAlreadySent==false" ng-click="addFriend(user);" class="btn btn-success">add friend</button>
-                                    <button ng-if="isFriendRequestingMe" ng-click="addFriend(user);" class="btn btn-success">accept friend request</button>
+            <div class="rowtop-buffer bot-buffer2 hidden-xs">
+                <div class="col-md-6 col-sm-6">
+                    <div class="well" style="background-color:white;margin:0px;">
+                        <div class="row" ng-if="user.name">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div style="float:left;margin-right:10px;">
+                                    <img src="{{user.pic}}" class="" style="height:50px;width:50px;" />
                                 </div>
-                                <div class="btn-group" dropdown ng-if="_me && _me._id!=user._id && isStranger==false">
-                                    <button id="split-button" type="submit" class="btn btn-primary btn-lg" dropdown-toggle>
-                                        Action <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <!--<li><a href="#">send poke</a></li>
-                                        <li role="separator" class="divider"></li>
-                                    -->
-                                        <li><a href="#" ng-click="unFriend(user);">unfriend</a></li>
-                                        <!-- <li><a href="#">block</a></li> -->
-                                    </ul>
+                                <div ng-if="user.link">
+                                    <a href="{{user.link}}"><strong>{{user.name}}</strong></a>
+                                </div>
+                                <div ng-if="!user.link">
+                                    <strong>{{user.name}}</strong>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div mycommunitylist="_me.groups" list-title="false" list-filter="communityFilter"></div>
                 </div>
-                <div friendcommunitylist="id" list-title="true" filter="communityFilter"></div>
-            </div>
-            <div class="col-md-6 col-sm-6">
-                <div ng-if="isStranger==true">
-                    <div class="tasq-list-header">{{user.name | lowercase}}'s tasqs</div>
-                    <div class="well" style="background-color:white;margin:0px;">tasqs only shown to friends</div>
+                <div class="col-md-6 col-sm-6">
+                    <div mytaskslist="" list-title="true" filter="myTaskFilter"></div>
                 </div>
-                <div ng-if="isStranger==false" friendtaskslist="id" list-title="true" filter="tasksFilter"></div>
             </div>
-        </div>
-    </section>
+        </section>
+    </article>
 </div>

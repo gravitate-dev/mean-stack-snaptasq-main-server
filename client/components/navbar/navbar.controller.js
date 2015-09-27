@@ -46,13 +46,8 @@ angular.module('snaptasqApp')
                             reqLogin: true
                         });
                         $scope.menu.push({
-                            'title': '<i class="fa fa-home"></i>&nbsp;Communities',
-                            'link': '/communities',
-                            reqLogin: true
-                        });
-                        $scope.menu.push({
                             'title': '<i class="fa fa-globe"></i>&nbsp;Activity',
-                            'link': '/community/friends',
+                            'link': '/communities',
                             reqLogin: true
                         });
                     } else {

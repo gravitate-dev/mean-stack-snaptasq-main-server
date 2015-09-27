@@ -110,7 +110,7 @@ angular.module('snaptasqApp')
         User.removeCache();
         $scope._bgcolorGrey();
         $scope._noFooter();
-        $scope.communityFilter = {};
+        $scope.taskFilter = {};
         $scope.friendlistFilter = {};
         _me.$promise.then(function(me) {
             $scope._me = me;

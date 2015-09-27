@@ -20,8 +20,7 @@
             </ul>
             <span id="notifications-bar-mobile" ng-if="!isUserBetaLocked && isLoggedIn()" class="visible-xs pull-right">
                 <button ng-click="_goToPath('/tasqs');" ng-class="{'btn-primary': isActive('/tasqs')}" class="nav-notification-button btn"><i class="fa fa-pencil"></i></button>
-                <button ng-click="_goToPath('/communities');" ng-class="{'btn-primary': isActive('/communities')}" class="nav-notification-button btn"><i class="fa fa-home"></i></button>
-                <button ng-click="_goToPath('/community/friends');" ng-class="{'btn-primary': isActive('/community/friends')}" class="nav-notification-button btn"><i class="fa fa-globe"></i></button>
+                <button ng-click="_goToPath('/communities');" ng-class="{'btn-primary': isActive('/communities')}" class="nav-notification-button btn"><i class="fa fa-globe"></i></button>
                 <button ng-controller="NavBarNotificationsCtrl" ng-click="readNotificationsCount=notifications.length;_goToPath('/notifications');" ng-class="{'btn-primary': isActive('/notifications')}" class="nav-notification-button btn"><i class="fa fa-bell"></i><span class="badge" style="pointer-events:none;" ng-if="readNotificationsCount!=undefined && readNotificationsCount < notifications.length">{{notifications.length - readNotificationsCount}}</span></button>
             </span>
         </div>
