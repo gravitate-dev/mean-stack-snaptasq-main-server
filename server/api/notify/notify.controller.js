@@ -17,7 +17,16 @@ var hrefs = {
     task: "/tasq/view/",
     community: "/community/view/",
 };
-var accountCodes = {};
+var accountCodes = {
+    welcome: {
+        // one = chosen tasker
+        // many = applicants minus me
+        msgOne: 'Welcome, {name} to snaptasq. You can now create a tasq',
+        href: "/tasq/create",
+        category: "account",
+        code: "task.account.welcome"
+    }
+};
 var friendCodes = {
     newFriendRequest: {
         // one target friend
@@ -145,10 +154,9 @@ function notify(data) {
         var stack = new Error().stack;
         return console.log(stack);
     }
-    if (hrefId == undefined || typeof hrefId === 'string' || hrefId instanceof String) {
+    if (hrefId != undefined && (typeof hrefId === 'string' || hrefId instanceof String)) {
         console.error("Missing hrefID or it is a normal string. Requires ObjectID.", hrefId, forOne, forMany);
-        var stack = new Error().stack;
-        return console.log(stack);
+        return console.log(new Error().stack);
     }
     var formattedForMany = undefined;
     var formattedForOne = undefined;
@@ -158,13 +166,17 @@ function notify(data) {
     if (codeObj.msgOne != undefined) {
         formattedForOne = codeObj.msgOne.format(params);
     }
+    var hrefUrl = codeObj.href;
+    if (hrefId != undefined) {
+        hrefUrl += hrefId.toString();
+    }
     var notifyObj = {
         forOne: forOne,
         forMany: forMany,
         source: hrefId,
         message: formattedForMany,
         messageOne: formattedForOne,
-        href: codeObj.href + hrefId.toString(),
+        href: hrefUrl,
         category: codeObj.category,
         code: codeObj.code
     };
@@ -181,7 +193,7 @@ function notify(data) {
  * Returns Notifications for the current user for this week
  **/
 function getMyNotifications(req, res) {
-    var category = req.param('category');
+    var category = req.headers.category;
     var today = moment().endOf('day');
     var lastWeek = moment(today).subtract(7, 'days');
     var currentUserId = req.session.userId;
@@ -209,7 +221,7 @@ function getMyNotifications(req, res) {
 }
 
 function hideById(req, res) {
-    var id = req.param('id');
+    var id = req.params.id
     var currentUserId = req.session.userId;
     if (currentUserId == undefined) return res.status(401).send("Please login again");
     if (id == undefined) return res.status(400).send("Missing parameter id. The notification id you want to remove.");

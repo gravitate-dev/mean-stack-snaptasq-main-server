@@ -6,6 +6,7 @@
         <strong id="owner_name">{{item.ownerName}}</strong>&nbsp;&middot;&nbsp;<span am-time-ago="item.created"></span>&nbsp;&middot;&nbsp;<span id="payout" ng-if="item.payout">${{item.payout}}</span><span ng-if="!item.payout">free</span>
     </div>
     <div class="badge" ng-class="{'badge-success':item.status=='completed','badge-info':item.status!='completed'}">{{item.status | capslock}}
+        <span ng-if="!item.tasker.name && item.applicants.length>0">&nbsp;with {{item.applicants.length}} applicant<span ng-if="item.applicants.length!=1">s</span></span>
         <span ng-if="item.tasker.name">&nbsp;<a href="/user/view/{{item.tasker.id}}" style="color:white;">by {{item.tasker.name}}</a></span>
     </div>
     <div ng-if="item.status!='completed'">

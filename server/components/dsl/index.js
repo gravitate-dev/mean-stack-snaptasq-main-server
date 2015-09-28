@@ -16,7 +16,7 @@ var moment = require('moment');
 var mongoose = require('mongoose');
 exports.processSearch = function(req, res, next) {
     var query = {};
-    var age = req.param('age'); //age means the oldest document
+    var age = req.query.age; //age means the oldest document
     if (age != undefined) {
         if (moment(age).isValid()) {
             query.created = {
@@ -39,7 +39,7 @@ exports.processSearch = function(req, res, next) {
         }
     }
     */
-    var name = req.param('name');
+    var name = req.query.name;
     if (name != undefined) {
         if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) {
             console.error("Invalid name in dsl, ", name);

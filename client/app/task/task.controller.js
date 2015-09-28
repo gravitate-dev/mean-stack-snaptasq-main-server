@@ -253,9 +253,9 @@ angular.module('snaptasqApp').controller('TaskGlobalCtrl', function($scope, $rou
             $scope.task.locationCopy = _.clone(data.location, true);
         }, function(err) {
             notifications.showError({
-                message: "This task no longer exists, because it was deleted by the owner."
+                message: "This tasq no longer exists."
             });
-            $location.path('/tasqs');
+            $location.path('/communities');
         });
     }
     if (!angular.isUndefined($scope.id)) {

@@ -1,5 +1,6 @@
 var passport = require('passport');
 var User = require('../../api/user/user.model');
+var Notify = require('../../api/notify/notify.controller');
 var UserController = require('../../api/user/user.controller');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var graph = require('fbgraph');
@@ -10,7 +11,6 @@ var _ = require('lodash');
 function isLoggedIn(req) {
     return req.cookies.token != undefined;
 }
-
 var SCHEMA_USER_HIDE_FROM_ME = '-salt -hashedPassword -verification.code -forgotPassCode -phone.verifyCode -phone.attempts';
 
 function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
@@ -45,7 +45,6 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                 //difference source, compareTo
                 //will keep whats diff on the left guy
                 //lets find the friends i have yet to delete
-
                 //console.log("Current fb friend ids",requestFbFriendIds);
                 //console.log("REQUEST fb friend ids",currentFbFriendIds);
                 var notDeltdYetIds = _.difference(currentFbFriendIds, requestFbFriendIds);
@@ -57,7 +56,6 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                 });
                 //console.log("After fbFriends",fbFriends)
                 //console.log(user.friends);
-
                 for (var i = 0; i < fbFriends.length; i++) {
                     newFriends.push(fbFriends[i]);
                 }
@@ -86,7 +84,6 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                             }
                         }
                         // check to see if i have already added the friend via other providers
-
                         if (addFriendOkay) {
                             var i = user.friends.length;
                             while (i-- > 0) {
@@ -125,7 +122,6 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                 return cb(user);
             }
         });
-
     });
 }
 
@@ -186,6 +182,14 @@ function createNewUserWithFacebook(user, req, accessToken, refreshToken, profile
         linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, function(user) {
             user.save(function(err) {
                 if (err) done(err);
+                Notify.put({
+                    forOne: user._id,
+                    forMany: [],
+                    code: Notify.CODES.account.welcome,
+                    params: {
+                        name: user.name
+                    }
+                });
                 return done(err, user);
             });
         });
@@ -211,7 +215,6 @@ function linkFacebookAccountToExistingUser(user, req, accessToken, refreshToken,
         //user.email = email;
         user.fb.email = email;
     } catch (e) {}
-
     getFbPicFromProfileObj(user, req, accessToken, profile, function(user) {
         linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, function(user) {
             user.save(function(err) {
@@ -233,14 +236,12 @@ exports.setup = function(User, config) {
         profileFields: ['id', 'name', 'emails', 'displayName', 'link', 'gender', 'friends']
     }, function(req, accessToken, refreshToken, profile, done) {
         var currentUserId = req.session.userId;
-
         /* This is how login will work */
         /* 1.  Check for facebook profile id already registered, if so then return that user
          * 2a. IF THEY ARE LOGGED IN, check to make sure the facebook profile is not registered, if so, link the facebook with this account.
          * 2b. ELSE no such facebook profile id user found, then create a new user for this facebook account, then return the new user.
          * 3.  If the current user is already linked with a DIFFERENT facebook account or there is no current user, then create a new user with this facebook account, return that user
          */
-
         /** 1. **/
         var isFacebookProfileRegistered = true;
         User.findOne({
@@ -273,7 +274,6 @@ exports.setup = function(User, config) {
                     });
                 }
                 //if so then error message because the account is already linked
-
                 //return done(err, fbuser);
             } else {
                 /** 2a. Check if fb account is not yet linked **/

@@ -29,9 +29,6 @@
                                                 Action <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <!--<li><a href="#">send poke</a></li>
-                                                                                                                                        <li role="separator" class="divider"></li>
-                                                -->
                                                 <li><a href="#" ng-click="unFriend(user);">unfriend</a></li>
                                                 <!-- <li><a href="#">block</a></li> -->
                                             </ul>
@@ -55,7 +52,7 @@
                                 <div tab-heading>
                                     <i class="fa fa-users"></i>&nbsp;groups
                                 </div>
-                                <div friendcommunitylist="id" list-title="false" filter="communityFilter"></div>
+                                <div friendcommunitylist="id" list-title="true" filter="communityFilter"></div>
                             </section>
                         </div>
                     </div>
@@ -86,9 +83,6 @@
                                             Action <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu">
-                                            <!--<li><a href="#">send poke</a></li>
-                                                                                                                                <li role="separator" class="divider"></li>
-                                            -->
                                             <li><a href="#" ng-click="unFriend(user);">unfriend</a></li>
                                             <!-- <li><a href="#">block</a></li> -->
                                         </ul>
@@ -142,7 +136,7 @@
                                 <div tab-heading>
                                     <i class="fa fa-users"></i>&nbsp;groups
                                 </div>
-                                <div mycommunitylist="_me.groups" list-title="false" list-filter="communityFilter"></div>
+                                <div mycommunitylist="_me.groups" list-title="true" list-filter="communityFilter"></div>
                             </section>
                         </div>
                     </div>
@@ -165,7 +159,7 @@
                             </div>
                         </div>
                     </div>
-                    <div mycommunitylist="_me.groups" list-title="false" list-filter="communityFilter"></div>
+                    <div mycommunitylist="_me.groups" list-title="true" list-filter="communityFilter"></div>
                 </div>
                 <div class="col-md-6 col-sm-6">
                     <div mytaskslist="" list-title="true" filter="myTaskFilter"></div>

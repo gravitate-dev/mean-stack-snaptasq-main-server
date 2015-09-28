@@ -76,7 +76,7 @@ exports.doesCommunityExistByIdentifier = function(id, source, cb) {
 }
 
 exports.getCommunitiesByUser = function(req, res) {
-        var id = req.param('id');
+        var id = req.params.id
         if (id == undefined) return res.status(400).send("Missing parameter id. (User id)");
         User.findOne({
             _id: id
@@ -101,7 +101,7 @@ exports.getCommunitiesByUser = function(req, res) {
     // Get a single comm
 exports.show = function(req, res) {
     var currentUserId = req.session.userId;
-    var groupId = req.param('id');
+    var groupId = req.params.id
     if (groupId == undefined) return res.status(400).send("Missing parameter id. The group ID");
     Community.findById(groupId, function(err, comm) {
         if (err) {
@@ -144,7 +144,7 @@ exports.create = function(req, res) {
 
 // Returns true if the current user is a member
 exports.amIMember = function(req, res) {
-        var id = req.param('id');
+        var id = req.params.id
         var currentUserId = req.session.userId;
         if (id == undefined) return res.status(400).send("Missing parameter id");
         if (currentUserId == undefined) return res.status(401).send("Not logged in");
@@ -289,7 +289,7 @@ console.log(plaintext);
  * @param challengeId: The id of the authenticaiton challenge of the community that the user took
  **/
 exports.requestJoin = function(req, res) {
-    var groupId = req.param('id');
+    var groupId = req.params.id
     var currentUserId = req.session.userId;
     if (currentUserId == undefined)
         return res.status(401).send("Please login first");
@@ -436,7 +436,7 @@ function _isUserAlreadyInGroup(comm, user) {
     return false;
 }
 exports.leaveGroup = function(req, res) {
-    var groupId = req.param('id');
+    var groupId = req.params.id
     var currentUserId = req.session.userId;
     if (groupId == undefined) return res.status(400).send("Missing id. The Group ID you are leaving");
     Community.findById(groupId, function(err, comm) {
@@ -518,7 +518,7 @@ function _addUserToComm(req, res, comm, user) {
 }
 
 exports.getTasks = function(req, res) {
-    var groupId = req.param('id');
+    var groupId = req.params.id
     if (groupId == undefined) return res.status(400).send("Missing parameter id. The Group ID");
 
     var query = {};
@@ -534,7 +534,7 @@ exports.getTasks = function(req, res) {
 }
 
 exports.getMembers = function(req, res) {
-    var groupId = req.param('id');
+    var groupId = req.params.id
     if (groupId == undefined) return res.status(400).send("Missing parameter id. The Group ID");
     var query = {};
     if (req.dsl) query = req.dsl;
@@ -549,7 +549,7 @@ exports.getMembers = function(req, res) {
 }
 
 exports.myInvitableFriends = function(req, res) {
-        var groupId = req.param('id');
+        var groupId = req.params.id
         var currentUserId = req.session.userId;
         if (groupId == undefined) return res.status(400).send("Missing parameter id. The Group ID");
         if (currentUserId == undefined) return res.status(403).send("Please login again");
@@ -583,7 +583,7 @@ exports.myInvitableFriends = function(req, res) {
      * @param {[taskId]} taskId of the tasq to add
      */
 exports.addTaskToCommunity = function(req, res) {
-    var groupId = req.param('id');
+    var groupId = req.params.id
     var taskId = req.param('taskId');
     var currentUserId = req.session.userId;
     if (groupId == undefined) return res.status(400).send("Missing id. The Group ID you want to add the tasq too");
@@ -649,7 +649,7 @@ exports._joinInternal = function(req, res, groupId, userId) {
     });
 }
 exports.join = function(req, res) {
-    var groupId = req.param('id');
+    var groupId = req.params.id
     var urlSafeEncoded_encryptedUserId = req.param('encUserId');
     /*
     var userId = eUserId;

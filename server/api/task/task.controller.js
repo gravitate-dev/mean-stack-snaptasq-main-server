@@ -8,6 +8,7 @@ var config = require('../../config/environment');
 var Notify = require('../notify/notify.controller');
 var moment = require('moment');
 var RateLimiter = require('limiter').RateLimiter;
+var limiterCreateTask = new RateLimiter(4, 'hour', true);
 var limiterSetTasker = new RateLimiter(10, 'hour', true);
 var limiterStartTaskNotify = new RateLimiter(4, 'hour', true);
 // technically i never return any USER json so these are unneded but i have them here anyways
@@ -53,7 +54,7 @@ exports.getMyTasks = function(req, res) {
 exports.getUsersTasksByUserId = function(req, res) {
     //TODO check if they are friends
     var currentUserId = req.session.userId;
-    var id = req.param('id');
+    var id = req.params.id
     if (id == undefined) return res.status(400).send("Missing parameter id");
     var query = {};
     if (req.dsl) query = req.dsl;
@@ -100,38 +101,44 @@ exports.show = function(req, res) {
 };
 // Creates a new task in the DB.
 exports.create = function(req, res) {
-    var newTask = new Task(req.body);
-    var currentUserId = req.session.userId;
-    if (currentUserId == undefined) return res.status(400).send("Please login first. Missing userId");
-    newTask.ownerId = currentUserId;
-    User.findOne({
-        _id: currentUserId
-    }, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, user) { // don't ever give out the password or salt
-        if (err) return res.status(500).json(err);
-        if (!user) return res.json(401);
-        newTask.ownerName = user.name;
-        newTask.ownerPic = user.pic;
-        newTask.historicalPrices.push({
-            price: newTask.payout
-        });
-        Task.create(newTask, function(err, task) {
-            if (err) {
-                return handleError(res, err);
-            }
-            var friendIds = _.pluck(user.friends, "id");
-            Notify.put({
-                forOne: currentUserId,
-                forMany: friendIds,
-                hrefId: task._id,
-                code: Notify.CODES.taskOwner.created,
-                pic: user.pic,
-                params: {
-                    task: task.name,
-                    name: user.name
-                }
+    limiterCreateTask.removeTokens(1, function(err, remainingRequests) {
+        if (remainingRequests < 0) {
+            return res.status(429).send("Too many tasqs created, try again in an hour");
+        } else {
+            var newTask = new Task(req.body);
+            var currentUserId = req.session.userId;
+            if (currentUserId == undefined) return res.status(401).send("Please login again");
+            newTask.ownerId = currentUserId;
+            User.findOne({
+                _id: currentUserId
+            }, '-salt -hashedPassword -verification.code -forgotPassCode -throttle', function(err, user) { // don't ever give out the password or salt
+                if (err) return res.status(500).json(err);
+                if (!user) return res.sendStatus(401);
+                newTask.ownerName = user.name;
+                newTask.ownerPic = user.pic;
+                newTask.historicalPrices.push({
+                    price: newTask.payout
+                });
+                Task.create(newTask, function(err, task) {
+                    if (err) {
+                        return handleError(res, err);
+                    }
+                    var friendIds = _.pluck(user.friends, "id");
+                    Notify.put({
+                        forOne: currentUserId,
+                        forMany: friendIds,
+                        hrefId: task._id,
+                        code: Notify.CODES.taskOwner.created,
+                        pic: user.pic,
+                        params: {
+                            task: task.name,
+                            name: user.name
+                        }
+                    });
+                    return res.status(201).json(task);
+                });
             });
-            return res.status(201).json(task);
-        });
+        }
     });
 };
 // Updates an existing task in the DB.
@@ -176,7 +183,7 @@ exports.isTaskOwner = function(req, res, next) {
             }
             var currentUserId = req.session.userId;
             if (!task.ownerId.equals(req.session.userId)) {
-                return res.status(403).send("You do not own this task");
+                return res.status(403).send("You do not own this tasq");
             }
             next();
         });
@@ -260,7 +267,7 @@ exports.applyToTask = function(req, res) {
  * A Tasker can signal they are starting the task with this api call
  **/
 exports.startTask = function(req, res) {
-    var taskId = req.param('id');
+    var taskId = req.params.id
     if (taskId == undefined) return res.status(400).send("Missing parameter id. For the TaskID");
     var currentUserId = req.session.userId;
     if (currentUserId == undefined) return res.status(401).send("Please login again");
@@ -313,7 +320,7 @@ exports.startTask = function(req, res) {
  * A Tasker can signal they finished the task
  **/
 exports.finishTask = function(req, res) {
-    var taskId = req.param('id');
+    var taskId = req.params.id
     if (taskId == undefined) return res.status(400).send("Missing parameter id. For the TaskID");
     var currentUserId = req.session.userId;
     if (currentUserId == undefined) return res.status(401).send("Please login again");
@@ -382,7 +389,7 @@ exports.finishTask = function(req, res) {
  * @pre: checked by isTaskOwner for null task, and task ownership
  **/
 exports.setTasker = function(req, res) {
-    var taskId = req.param('id');
+    var taskId = req.params.id
     if (taskId == undefined) return res.status(400).send("Missing parameter id. For the TaskID");
     var chosenApplicantId = req.param('applicantId');
     //Not checking for undefined because i allow undefined, when the tasker is set to none.
@@ -524,7 +531,7 @@ function isUserTasker(task, userId) {
  * Allowsa user to apply to help for a task
  **/
 exports.unapplyToTask = function(req, res) {
-    var id = req.param('id');
+    var id = req.params.id
     var currentUserId = req.session.userId;
     if (id == undefined) return res.status(400).send("Missing parameter id. The Task Id");
     if (currentUserId == undefined) return res.status(401).send("Please login again");

@@ -196,7 +196,7 @@ exports.replyToMessage = function(req, res) {
         if (remainingRequests < 0) {
             return res.status(429).send("Too many replies. Please wait for 60 seconds then try again.");
         } else {
-            var id = req.param('id');
+            var id = req.params.id
             if (id == undefined) return res.status(400).send("Missing parameter id");
             var reply = req.param('reply');
             if (reply == undefined || _.isEmpty(reply)) return res.status(400).send("Can't send an empty response");
@@ -235,7 +235,7 @@ exports.replyToMessage = function(req, res) {
 }
 
 exports.hideMessageThread = function(req, res) {
-    var id = req.param('id');
+    var id = req.params.id
     var t = req.userThread;
     var currentUserId = req.session.userId;
     var removeMe = -1;
@@ -253,7 +253,7 @@ exports.hideMessageThread = function(req, res) {
     });
 }
 exports.doesUserOwnAndSeeMessageThread = function(req, res, next) {
-    var id = req.param('id');
+    var id = req.params.id
     var currentUserId = req.session.userId;
     if (id == undefined) return res.status(400).send("Missing parameter id for threadId");
     UserMessageThread.findOne({
@@ -278,7 +278,7 @@ exports.doesUserOwnAndSeeMessageThread = function(req, res, next) {
 exports.getMessagesByThreadId = function(req, res) {
     // call doesUserOwnAndSeeMessageThread before this
     console.log(req.userThread);
-    var threadId = req.param('id');
+    var threadId = req.params.id
     limiterGetMessagesByThreadId.removeTokens(1, function(err, remainingRequests) {
         if (remainingRequests < 0) {
             return res.status(429).send("Slow down. Too many requests.");
@@ -398,7 +398,7 @@ exports.deleteMessageIdInternal = function(req, res, id, cb) {
 }
 exports.deleteById = function(req, res) {
     var currentUserId = req.session.userId;
-    var id = req.param('id');
+    var id = req.params.id
     if (id == undefined) return res.status(400).send("Missing parameter id");
     UserMessage.findOneAndRemove({
         'to.id': currentUserId, //this makes sure i am the owner
@@ -410,7 +410,7 @@ exports.deleteById = function(req, res) {
 }
 
 exports.getMessageById = function(req, res) {
-    var id = req.param('id');
+    var id = req.params.id
     if (id == undefined) return res.status(400).send("Missing parameter id");
     //by having the $or clause i prevent people from reading messages they should not see
     var currentUserId = req.session.userId;

@@ -21,8 +21,6 @@ var limiterRedeemVerifyPhoneNumber = new RateLimiter(10, 'hour', true);
 var validationError = function(res, err) {
     return res.status(422).json(err);
 };
-
-
 var SCHEMA_USER_HIDE_FROM_ME_CREATE = '-salt -hashedPassword -forgotPassCode -phone.verifyCode -phone.attempts';
 var SCHEMA_USER_HIDE_FROM_ME = '-salt -hashedPassword -verification.code -forgotPassCode -phone.verifyCode -phone.attempts';
 var SCHEMA_USER_HIDE_FROM_OTHERS = '-salt -hashedPassword -verification.code -forgotPassCode -phone.verifyCode -phone.number -phone.newNumber -personalBetaCodes -doNotAutoFriend';
@@ -37,7 +35,7 @@ exports.index = function(req, res) {
     });
 };
 /**
- * Creates a new user
+ * Creates a new user from email
  */
 exports.create = function(req, res, next) {
     var newUser = new User(req.body);
@@ -73,9 +71,17 @@ exports.create = function(req, res, next) {
                 return;
             }
             if (user.verification.status == false) {
-                console.log("Sending verification code", user.verification.code);
                 Emailer.sendVerificationSilent(user.email, user.verification.code);
             }
+            // Notify me, that i have made an account
+            Notify.put({
+                forOne: user._id,
+                forMany: [],
+                code: Notify.CODES.account.welcome,
+                params: {
+                    name: user.name
+                }
+            });
             delete user.verification.code;
             res.json({
                 token: token,
@@ -262,10 +268,8 @@ exports.hasFbPermissionInternal = function(req, permission, cb) {
     });
 }
 exports.hasFbPermission = function(req, res) {
-    if (req.param('permission') == undefined) {
-        return res.status(400).send("Missing parameter req.permission");
-    }
-    var permission = req.param('permission');
+    var permission = req.body.permission;
+    if (permission == undefined) return res.status(400).send("Missing parameter req.permission");
     User.findOne({
         _id: req.session.userId
     }, function(err, user) {
@@ -335,7 +339,7 @@ exports.applyBetaCode = function(req, res, next) {
      **/
 exports.removeFriendship = function(req, res) {
         var currentUserId = req.session.userId;
-        var friendId = req.param('id');
+        var friendId = req.params.id
         if (friendId == undefined) return res.status(400).send("Missing parameter, id. The friends user id");
         if (mongoose.Types.ObjectId.isValid(friendId) == false) return res.status(400).send("Invalid friend ID");
         if (currentUserId == undefined) {
@@ -360,7 +364,7 @@ exports.removeFriendship = function(req, res) {
      **/
 exports.requestFriendship = function(req, res) {
     var currentUserId = req.session.userId;
-    var friendId = req.param('id');
+    var friendId = req.params.id
     if (friendId == undefined) return res.status(400).send("Missing parameter, id. The friends user id");
     if (currentUserId == undefined) {
         return res.status(401).send("Please login first"); //they need to relogin
@@ -618,7 +622,7 @@ function _removeFriends(req, res, idOther, idMe, cb) {
  * Get a single user
  */
 exports.show = function(req, res, next) {
-    var userId = req.param('id');
+    var userId = req.params.id
     if (userId == undefined) {
         return res.status(400).send("Missing parameter id");
     }
@@ -852,7 +856,7 @@ exports.me = function(req, res, next) {
  * this is used in the find friends
  **/
 exports.search = function(req, res) {
-    var name = req.param('name');
+    var name = req.body.name;
     if (name == undefined) return res.status(400).send("Missing parameter, name");
     if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) return res.status(400).send("Name contains invalid characters");
     User.find({
@@ -882,8 +886,6 @@ function isChangeAllowed(field, value) {
     }
     return validation(value)
 }
-
-
 exports.setField = function(req, res) {
     var field = req.param('field');
     var value = req.param('value');
@@ -898,16 +900,12 @@ exports.setField = function(req, res) {
     User.findById(currentUserId, SCHEMA_USER_HIDE_FROM_ME, function(err, user) {
         if (err) return validationError(res, err);
         if (!user) return res.status(404).send("User not found");
-
         _.set(user, field, value);
         user.save(function(err) {
             if (err) return validationError(res, err);
             return res.status(200).json(_.get(user, field));
         })
     })
-
-
-
 }
 exports.authCallback = function(req, res, next) {
     res.redirect('/');
