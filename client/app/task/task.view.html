@@ -70,10 +70,7 @@
         </div>
         <div class="row top-buffer2">
             <!--share stuff -->
-            <!-- Facebook Share Button -->
-            <!--btnz share facebook-->
-            <a class="col-md-3 col-sm-3 col-xs-3 btn" style="background-color:#3b5998;color:white" ng-click="_share('fb','Help '+task.ownerName+' with ' + task.name,task.description)" href="#"><i class="fa fa-facebook"></i> Share</a>
-            <!-- Googple Plus Share Button -->
+            <!-- Google Plus Share Button -->
             <!-- <a class="btnz share gplus" href="#"><i class="fa fa-google-plus"></i> Share</a> -->
             <a href="#" class="col-md-3 col-sm-3 col-xs-3 btn" style="background-color:#cc2127;color:white" ng-click="_share('google',task.name,task.description)"><i class="fa fa-google-plus"></i> Share</a>
             <!-- Twitter Share Button -->
@@ -86,6 +83,11 @@
             <a href="#" class="col-md-3 col-sm-3 col-xs-3 btn" style="background-color:#fcd11a;color:white" ng-click="shareTasq(task);"><i class="fa fa-share-alt"></i> Snap</a>
             <!-- LinkedIn Share Button -->
             <!-- <a class="btnz share linkedin" href="#"><i class="fa fa-linkedin"></i> LinkedIn</a> -->
+            <div class="visible-xs col-md-3 col-sm-3 col-xs-3">
+                <div class="fb-share-button" data-href="{{getUrl()}}" data-layout="button_count"></div>
+            </div>
+            <!-- Facebook Share Button -->
+            <a class="hidden-xs col-md-3 col-sm-3 col-xs-3 btn" style="background-color:#3b5998;color:white" ng-click="_share('fb','Help '+task.ownerName+' with ' + task.name,task.description)" href="#"><i class="fa fa-facebook"></i> Share</a>
         </div>
         <div class="row top-buffer">
             <div class="col-md-12 col-sm-12 col-xs-12">

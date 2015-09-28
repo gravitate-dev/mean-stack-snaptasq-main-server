@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('snaptasqApp')
-    .controller('SigninCtrl', function($scope, Beta, $routeParams, $timeout, Task, TaskMarshaler, Auth, $location, $window, notifications, vcRecaptchaService, $rootScope) {
+    .controller('SigninCtrl', function($scope, Beta, $routeParams, $timeout, Task, TaskMarshaler, Auth, $location, $window, notifications, vcRecaptchaService, $rootScope, $cookies) {
 
 
         function createCookie(name, value, days) {
@@ -38,6 +38,7 @@ angular.module('snaptasqApp')
             }
             return r;
         }
+        //this is to check that cookies are there
         $scope.areCookiesEnabled = areCookiesEnabled();
         $scope.handleParams = function() {
             if ($routeParams.action) {
@@ -118,6 +119,14 @@ angular.module('snaptasqApp')
         var handleTaskPostAuthenticate = function(user) {
             // in order to refresh the badges we do this here
             $rootScope.$broadcast('user.state_change', {});
+            var expireDate = new Date();
+            var newDate = expireDate.getDate()
+                //expireDate.setHours(expireDate.getHours()+h);
+            expireDate.setSeconds(expireDate.getSeconds() + 10);
+            // Setting a cookie
+            $cookies.put('myFavorite', 'oatmeal', {
+                'expires': expireDate
+            });
             if (user.requiresBeta && $scope._beta) {
                 $location.path('/beta');
             } else {

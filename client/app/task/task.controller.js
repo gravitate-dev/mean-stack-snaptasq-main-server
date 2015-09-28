@@ -196,6 +196,10 @@ angular.module('snaptasqApp').controller('TaskGlobalCtrl', function($scope, $rou
     _me.$promise.then(function(me) {
         $scope._me = _me;
     });
+
+    $scope.getUrl = function() {
+        return $location.absUrl().split('#')[0]
+    }
     $scope.action = $routeParams.action;
     $scope.id = $routeParams.id;
     $scope.errors = {};
