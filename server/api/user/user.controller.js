@@ -774,19 +774,17 @@ exports.sendForgotPasswordEmail = function(req, res, next) {
 exports.verifyEmailCompleted = function(req, res, next) {
         //TODO: find the verification code in the thing
         var code = req.param('code');
-        if (code == undefined) return res.status(500).json("Invalid verification code, please check again");
+        if (code == undefined) return res.status(500).send("Invalid verification code, please check again");
         User.findOne({
             "verification.code": code
         }, function(err, user) {
             if (err || user == null) {
-                return res.status(500).json({
-                    message: "Invalid verification code"
-                });
+                return res.status(500).send("Invalid verification code");
             }
             user.verification.status = true;
             user.save(function(err) {
                 if (err) return validationError(res, err);
-                res.redirect('/connect');
+                res.redirect('/tasqs');
             });
         });
     }
