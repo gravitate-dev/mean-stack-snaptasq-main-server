@@ -1,5 +1,8 @@
 <div class="panel panel-default">
     <div ng-if="listTitle" snaplist-title="'tasqs'"></div>
+    <a href="/tasq/create">
+        <div snaplist-button="{text:'create new tasq',icon:'fa fa-plus'}"></div>
+    </a>
     <div snaplist-search="searchFilter.text"></div>
     <ul class="list-group" infinite-scroll='loadMore()' infinite-scroll-distance='2'>
         <li class="list-group-item ng-cloak" ng-if="(items | filter:{'name':searchFilter.text}).length==0">

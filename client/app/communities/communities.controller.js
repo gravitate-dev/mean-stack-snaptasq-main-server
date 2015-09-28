@@ -115,6 +115,7 @@ angular.module('snaptasqApp')
         $scope._noFooter();
         $scope.taskFilter = {};
         $scope.friendlistFilter = {};
+        $scope.communityFilter = {};
         _me.$promise.then(function(me) {
             $scope._me = me;
         });

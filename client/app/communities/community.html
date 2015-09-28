@@ -2,11 +2,8 @@
     <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
             <img ng-if="group.pic" style="width:100%;max-height:200px;background-size:cover;" class="ng-scope" ng-src="{{group.pic}}">
-            <div>
-                <a href="{{group.url}}" ng-if="group.url">
-                    <div snaplist-title="group.name" class="text-center"></div>
-                </a>
-                <div ng-if="!group.url" snaplist-title="group.name" class="text-center"></div>
+            <div style="background-color:white;">
+                <div snaplist-title="group.name" class="text-center"></div>
                 <div ng-if="isMember==false">
                     <div ng-click="requestJoin()" snaplist-button="{href:'#',text:'join this community',icon:'fa fa-plus'}"></div>
                     <p>only group members can see tasqs.</p>
@@ -31,6 +28,7 @@
                                 <div tab-heading>
                                     <i class="fa fa-user"></i>&nbsp;Members
                                 </div>
+                                <div ng-click="requestLeave()" snaplist-button="{href:'#',text:'leave this community',icon:'fa fa-warning'}"></div>
                                 <div communityuserslist="id" list-title="false" filter="userFilter"></div>
                             </section>
                             <section tab select="">
@@ -38,10 +36,16 @@
                                     <i class="fa fa-info-circle"></i>&nbsp;Info
                                 </div>
                                 <div class="panel panel-default">
-                                    <div ng-click="requestLeave()" snaplist-button="{href:'#',text:'leave this community',icon:'fa fa-warning'}"></div>
-                                    <p style="white-space: pre-line;">
-                                        {{group.description}}
-                                    </p>
+                                    <a href="{{group.url}}" ng-if="group.url" target="_tab">
+                                        <div snaplist-button="{text:'visit facebook group',icon:'fa fa-link'}"></div>
+                                    </a>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <p style="white-space: pre-line; padding:5px;">
+                                                {{group.description}}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </section>
                         </div>

@@ -14,15 +14,34 @@
                     </div>
                     <div myfriendlist="" list-title="false" list-filter="friendlistFilter"></div>
                 </section>
+                <section tab select="">
+                    <div tab-heading>
+                        <i class="fa fa-users"></i>&nbsp;groups
+                    </div>
+                    <div mycommunitylist="_me.groups" list-title="false" list-filter="communityFilter"></div>
+                </section>
             </div>
         </div>
     </div>
     <div class="row hidden-xs">
         <div class="col-md-5 col-sm-5 col-xs-12">
-            <div myfriendlist="" list-title="true" list-filter="friendlistFilter"></div>
+            <div tabset>
+                <section tab select="">
+                    <div tab-heading>
+                        <i class="fa fa-user"></i>&nbsp;friends
+                    </div>
+                    <div myfriendlist="" list-title="false" list-filter="friendlistFilter"></div>
+                </section>
+                <section tab select="">
+                    <div tab-heading>
+                        <i class="fa fa-users"></i>&nbsp;groups
+                    </div>
+                    <div mycommunitylist="_me.groups" list-title="false" list-filter="communityFilter"></div>
+                </section>
+            </div>
         </div>
         <div class="col-md-7 col-sm-7 col-xs-12">
-            <div snaplist-title="'my friend\'s tasqs'" class="text-center"></div>
+            <div snaplist-title="'my friend\'s activity'" class="text-center"></div>
             <div communityfriendtaskslist="" list-title="false" filter="taskFilter"></div>
         </div>
     </div>
