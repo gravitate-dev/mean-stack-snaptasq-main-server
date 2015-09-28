@@ -52,7 +52,7 @@ angular.module('snaptasqApp')
             },
             link: function(scope, element, attrs) {}
         };
-    }).directive('snaplistResultsTask', function($location) {
+    }).directive('snaplistResultsTask', function($location, User) {
         return {
             restrict: 'ACE',
             replace: false,
@@ -61,6 +61,10 @@ angular.module('snaptasqApp')
             },
             templateUrl: 'components/snaplist/base/results/task.results.template.html',
             controller: function($scope) {
+
+                User.get(function(me) {
+                    $scope._me = me;
+                });
                 $scope._goToPath = function(url, $event) {
                     if (!angular.isUndefined($event)) {
                         $event.stopPropagation();

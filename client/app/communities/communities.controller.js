@@ -1,6 +1,9 @@
 'use strict';
 angular.module('snaptasqApp')
-    .controller('CommunityJoinCtrl', function($scope, Auth, notifications, Community, Notification, FbCommunity, $window, $timeout, $location, $route) {
+    .controller('CommunityJoinCtrl', function($scope, Modal, Auth, notifications, Community, Notification, FbCommunity, $window, $timeout, $location, $route) {
+
+        // when going to this from share tasq a modal is shown and it should be dismissed
+        Modal.closeCurrent();
         $scope.freezeInput = false;
         $scope.noResults = false;
         $scope.searchResults = [];

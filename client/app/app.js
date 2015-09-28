@@ -1,5 +1,5 @@
 'use strict';
-var app = angular.module('snaptasqApp', ['ui.mask', 'ngAudio', 'infinite-scroll', 'angucomplete-alt' /*,'bcherny/formatAsCurrency'*/ , 'slick', 'angularMoment', 'LocalStorageModule', 'seo', 'FBAngular', 'ezfb', 'djds4rce.angular-socialshare', 'ngDisqus', 'ui-notification', 'pasvaz.bindonce', 'uiGmapgoogle-maps', 'ngAutocomplete', 'commentBox', 'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'btford.socket-io', 'ui.bootstrap', 'ngAnimate', 'ngNotificationsBar', 'vcRecaptcha'])
+var app = angular.module('snaptasqApp', ['ui.utils.masks', 'ngAudio', 'infinite-scroll', 'angucomplete-alt' /*,'bcherny/formatAsCurrency'*/ , 'slick', 'angularMoment', 'LocalStorageModule', 'seo', 'FBAngular', 'ezfb', 'djds4rce.angular-socialshare', 'ngDisqus', 'ui-notification', 'pasvaz.bindonce', 'uiGmapgoogle-maps', 'ngAutocomplete', 'commentBox', 'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'btford.socket-io', 'ui.bootstrap', 'ngAnimate', 'ngNotificationsBar', 'vcRecaptcha'])
     .config(function($routeProvider) {
         $routeProvider.otherwise({
             redirectTo: '/'

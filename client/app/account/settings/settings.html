@@ -64,13 +64,13 @@
             <div ng-if="_me.phone.verified==false">
                 <p>If you would like to be notified by text message if you are chosen to help out. Enter your phone number below.</p>
                 <form ng-if="canEnterVerificationCode==false" class="top-buffer">
-                    <input type="text" ng-model="phoneNumber" ui-mask="(999) 999-9999" />&nbsp;
+                    <input type="tel" ng-model="phoneNumber" ui-us-phone-number maxlength="14" />&nbsp;
                     <button class="btn btn-primary" ng-click="sendCode(phoneNumber)">ok</button>
                     <div class="text-error" style="color:red;">{{error}}</div>
                 </form>
                 <form ng-if="canEnterVerificationCode" class="top-buffer">
                     <p class="lead">Enter the verification code we sent you below</p>
-                    <input type="text" ng-model="verifyCode" ui-mask="****" />&nbsp;
+                    <input type="text" ng-model="verifyCode" maxlength="4" />&nbsp;
                     <button class="btn btn-primary" ng-click="redeemCode(verifyCode);">redeem</button>&nbsp;
                     <button class="btn btn-danger" ng-click="goBack();">cancel</button>
 
