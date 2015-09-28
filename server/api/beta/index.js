@@ -17,6 +17,5 @@ router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 router.post('/:id/activate', auth.hasRole('admin'), controller.activate);
 router.post('/:id/deactivate', auth.hasRole('admin'), controller.deactivate);
 router.post('/:code/redeem', auth.isAuthenticated(), controller.redeem);
-router.post('/addEmailBetaList', recaptcha.check, controller.addEmailBetaList);
 
 module.exports = router;

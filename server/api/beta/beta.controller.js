@@ -22,16 +22,16 @@ exports.index = function(req, res) {
 exports.isValidCode = function(req, res, next) {
     limiter.removeTokens(1, function(err, remainingRequests) {
         if (remainingRequests < 0) {
-            return res.send(429, 'Too Many Requests - your IP is being rate limited. Please try again in one minute');
+            return res.status(429).send('Too Many Requests - your IP is being rate limited. Please try again in one minute');
         } else {
             var betaCode = req.body.id;
             Beta.findOne({
                 "name": betaCode
             }, function(err, beta) {
                 if (err) return handleError(res, err);
-                if (!beta) return res.send(500, "This beta code has is no longer valid. Check your spelling.");
-                if (beta.status != "active") return res.send(500, "This beta code has is no longer valid. It is set to inactive");
-                if (beta.maxUses <= beta.uses) return res.send(500, "This beta code is no longer valid. It has been used up by " + beta.maxUses + " people already.");
+                if (!beta) return res.status(500).send("This beta code has is no longer valid. Check your spelling.");
+                if (beta.status != "active") return res.status(500).send("This beta code has is no longer valid. It is set to inactive");
+                if (beta.maxUses <= beta.uses) return res.status(500).send("This beta code is no longer valid. It has been used up by " + beta.maxUses + " people already.");
                 if (beta.isCodeRoot == false) {
                     //if the beta code is not root, then we will need to remove it from the user that has it
                     User.update({
@@ -94,13 +94,13 @@ exports.redeem = function(req, res, next) {
     Beta.findOne({
         "name": betaCode
     }, function(err, beta) {
-        if (!beta) return res.send(400, "Invalid beta code");
-        if (beta.status != "active") return res.send(400, "Beta code invalid");
-        if (beta.maxUses <= beta.uses) return res.send(400, "Beta code has reached its max uses");
+        if (!beta) return res.status(400).send("Invalid beta code");
+        if (beta.status != "active") return res.status(400).send("Beta code invalid");
+        if (beta.maxUses <= beta.uses) return res.status(400).send("Beta code has reached its max uses");
         beta.uses += 1;
         beta.save(function(err) {
             if (err) return validationError(res, err);
-            return res.send(200, "Success, welcome to the beta");
+            return res.status(200).send("Success, welcome to the beta");
         });
     });
 };
@@ -150,25 +150,11 @@ exports.create = function(req, res) {
 // Deletes a beta from the DB.
 exports.destroy = function(req, res) {
     Beta.findByIdAndRemove(req.params.id, function(err, user) {
-        if (err) return res.send(500, err);
+        if (err) return res.status(500).send(err);
         return res.send(204);
     });
 };
 
-
-exports.addEmailBetaList = function(req, res) {
-    var email = req.param('email');
-    if (email == undefined) return res.status(500).json({
-        message: "Missing email address"
-    });
-
-
-    return res.status(200).json({
-        "message": "Added your email to the list"
-    });
-
-}
-
 function handleError(res, err) {
-    return res.send(500, err);
+    return res.status(500).send(err);
 }

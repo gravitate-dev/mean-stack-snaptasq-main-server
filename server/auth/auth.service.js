@@ -68,7 +68,7 @@ function signToken(id) {
  */
 function setTokenCookie(req, res) {
     //only called for oauth
-    if (!req.user) return res.json(404, {
+    if (!req.user) return res.status(404).json({
         message: 'Something went wrong, please try again.'
     });
     var token = signToken(req.user._id, req.user.role);

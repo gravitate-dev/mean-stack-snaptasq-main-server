@@ -24,7 +24,7 @@ exports.processSearch = function(req, res, next) {
             };
         } else {
             console.error("Age requested is invalid", age);
-            return res.json(500, []);
+            return res.status(500).json([]);
         }
     }
     //id is not good
@@ -35,7 +35,7 @@ exports.processSearch = function(req, res, next) {
             query._id = { $lt : id };
         } else {
             console.error("Object ID is invalid",id);
-            return res.json(500,[]);
+            return res.status(500).json([]);
         }
     }
     */
@@ -43,7 +43,7 @@ exports.processSearch = function(req, res, next) {
     if (name != undefined) {
         if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) {
             console.error("Invalid name in dsl, ", name);
-            return res.json(500, []);
+            return res.status(500).json([]);
         }
         //then add it
         query.name = new RegExp('^' + name, "i");

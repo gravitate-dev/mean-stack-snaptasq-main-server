@@ -19,10 +19,11 @@ var RateLimiter = require('limiter').RateLimiter;
 var limiterVerifyPhoneNumber = new RateLimiter(3, 'hour', true);
 var limiterRedeemVerifyPhoneNumber = new RateLimiter(10, 'hour', true);
 var validationError = function(res, err) {
-    return res.json(422, err);
+    return res.status(422).json(err);
 };
 
 
+var SCHEMA_USER_HIDE_FROM_ME_CREATE = '-salt -hashedPassword -forgotPassCode -phone.verifyCode -phone.attempts';
 var SCHEMA_USER_HIDE_FROM_ME = '-salt -hashedPassword -verification.code -forgotPassCode -phone.verifyCode -phone.attempts';
 var SCHEMA_USER_HIDE_FROM_OTHERS = '-salt -hashedPassword -verification.code -forgotPassCode -phone.verifyCode -phone.number -phone.newNumber -personalBetaCodes -doNotAutoFriend';
 /**
@@ -31,7 +32,7 @@ var SCHEMA_USER_HIDE_FROM_OTHERS = '-salt -hashedPassword -verification.code -fo
  */
 exports.index = function(req, res) {
     User.find({}, '-salt -hashedPassword -verification.code -forgotPassCode -personalBetaCodes', function(err, users) {
-        if (err) return res.send(500, err);
+        if (err) return res.status(500).send(err);
         res.status(200).json(users);
     });
 };
@@ -44,7 +45,10 @@ exports.create = function(req, res, next) {
     newUser.accountName = newUser.name;
     newUser.provider = 'local';
     newUser.role = 'user';
-    newUser.verification.code = uuid.v4();
+    newUser.verification = {
+        code: uuid.v4(),
+        status: false
+    };
     newUser.forgotPassCode = uuid.v4();
     newUser.requiresBeta = config.betaTrails;
     if (config.dontRequireEmailVerification) {
@@ -60,7 +64,7 @@ exports.create = function(req, res, next) {
         req.session.userId = user._id;
         req.session.save();
         //(toId,code,params,link,cb)
-        User.findById(user._id, SCHEMA_USER_HIDE_FROM_ME, function(err, user) {
+        User.findById(user._id, SCHEMA_USER_HIDE_FROM_ME_CREATE, function(err, user) {
             if (err || user == null) {
                 return res.status(500).json({
                     status: "error",
@@ -69,8 +73,10 @@ exports.create = function(req, res, next) {
                 return;
             }
             if (user.verification.status == false) {
-                Emailer.resendVerificationSilent(user.email, user.verification.code);
+                console.log("Sending verification code", user.verification.code);
+                Emailer.sendVerificationSilent(user.email, user.verification.code);
             }
+            delete user.verification.code;
             res.json({
                 token: token,
                 user: user
@@ -80,13 +86,13 @@ exports.create = function(req, res, next) {
 };
 exports.getFbAccessToken = function(req, res, next) {
     var currentUserId = req.session.userId;
-    if (currentUserId) return res.send(401, "Please login again");
+    if (currentUserId == undefined) return res.status(401).send("Please login again");
     User.findOne({
         _id: currentUserId
     }, SCHEMA_USER_HIDE_FROM_ME, function(err, user) {
         if (err) validationError(res, err);
-        if (!user) return res.send(403, "Please login again");
-        if (!user.fb) return res.send(403, "You are not connected with facebook");
+        if (!user) return res.status(403).send("Please login again");
+        if (!user.fb) return res.status(403).send("You are not connected with facebook");
         req.token = user.fb.accessToken;
         next();
     });
@@ -115,21 +121,21 @@ function isValidPhoneNumber(inputtxt) {
 exports.sendVerificationText = function(req, res) {
         // I dont rate limit when you are not logged in.
         var currentUserId = req.session.userId;
-        if (currentUserId == undefined) return res.send(401, "Please login again");
+        if (currentUserId == undefined) return res.status(401).send("Please login again");
         limiterVerifyPhoneNumber.removeTokens(1, function(err, remainingRequests) {
             console.log(remainingRequests);
             if (remainingRequests < 0) {
-                return res.send(429, 'Too many requests, try again in an hour or contact support for additional help');
+                return res.status(429).send('Too many requests, try again in an hour or contact support for additional help');
             } else {
                 var currentUserId = req.session.userId;
-                if (currentUserId == undefined) return res.send(401, "Please login again");
+                if (currentUserId == undefined) return res.status(401).send("Please login again");
                 var number = req.param('number');
-                if (number == undefined || !isValidPhoneNumber(number)) return res.send(400, "Invalid phone number");
+                if (number == undefined || !isValidPhoneNumber(number)) return res.status(400).send("Invalid phone number");
                 User.findOne({
                     _id: currentUserId
                 }, function(err, user) {
                     if (err) validationError(res, err);
-                    if (!user) return res.send(401, "Please login again");
+                    if (!user) return res.status(401).send("Please login again");
                     var notVerifiedYet = false;
                     var isChangingNumber = false;
                     if (user.phone == undefined) {
@@ -160,10 +166,10 @@ exports.sendVerificationText = function(req, res) {
                         user.save(function(err) {
                             if (err) return validationError(res, err);
                             sms.text(number, phoneVerifyCode + " is your verification code. Please enter this in your account settings. You can always turn off text notifications in your account settings as well. Enjoy, snaptasq.")
-                            return res.send(200, "Verification text sent to your phone. Please enter this code.")
+                            return res.status(200).send("Verification text sent to your phone. Please enter this code.")
                         });
                     } else {
-                        return res.send(500, "Phone number already verified");
+                        return res.status(500).send("Phone number already verified");
                     }
                 });
             }
@@ -176,18 +182,18 @@ exports.sendVerificationText = function(req, res) {
      */
 exports.redeemPhoneVerifyCode = function(req, res) {
     var currentUserId = req.session.userId;
-    if (currentUserId == undefined) return res.send(401, "Please login again");
+    if (currentUserId == undefined) return res.status(401).send("Please login again");
     var code = req.param('code');
-    if (code == undefined) return res.send(400, "Missing code. The code to verify your phone number");
+    if (code == undefined) return res.status(400).send("Missing code. The code to verify your phone number");
     limiterRedeemVerifyPhoneNumber.removeTokens(1, function(err, remainingRequests) {
         if (remainingRequests < 0) {
-            return res.send(429, 'Too many requests, try again in an hour');
+            return res.status(429).send('Too many requests, try again in an hour');
         } else {
             User.findOne({
                 _id: currentUserId
             }, function(err, user) {
                 if (err) validationError(res, err);
-                if (!user) return res.send(401, "Please login again");
+                if (!user) return res.status(401).send("Please login again");
                 console.log(JSON.stringify(user.phone));
                 var doesCodeMatch = (user.phone.verifyCode != undefined && user.phone.verifyCode == code);
                 if (doesCodeMatch) {
@@ -197,10 +203,10 @@ exports.redeemPhoneVerifyCode = function(req, res) {
                     user.phone.verifyCode = uuid.v4().substring(0, 4);
                     user.save(function(err) {
                         if (err) return validationError(res, err);
-                        return res.send(200, "Your phone number is now verified");
+                        return res.status(200).send("Your phone number is now verified");
                     });
                 } else {
-                    return res.send(403, "You have entered an incorrect code");
+                    return res.status(403).send("You have entered an incorrect code");
                 }
             });
         }
@@ -257,20 +263,20 @@ exports.hasFbPermissionInternal = function(req, permission, cb) {
 }
 exports.hasFbPermission = function(req, res) {
     if (req.param('permission') == undefined) {
-        return res.send(400, "Missing parameter req.permission");
+        return res.status(400).send("Missing parameter req.permission");
     }
     var permission = req.param('permission');
     User.findOne({
         _id: req.session.userId
     }, function(err, user) {
         if (err) validationError(res, err);
-        if (!user) return res.send(403, "Please login again");
-        if (!user.fb) return res.send(500, "You are not connected with facebook");
+        if (!user) return res.status(403).send("Please login again");
+        if (!user.fb) return res.status(500).send("You are not connected with facebook");
         /** if facebook starts bitching about API call rates turn this baby on **/
         /*if (user.fb.permissions){
             for (var i = 0; i < user.fb.permissions.length;i++){
                 if (user.fb.permissions[i]==permission){
-                    return res.send(200,"Permissions granted already");
+                    return res.status(200).send("Permissions granted already");
                 }
             }
         }*/
@@ -278,19 +284,19 @@ exports.hasFbPermission = function(req, res) {
             access_token: user.fb.accessToken
         }, function(err, response) {
             if (err) {
-                return res.send(500, "Error with getting /permissions from user " + user._id.toString());
+                return res.status(500).send("Error with getting /permissions from user " + user._id.toString());
             }
             //user.fb.permissions = [];
             var hasPermission = false;
-            if (!response) return res.send(500, "no response");
-            if (!response.data) return res.send(500, "bad response");
+            if (!response) return res.status(500).send("no response");
+            if (!response.data) return res.status(500).send("bad response");
             for (var i = 0; i < response.data.length; i++) {
                 var item = response.data[i];
                 if (item.status == "granted" && item.permission == permission) {
-                    return res.send(200, "Facebook permission exists");
+                    return res.status(200).send("Facebook permission exists");
                 }
             }
-            return res.send(500, "Facebook permission not there");
+            return res.status(500).send("Facebook permission not there");
         });
     });
 };
@@ -307,8 +313,8 @@ exports.applyBetaCode = function(req, res, next) {
             _id: currentUserId
         }, function(err, user) {
             if (err) validationError(res, err);
-            if (!user) return res.send(401, "Please login again");
-            if (!user.requiresBeta) return res.send(400, "Success, you have already entered a beta code!");
+            if (!user) return res.status(401).send("Please login again");
+            if (!user.requiresBeta) return res.status(400).send("Success, you have already entered a beta code!");
             user.requiresBeta = false;
             if (req.beta.isCodeRoot) {
                 //generate two more beta codes then save them to the user object
@@ -330,20 +336,20 @@ exports.applyBetaCode = function(req, res, next) {
 exports.removeFriendship = function(req, res) {
         var currentUserId = req.session.userId;
         var friendId = req.param('id');
-        if (friendId == undefined) return res.send(400, "Missing parameter, id. The friends user id");
-        if (mongoose.Types.ObjectId.isValid(friendId) == false) return res.send(400, "Invalid friend ID");
+        if (friendId == undefined) return res.status(400).send("Missing parameter, id. The friends user id");
+        if (mongoose.Types.ObjectId.isValid(friendId) == false) return res.status(400).send("Invalid friend ID");
         if (currentUserId == undefined) {
-            return res.send(401, "Please login first"); //they need to relogin
+            return res.status(401).send("Please login first"); //they need to relogin
         }
         User.findById(currentUserId, function(err, user) {
             if (err) validationError(res, err);
-            if (!user) return res.send(401, "Please login first");
+            if (!user) return res.status(401).send("Please login first");
             if (!_isFriendsAlready(user, friendId)) {
-                return res.send(500, "You are already not friends");
+                return res.status(500).send("You are already not friends");
             }
             _removeFriends(req, res, friendId, currentUserId, function(wasSuccess) {
-                if (wasSuccess) return res.send(200, "You are no longer friends.");
-                else return res.send(500, "An error occured.");
+                if (wasSuccess) return res.status(200).send("You are no longer friends.");
+                else return res.status(500).send("An error occured.");
             });
         });
     }
@@ -355,17 +361,17 @@ exports.removeFriendship = function(req, res) {
 exports.requestFriendship = function(req, res) {
     var currentUserId = req.session.userId;
     var friendId = req.param('id');
-    if (friendId == undefined) return res.send(400, "Missing parameter, id. The friends user id");
+    if (friendId == undefined) return res.status(400).send("Missing parameter, id. The friends user id");
     if (currentUserId == undefined) {
-        return res.send(401, "Please login first"); //they need to relogin
+        return res.status(401).send("Please login first"); //they need to relogin
     }
     User.findOne({
         _id: currentUserId
     }, function(err, user) {
         if (err) validationError(res, err);
-        if (!user) return res.send(401, "Please login first");
+        if (!user) return res.status(401).send("Please login first");
         if (_isFriendsAlready(user, friendId)) {
-            return res.send(200, "You are already friends");
+            return res.status(200).send("You are already friends");
         }
         //check the callers canFriends. If they can friend then make a friendship
         var isCompletingFriendship = false;
@@ -380,7 +386,7 @@ exports.requestFriendship = function(req, res) {
                 if (wasSuccess) {
                     User.findById(friendId, function(err, frnd) {
                         if (err) return validationError(res, err);
-                        if (!frnd) return res.send(404, "Friend not found.");
+                        if (!frnd) return res.status(404).send("Friend not found.");
                         // Notify friend, that i have am your friend
                         Notify.put({
                             forOne: friendId,
@@ -412,10 +418,10 @@ exports.requestFriendship = function(req, res) {
                             "forOne": friendId,
                             "source": user._id
                         });
-                        return res.send(200, "You are now friends.");
+                        return res.status(200).send("You are now friends.");
                     });
                     // Notify friend, that i am your friend
-                } else return res.send(500, "An error occured.");
+                } else return res.status(500).send("An error occured.");
             });
         } else {
             //send a friend request to the other user
@@ -424,11 +430,11 @@ exports.requestFriendship = function(req, res) {
                 if (err) {
                     return validationError(res, err);
                 }
-                if (!frnd) return res.send(404, "User does not exist anymore");
+                if (!frnd) return res.status(404).send("User does not exist anymore");
                 // check for duplicate friend requests
                 for (var i = 0; i < frnd.canFriend.length; i++) {
                     if (frnd.canFriend[i].equals(user._id)) {
-                        return res.send(500, "You have already sent a friend request to this person");
+                        return res.status(500).send("You have already sent a friend request to this person");
                     }
                 }
                 // if no duplicates then proceed
@@ -451,7 +457,7 @@ exports.requestFriendship = function(req, res) {
                             name: user.name
                         }
                     });
-                    return res.send(200, "Friend request has been sent");
+                    return res.status(200).send("Friend request has been sent");
                 });
             });
         }
@@ -480,22 +486,22 @@ function _isFriendsAlready(user, friendId) {
 }
 
 function _makeFriends(req, res, idOther, idMe, cb) {
-    if (idMe == undefined) return res.send(400, "Me id, can not be undefined in _makeFriends");
-    if (idOther == undefined) return res.send(400, "Other id, can not be undefined in _makeFriends");
+    if (idMe == undefined) return res.status(400).send("Me id, can not be undefined in _makeFriends");
+    if (idOther == undefined) return res.status(400).send("Other id, can not be undefined in _makeFriends");
     //this can only be called by addFriendToMe
     if (idMe != req.session.userId) {
-        return res.send(403, "Only you can add friends to yourself");
+        return res.status(403).send("Only you can add friends to yourself");
     }
     User.findOne({
         _id: idOther
     }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, other) { // don't ever give out the password or salt
-        if (err) return res.send(500, err);
-        if (!other) return res.send(404, "This user no longer exists");
+        if (err) return res.status(500).send(err);
+        if (!other) return res.status(404).send("This user no longer exists");
         User.findOne({
             _id: idMe
         }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, me) { // don't ever give out the password or salt
-            if (err) return res.send(500, err);
-            if (!me) return res.send(404, "Your account no longer exists"); //strange but logical
+            if (err) return res.status(500).send(err);
+            if (!me) return res.status(404).send("Your account no longer exists"); //strange but logical
             //now check if i am already their friend
             var needToSaveOther = false;
             if (!_isFriendsAlready(me, other._id)) {
@@ -545,22 +551,22 @@ function _makeFriends(req, res, idOther, idMe, cb) {
  * This will unfriend each other
  **/
 function _removeFriends(req, res, idOther, idMe, cb) {
-    if (idMe == undefined) return res.send(400, "Me id, can not be undefined in _makeFriends");
-    if (idOther == undefined) return res.send(400, "Other id, can not be undefined in _makeFriends");
+    if (idMe == undefined) return res.status(400).send("Me id, can not be undefined in _makeFriends");
+    if (idOther == undefined) return res.status(400).send("Other id, can not be undefined in _makeFriends");
     //this can only be called by addFriendToMe
     if (idMe != req.session.userId) {
-        return res.send(403, "Only you can remove your own friends");
+        return res.status(403).send("Only you can remove your own friends");
     }
     User.findOne({
         _id: idOther
     }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, other) { // don't ever give out the password or salt
-        if (err) return res.send(500, err);
+        if (err) return res.status(500).send(err);
         //if the other peson doesnt exist it should be fine to unfriend anyways
         User.findOne({
             _id: idMe
         }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, me) { // don't ever give out the password or salt
-            if (err) return res.send(500, err);
-            if (!me) return res.send(404, "Your account no longer exists"); //strange but logical
+            if (err) return res.status(500).send(err);
+            if (!me) return res.status(404).send("Your account no longer exists"); //strange but logical
             // lets remove the canFriend too
             me.canFriend = _.filter(me.canFriend, function(item) {
                 return !item.equals(idOther);
@@ -614,7 +620,7 @@ function _removeFriends(req, res, idOther, idMe, cb) {
 exports.show = function(req, res, next) {
     var userId = req.param('id');
     if (userId == undefined) {
-        return res.send(400, "Missing parameter id");
+        return res.status(400).send("Missing parameter id");
     }
     User.findById(userId, SCHEMA_USER_HIDE_FROM_OTHERS, function(err, user) {
         if (err) return next(err);
@@ -628,7 +634,7 @@ exports.show = function(req, res, next) {
  */
 exports.destroy = function(req, res) {
     User.findByIdAndRemove(req.params.id, function(err, user) {
-        if (err) return res.send(500, err);
+        if (err) return res.status(500).send(err);
         return res.send(204);
     });
 };
@@ -647,14 +653,14 @@ exports.destroy = function(req, res) {
 exports.deleteMyAccount = function(req, res) {
     var currentUserId = req.session.userId;
     if (currentUserId == undefined) {
-        return res.send(500, "Missing session userId");
+        return res.status(500).send("Missing session userId");
     }
     if (req.param('id') != currentUserId) {
-        return res.send(500, "The id that was sent did not match the userId");
+        return res.status(500).send("The id that was sent did not match the userId");
     }
     // its written this way to trigger the remove hooks
     User.findById(currentUserId, function(err, user) {
-        if (err) return res.send(500, err);
+        if (err) return res.status(500).send(err);
         user.remove(function() {
             req.session.destroy();
             return res.send(204);
@@ -768,7 +774,7 @@ exports.sendForgotPasswordEmail = function(req, res, next) {
 exports.verifyEmailCompleted = function(req, res, next) {
         //TODO: find the verification code in the thing
         var code = req.param('code');
-        if (code == undefined) return res.json(500, "Invalid verification code, please check again");
+        if (code == undefined) return res.status(500).json("Invalid verification code, please check again");
         User.findOne({
             "verification.code": code
         }, function(err, user) {
@@ -849,14 +855,14 @@ exports.me = function(req, res, next) {
  **/
 exports.search = function(req, res) {
     var name = req.param('name');
-    if (name == undefined) return res.send(400, "Missing parameter, name");
-    if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) return res.send(400, "Name contains invalid characters");
+    if (name == undefined) return res.status(400).send("Missing parameter, name");
+    if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) return res.status(400).send("Name contains invalid characters");
     User.find({
         name: new RegExp('^' + name, "i")
     }, SCHEMA_USER_HIDE_FROM_OTHERS).sort({
         'updated': -1
     }).limit(30).exec(function(err, users) {
-        if (err) return res.send(500, err);
+        if (err) return res.status(500).send(err);
         var everyoneButMe = _.filter(users, function(item) {
             return !item._id.equals(req.session.userId);
         });
@@ -884,16 +890,16 @@ exports.setField = function(req, res) {
     var field = req.param('field');
     var value = req.param('value');
     var currentUserId = req.session.userId;
-    if (field == undefined) return res.send(400, "Missing parameter field");
-    if (value == undefined) return res.send(400, "Missing parameter value");
-    if (currentUserId == undefined) return res.send(401, "Please login again");
+    if (field == undefined) return res.status(400).send("Missing parameter field");
+    if (value == undefined) return res.status(400).send("Missing parameter value");
+    if (currentUserId == undefined) return res.status(401).send("Please login again");
     // check field for allowed fields
     if (!isChangeAllowed(field, value)) {
-        return res.send(500, "Unallowed to change field to that value ", field, value);
+        return res.status(500).send("Unallowed to change field to that value ", field, value);
     }
     User.findById(currentUserId, SCHEMA_USER_HIDE_FROM_ME, function(err, user) {
         if (err) return validationError(res, err);
-        if (!user) return res.send(404, "User not found");
+        if (!user) return res.status(404).send("User not found");
 
         _.set(user, field, value);
         user.save(function(err) {

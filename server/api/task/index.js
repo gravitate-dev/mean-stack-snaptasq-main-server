@@ -8,11 +8,8 @@ var router = express.Router();
 
 router.get('/', controller.index);
 router.get('/me', auth.isAuthenticated(), dsl.processSearch, controller.getMyTasks); // dsl
-router.get('/meResponsible', auth.isAuthenticated(), dsl.processSearch, controller.getTasksResponsible);
 router.get('/meApplied', auth.isAuthenticated(), dsl.processSearch, controller.getMyAppliedTasks);
 router.get('/meFriends', auth.isAuthenticated(), dsl.processSearch, controller.getMyFriendsTasks);
-
-router.get('/countResponsible', auth.isAuthenticated(), dsl.processSearch, controller.countResponsibleTasks);
 
 router.get('/friends/:id', dsl.processSearch, controller.getUsersTasksByUserId); //dsl
 router.get('/:id', controller.show);

@@ -211,8 +211,8 @@ function getMyNotifications(req, res) {
 function hideById(req, res) {
     var id = req.param('id');
     var currentUserId = req.session.userId;
-    if (currentUserId == undefined) return res.send(401, "Please login again");
-    if (id == undefined) return res.send(400, "Missing parameter id. The notification id you want to remove.");
+    if (currentUserId == undefined) return res.status(401).send("Please login again");
+    if (id == undefined) return res.status(400).send("Missing parameter id. The notification id you want to remove.");
 
     var query = {
         _id: id
@@ -237,7 +237,7 @@ function hideById(req, res) {
                 doc.forOne = undefined;
                 doc.save();
             }
-            return res.send(200, "Success");
+            return res.status(200).send("Success");
         });
     });
 }

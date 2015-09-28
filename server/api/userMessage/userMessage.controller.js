@@ -24,13 +24,13 @@ var CONST_MAX_EMAILS_PER_PAGE = 30;
 exports.create = function(req, res) {
     limiterCreateMessage.removeTokens(1, function(err, remainingRequests) {
         if (remainingRequests < 0) {
-            return res.send(429, 'Too Many Requests - your IP is being rate limited. Please try again in one minute');
+            return res.status(429).send('Too Many Requests - your IP is being rate limited. Please try again in one minute');
         } else {
             var toId = req.param('toId');
-            if (toId == undefined) return res.send(400, "Missing parameter toId");
+            if (toId == undefined) return res.status(400).send("Missing parameter toId");
             var fromId = req.session.userId;
             var type = req.param('type'); // type is normal, friendRequest
-            if (type == undefined) return res.send(400, "Missing parameter type to describe the type of message");
+            if (type == undefined) return res.status(400).send("Missing parameter type to describe the type of message");
 
             var newObj = new UserMessage(req.body);
             if (type == "friendRequest") {
@@ -40,8 +40,8 @@ exports.create = function(req, res) {
             User.findOne({
                 _id: currentUserId
             }, function(err, me) {
-                if (err) return res.send(500, err);
-                if (!me) return res.send(404, "Could not find your user account");
+                if (err) return res.status(500).send(err);
+                if (!me) return res.status(404).send("Could not find your user account");
                 //i allow self replies
                 if (type != "friendRequest") {
                     //if i am sending a nonfriend request to a nonfriend this is not allowed
@@ -53,21 +53,21 @@ exports.create = function(req, res) {
                         if (temp != currentUserId) { //i am allowing replies to self.
                             if (!UserCtrl.isFriendsAlready(me, toId)) {
                                 console.log("Message can only be sent to yourself, or a friend. You are neither.")
-                                return res.send(403, "Unable to send message to user.");
+                                return res.status(403).send("Unable to send message to user.");
                             }
                         }
                     }
                 } else if (type == "friendRequest") {
                     //check if already friends if so then stop here.
                     if (UserCtrl.isFriendsAlready(me, toId)) {
-                        return res.send(500, "You are already friends");
+                        return res.status(500).send("You are already friends");
                     }
                 }
                 User.findOne({
                     _id: toId
                 }, function(err, other) {
-                    if (err) return res.send(500, err);
-                    if (!other) return res.send(404, "Could not find target user");
+                    if (err) return res.status(500).send(err);
+                    if (!other) return res.status(404).send("Could not find target user");
                     newObj.to = {
                         id: other._id,
                         name: other.name,
@@ -143,7 +143,7 @@ function _addMessageToThread(req, res, message, cb) {
                     isMyThread = true;
             });
             if (!isMyThread) {
-                return res.send(403, "You can only reply to messages you are part of");
+                return res.status(403).send("You can only reply to messages you are part of");
             }
             umsgthread.viewerIds = umsgthread.ownerIds;
             umsgthread.last = message.from;
@@ -172,12 +172,12 @@ function _addMessageToThread(req, res, message, cb) {
  **/
 exports.isValidFriendRequest = function(req, res, messageId, fromUserId, toUserId, cb) {
 
-    if (messageId == undefined) return res.send(400, "Missing parameter messageId");
-    if (fromUserId == undefined) return res.send(400, "Missing parameter fromUserId");
-    if (toUserId == undefined) return res.send(400, "Missing parameter toUserId");
+    if (messageId == undefined) return res.status(400).send("Missing parameter messageId");
+    if (fromUserId == undefined) return res.status(400).send("Missing parameter fromUserId");
+    if (toUserId == undefined) return res.status(400).send("Missing parameter toUserId");
     //to userId should be self
     if (req.session.userId != toUserId) {
-        return res.send(500, "Only you can accept your own friend requests");
+        return res.status(500).send("Only you can accept your own friend requests");
     }
     UserMessage.findOne({
         _id: messageId,
@@ -185,8 +185,8 @@ exports.isValidFriendRequest = function(req, res, messageId, fromUserId, toUserI
         'to.id': toUserId,
         'type': 'friendRequest'
     }, function(err, umsg) {
-        if (err) return res.send(500, err);
-        if (!umsg) return res.send(404, "Message not found");
+        if (err) return res.status(500).send(err);
+        if (!umsg) return res.status(404).send("Message not found");
         //if there is a msg that means i am friend requested!
         return cb(true);
     });
@@ -194,12 +194,12 @@ exports.isValidFriendRequest = function(req, res, messageId, fromUserId, toUserI
 exports.replyToMessage = function(req, res) {
     limiterReplyToMessage.removeTokens(1, function(err, remainingRequests) {
         if (remainingRequests < 0) {
-            return res.send(429, "Too many replies. Please wait for 60 seconds then try again.");
+            return res.status(429).send("Too many replies. Please wait for 60 seconds then try again.");
         } else {
             var id = req.param('id');
-            if (id == undefined) return res.send(400, "Missing parameter id");
+            if (id == undefined) return res.status(400).send("Missing parameter id");
             var reply = req.param('reply');
-            if (reply == undefined || _.isEmpty(reply)) return res.send(400, "Can't send an empty response");
+            if (reply == undefined || _.isEmpty(reply)) return res.status(400).send("Can't send an empty response");
 
             //by having the $or clause i prevent people from reading messages they should not see
             var currentUserId = req.session.userId;
@@ -207,8 +207,8 @@ exports.replyToMessage = function(req, res) {
                 _id: id,
                 'to.id': currentUserId,
             }, function(err, umsg) {
-                if (err) return res.send(500, err);
-                if (!umsg) return res.send(404, "Message not found");
+                if (err) return res.status(500).send(err);
+                if (!umsg) return res.status(404).send("Message not found");
                 var replyMsg = new UserMessage(umsg);
                 replyMsg.body = reply;
                 replyMsg._id = mongoose.Types.ObjectId();
@@ -249,18 +249,18 @@ exports.hideMessageThread = function(req, res) {
     });
     t.save(function(err, umsgthread) {
         if (err) return validationError(res, err);
-        return res.send(200, "Conversation Hidden");
+        return res.status(200).send("Conversation Hidden");
     });
 }
 exports.doesUserOwnAndSeeMessageThread = function(req, res, next) {
     var id = req.param('id');
     var currentUserId = req.session.userId;
-    if (id == undefined) return res.send(400, "Missing parameter id for threadId");
+    if (id == undefined) return res.status(400).send("Missing parameter id for threadId");
     UserMessageThread.findOne({
         _id: id
     }, function(err, umsgthread) {
         if (err) return validationError(res, err);
-        if (!umsgthread) return res.send(404, "Message thread is deleted"); //system deletions
+        if (!umsgthread) return res.status(404).send("Message thread is deleted"); //system deletions
         // check to see that i am part of the email thread and have not deleted it.
         var isVisibleToMe = false;
         _.each(umsgthread.viewerIds, function(item) {
@@ -268,7 +268,7 @@ exports.doesUserOwnAndSeeMessageThread = function(req, res, next) {
                 isVisibleToMe = true;
         });
         if (!isVisibleToMe) {
-            return res.send(403, "Can not view deleted messages.");
+            return res.status(403).send("Can not view deleted messages.");
         }
         console.log("Found the thread");
         req.userThread = umsgthread;
@@ -281,7 +281,7 @@ exports.getMessagesByThreadId = function(req, res) {
     var threadId = req.param('id');
     limiterGetMessagesByThreadId.removeTokens(1, function(err, remainingRequests) {
         if (remainingRequests < 0) {
-            return res.send(429, "Slow down. Too many requests.");
+            return res.status(429).send("Slow down. Too many requests.");
         } else {
             var currentUserId = req.session.userId;
             UserMessage.find({
@@ -319,12 +319,12 @@ exports.getMessageThreadById = function(req, res) {
 exports.getMyMessagesFriendRequests = function(req, res) {
     limiterRefreshInbox.removeTokens(1, function(err, remainingRequests) {
         if (remainingRequests < 0) {
-            return res.send(429, "Inbox already updated");
+            return res.status(429).send("Inbox already updated");
         } else {
             var offset = req.param('offset');
             var limit = req.param('limit');
-            if (limit == undefined || limit > CONST_MAX_EMAILS_PER_PAGE) return res.send(400, "Limit cannot exceed max or is missing");
-            if (offset == undefined) return res.send(400, "Offset is missing");
+            if (limit == undefined || limit > CONST_MAX_EMAILS_PER_PAGE) return res.status(400).send("Limit cannot exceed max or is missing");
+            if (offset == undefined) return res.status(400).send("Offset is missing");
             var currentUserId = req.session.userId;
             UserMessageThread.find({
                     viewerIds: currentUserId,
@@ -343,12 +343,12 @@ exports.getMyMessagesFriendRequests = function(req, res) {
 exports.getMyMessagesPrimary = function(req, res) {
     limiterRefreshInbox.removeTokens(1, function(err, remainingRequests) {
         if (remainingRequests < 0) {
-            return res.send(429, "Inbox already updated");
+            return res.status(429).send("Inbox already updated");
         } else {
             var offset = req.param('offset');
             var limit = req.param('limit');
-            if (limit == undefined || limit > CONST_MAX_EMAILS_PER_PAGE) return res.send(400, "Limit cannot exceed max or is missing");
-            if (offset == undefined) return res.send(400, "Offset is missing");
+            if (limit == undefined || limit > CONST_MAX_EMAILS_PER_PAGE) return res.status(400).send("Limit cannot exceed max or is missing");
+            if (offset == undefined) return res.status(400).send("Offset is missing");
             var currentUserId = req.session.userId;
             UserMessageThread.find({
                     viewerIds: currentUserId,
@@ -370,7 +370,7 @@ exports.getMyMessagesPrimary = function(req, res) {
 //thats why to.id will always be to the currentUserId
 exports.deleteThreadIdInternalFromMessageId = function(req, res, messageId, cb) {
     var currentUserId = req.session.userId;
-    if (messageId == undefined) return res.send(400, "Missing parameter messageId");
+    if (messageId == undefined) return res.status(400).send("Missing parameter messageId");
     UserMessage.findOne({
         'to.id': currentUserId, //this makes sure i am the owner
         _id: messageId
@@ -380,7 +380,7 @@ exports.deleteThreadIdInternalFromMessageId = function(req, res, messageId, cb) 
             type: "friendRequest"
         }, function(err, umsgthread) {
             if (err) return validationError(res, err);
-            if (!umsgthread) return res.send(404, "Thread could not be found with this message");
+            if (!umsgthread) return res.status(404).send("Thread could not be found with this message");
             return cb(true);
         });
 
@@ -388,7 +388,7 @@ exports.deleteThreadIdInternalFromMessageId = function(req, res, messageId, cb) 
 }
 exports.deleteMessageIdInternal = function(req, res, id, cb) {
     var currentUserId = req.session.userId;
-    if (id == undefined) return res.send(400, "Missing parameter id");
+    if (id == undefined) return res.status(400).send("Missing parameter id");
     UserMessage.findOneAndRemove({
         'to.id': currentUserId, //this makes sure i am the owner
         _id: id
@@ -399,19 +399,19 @@ exports.deleteMessageIdInternal = function(req, res, id, cb) {
 exports.deleteById = function(req, res) {
     var currentUserId = req.session.userId;
     var id = req.param('id');
-    if (id == undefined) return res.send(400, "Missing parameter id");
+    if (id == undefined) return res.status(400).send("Missing parameter id");
     UserMessage.findOneAndRemove({
         'to.id': currentUserId, //this makes sure i am the owner
         _id: id
     }, function(err) {
         if (err) return validationError(res, err);
-        return res.send(200, "Message has been deleted");
+        return res.status(200).send("Message has been deleted");
     });
 }
 
 exports.getMessageById = function(req, res) {
     var id = req.param('id');
-    if (id == undefined) return res.send(400, "Missing parameter id");
+    if (id == undefined) return res.status(400).send("Missing parameter id");
     //by having the $or clause i prevent people from reading messages they should not see
     var currentUserId = req.session.userId;
     UserMessage.findOne({
@@ -422,12 +422,12 @@ exports.getMessageById = function(req, res) {
             'from.id': currentUserId
         }],
     }, function(err, umsg) {
-        if (err) return res.send(500, err);
-        if (!umsg) return res.send(404, "Message not found");
+        if (err) return res.status(500).send(err);
+        if (!umsg) return res.status(404).send("Message not found");
         return res.status(200).json(umsg);
     });
 }
 
 var validationError = function(res, err) {
-    return res.json(422, err);
+    return res.status(422).json(err);
 };

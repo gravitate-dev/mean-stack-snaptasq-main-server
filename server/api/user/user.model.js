@@ -119,7 +119,6 @@ var UserSchema = new Schema({
     },
     /** These codes are to invite friends to use the beta **/
     personalBetaCodes: [String],
-    otherTasks: [Schema.Types.ObjectId],
     canFriend: [Schema.Types.ObjectId],
     doNotAutoFriend: [Schema.Types.ObjectId], //these are people you dont want to auto friend. This happens when a user unfriends a facebook friend
     friends: [friendSchema],
@@ -265,7 +264,6 @@ UserSchema
     .pre('remove', function(next) {
         var myId = this._id;
         var myFriendsIds = _.pluck(this.friends, 'id');
-        var appliedTasks = this.otherTasks;
         var myGroupsIds = _.pluck(this.groups, 'id');
         Task.find({
             ownerId: myId
@@ -298,9 +296,7 @@ UserSchema
                     }, function(err) {
                         if (err) console.error(err);
                         Task.update({
-                            _id: {
-                                $in: appliedTasks
-                            }
+                            'applicants.id': myId
                         }, {
                             $pull: {
                                 'applicants': {

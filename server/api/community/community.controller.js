@@ -47,8 +47,8 @@ exports.index = function(req, res) {
  **/
 exports.search = function(req, res) {
     var name = req.param('name');
-    if (name == undefined) return res.send(400, "Missing parameter, name");
-    if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) return res.send(400, "Name contains invalid characters");
+    if (name == undefined) return res.status(400).send("Missing parameter, name");
+    if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) return res.status(400).send("Name contains invalid characters");
     Community.find({
             name: new RegExp('^' + name, "i")
         }, '-challenges')
@@ -57,7 +57,7 @@ exports.search = function(req, res) {
         })
         .limit(30)
         .exec(function(err, comms) {
-            if (err) return res.send(500, err);
+            if (err) return res.status(500).send(err);
             return res.status(200).json(comms);
         });
 }
@@ -77,14 +77,14 @@ exports.doesCommunityExistByIdentifier = function(id, source, cb) {
 
 exports.getCommunitiesByUser = function(req, res) {
         var id = req.param('id');
-        if (id == undefined) return res.send(400, "Missing parameter id. (User id)");
+        if (id == undefined) return res.status(400).send("Missing parameter id. (User id)");
         User.findOne({
             _id: id
         }, function(err, usr) {
             if (err) {
                 return handleError(res, err);
             }
-            if (!usr) return res.send(404, "User does not exist");
+            if (!usr) return res.status(404).send("User does not exist");
             return res.status(200).json(usr.groups);
         });
     }
@@ -102,7 +102,7 @@ exports.getCommunitiesByUser = function(req, res) {
 exports.show = function(req, res) {
     var currentUserId = req.session.userId;
     var groupId = req.param('id');
-    if (groupId == undefined) return res.send(400, "Missing parameter id. The group ID");
+    if (groupId == undefined) return res.status(400).send("Missing parameter id. The group ID");
     Community.findById(groupId, function(err, comm) {
         if (err) {
             return handleError(res, err);
@@ -119,10 +119,10 @@ exports.show = function(req, res) {
                         }
                     }
                 }, function(err) {
-                    return res.send(404, "Group doesnt exist");
+                    return res.status(404).send("Group doesnt exist");
                 });
             } else {
-                return res.send(404, "Group doesnt exist");
+                return res.status(404).send("Group doesnt exist");
             }
 
         } else {
@@ -146,19 +146,19 @@ exports.create = function(req, res) {
 exports.amIMember = function(req, res) {
         var id = req.param('id');
         var currentUserId = req.session.userId;
-        if (id == undefined) return res.send(400, "Missing parameter id");
-        if (currentUserId == undefined) return res.send(401, "Not logged in");
+        if (id == undefined) return res.status(400).send("Missing parameter id");
+        if (currentUserId == undefined) return res.status(401).send("Not logged in");
         User.findOne({
             _id: currentUserId
         }, function(err, usr) {
-            if (err) return res.send(500, err);
-            if (!usr) return res.send(401, "Please login again");
+            if (err) return res.status(500).send(err);
+            if (!usr) return res.status(401).send("Please login again");
             for (var i = 0; i < usr.groups.length; i++) {
                 if (usr.groups[i].id == id) {
                     return res.send(200);
                 }
             }
-            return res.send(403, "You are not in this group");
+            return res.status(403).send("You are not in this group");
         });
     }
     // Updates an existing thing in the DB.
@@ -186,8 +186,8 @@ exports.update = function(req, res) {
 
 exports.search = function(req, res) {
         var name = req.param('name');
-        if (name == undefined) return res.send(400, "Missing parameter, name");
-        if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) return res.send(400, "Name contains invalid characters");
+        if (name == undefined) return res.status(400).send("Missing parameter, name");
+        if (name.match(/^[-\sa-zA-Z0-9\']+$/) == null) return res.status(400).send("Name contains invalid characters");
         Community.find({
                 name: new RegExp('^' + name, "i")
             }, '-challenges')
@@ -196,7 +196,7 @@ exports.search = function(req, res) {
             })
             .limit(30)
             .exec(function(err, comms) {
-                if (err) return res.send(500, err);
+                if (err) return res.status(500).send(err);
                 return res.status(200).json(comms);
             });
     }
@@ -207,7 +207,7 @@ exports.search = function(req, res) {
      */
 exports.getMyFriendsCommunities = function(req, res) {
     var currentUserId = req.session.userId;
-    if (currentUserId == undefined) return res.send(401, "Please login again");
+    if (currentUserId == undefined) return res.status(401).send("Please login again");
     User.findById(currentUserId, function(err, me) {
         var friendIds = _.pluck(me.friends, 'id');
         User.find({
@@ -292,15 +292,15 @@ exports.requestJoin = function(req, res) {
     var groupId = req.param('id');
     var currentUserId = req.session.userId;
     if (currentUserId == undefined)
-        return res.send(401, "Please login first");
+        return res.status(401).send("Please login first");
     if (groupId == undefined)
-        return res.send(500, "missing groupId");
+        return res.status(500).send("missing groupId");
     Community.findById(groupId, function(err, comm) {
         if (err) {
             return handleError(res, err);
         }
         if (!comm) {
-            return res.send(404, "Group no longer exists");
+            return res.status(404).send("Group no longer exists");
         }
         User.findById(currentUserId, function(err, user) {
             if (err) {
@@ -312,17 +312,17 @@ exports.requestJoin = function(req, res) {
 
             if (comm.source == "facebook") {
                 if (_isUserAlreadyInGroup(comm, user)) {
-                    return res.send(200, "You are already in this group");
+                    return res.status(200).send("You are already in this group");
                 }
                 if (_isBannedFromGroup(comm, user))
-                    return res.send(403, "You are banned from this group. Sorry!");
+                    return res.status(403).send("You are banned from this group. Sorry!");
                 // join via facebook
                 // GROUPID is the FACEBOOK GROUP ID not the SNAPTASQ GROUP ID!!!!!
                 FbCommunity.isUserAllowedToJoinInternal(req, res, comm.identifier, function(isAllowed) {
                     if (isAllowed) {
                         return _addUserToComm(req, res, comm, user);
                     } else {
-                        return res.send(403, "You are not allowed in this group. Please join this group on facebook first, then try again.");
+                        return res.status(403).send("You are not allowed in this group. Please join this group on facebook first, then try again.");
                     }
                 })
             } else if (comm.source == "snaptasq") {
@@ -332,7 +332,7 @@ exports.requestJoin = function(req, res) {
                     }
                 }
             } else {
-                return res.send(500, "Unsupported group source " + comm.source);
+                return res.status(500).send("Unsupported group source " + comm.source);
             }
             //find the right auth method they chose
 
@@ -342,12 +342,12 @@ exports.requestJoin = function(req, res) {
 
 function _handleChallenge(req, res, challenge, comm, user, creds) {
     if (challenge == undefined)
-        return res.send(500, "Challenge not valid");
+        return res.status(500).send("Challenge not valid");
     if (_isUserAlreadyInGroup(comm, user)) {
-        return res.send(200, "You are already in this group");
+        return res.status(200).send("You are already in this group");
     }
     if (_isBannedFromGroup(comm, user))
-        return res.send(403, "You are banned from this group. Sorry!");
+        return res.status(403).send("You are banned from this group. Sorry!");
     switch (challenge.type) {
         /* beautify ignore:start*/
         case "open":
@@ -359,7 +359,7 @@ function _handleChallenge(req, res, challenge, comm, user, creds) {
         case "code":
             return _handleJoinCode(req, res, challenge, comm, user, creds);
         default:
-            return res.send(500, "Unknown entry method" + comm.entryMethod);
+            return res.status(500).send("Unknown entry method" + comm.entryMethod);
             /* beautify ignore:end*/
     }
 }
@@ -373,26 +373,26 @@ function _handleJoinEmail(req, res, challenge, comm, user, creds) {
         if (creds.indexOf(answer) != -1) {
             var joinLink = _generateJoinLink(comm, user)
             Email.sendCommunityJoinCode(req, res, creds, comm.name, joinLink);
-            return res.send(200, "Check your email address for an activation code. " + creds);
+            return res.status(200).send("Check your email address for an activation code. " + creds);
         }
     });
-    return res.send(403, "Sorry this email address does not match the qualifications.");
+    return res.status(403).send("Sorry this email address does not match the qualifications.");
 }
 
 function _handleJoinAreaCode(req, res, challenge, comm, user, creds) {
     //function assumes creds will be in a format without an extension
     //it will match 51053424232
     if (creds == undefined || creds.length < 5) {
-        return res.send(403, "Invalid phone number");
+        return res.status(403).send("Invalid phone number");
     }
     var areaCode = creds.replace(/\D/g, '').substr(0, 3);
     _.each(challenge.answers, function(answer) {
         if (areaCode == answer) {
             sms.text(creds, "to join the snaptasq community, " + comm.name + " open this link " + _generateJoinLink(comm, user));
-            return res.send(200, "Check your phone for a link we sent you. " + creds);
+            return res.status(200).send("Check your phone for a link we sent you. " + creds);
         }
     });
-    return res.send(403, "This phone number is not allowed. " + creds);
+    return res.status(403).send("This phone number is not allowed. " + creds);
 }
 
 function _handleJoinCode(req, res, challenge, comm, user, creds) {
@@ -401,7 +401,7 @@ function _handleJoinCode(req, res, challenge, comm, user, creds) {
             return _addUserToComm(req, res, comm, user);
         }
     }
-    return res.send(403, "Sorry wrong code.");
+    return res.status(403).send("Sorry wrong code.");
 }
 
 function _generateJoinLink(comm, user) {
@@ -438,13 +438,13 @@ function _isUserAlreadyInGroup(comm, user) {
 exports.leaveGroup = function(req, res) {
     var groupId = req.param('id');
     var currentUserId = req.session.userId;
-    if (groupId == undefined) return res.send(400, "Missing id. The Group ID you are leaving");
+    if (groupId == undefined) return res.status(400).send("Missing id. The Group ID you are leaving");
     Community.findById(groupId, function(err, comm) {
         if (err) {
             return handleError(res, err);
         }
         if (!comm) {
-            return res.send(404, "Group no longer exists");
+            return res.status(404).send("Group no longer exists");
         }
         User.findById(currentUserId, function(err, user) {
             if (err) {
@@ -461,7 +461,7 @@ exports.leaveGroup = function(req, res) {
 function _removeUserFromComm(req, res, comm, user) {
     //first check that i dont contain the group id already
     if (!_isUserAlreadyInGroup(comm, user)) {
-        return res.send(200, "You are not in this group already.");
+        return res.status(200).send("You are not in this group already.");
     }
 
     user.groups = _.filter(user.groups, function(item) {
@@ -489,7 +489,7 @@ function _removeUserFromComm(req, res, comm, user) {
 function _addUserToComm(req, res, comm, user) {
     //first check that i dont contain the group id already
     if (_isUserAlreadyInGroup(comm, user)) {
-        return res.send(200, "You are already in this group");
+        return res.status(200).send("You are already in this group");
     }
 
     var group = {
@@ -519,7 +519,7 @@ function _addUserToComm(req, res, comm, user) {
 
 exports.getTasks = function(req, res) {
     var groupId = req.param('id');
-    if (groupId == undefined) return res.send(400, "Missing parameter id. The Group ID");
+    if (groupId == undefined) return res.status(400).send("Missing parameter id. The Group ID");
 
     var query = {};
     if (req.dsl) query = req.dsl;
@@ -535,7 +535,7 @@ exports.getTasks = function(req, res) {
 
 exports.getMembers = function(req, res) {
     var groupId = req.param('id');
-    if (groupId == undefined) return res.send(400, "Missing parameter id. The Group ID");
+    if (groupId == undefined) return res.status(400).send("Missing parameter id. The Group ID");
     var query = {};
     if (req.dsl) query = req.dsl;
     query['groups.id'] = groupId;
@@ -551,8 +551,8 @@ exports.getMembers = function(req, res) {
 exports.myInvitableFriends = function(req, res) {
         var groupId = req.param('id');
         var currentUserId = req.session.userId;
-        if (groupId == undefined) return res.send(400, "Missing parameter id. The Group ID");
-        if (currentUserId == undefined) return res.send(403, "Please login again");
+        if (groupId == undefined) return res.status(400).send("Missing parameter id. The Group ID");
+        if (currentUserId == undefined) return res.status(403).send("Please login again");
 
         User.findById(currentUserId, function(err, me) {
             if (err) {
@@ -586,19 +586,19 @@ exports.addTaskToCommunity = function(req, res) {
     var groupId = req.param('id');
     var taskId = req.param('taskId');
     var currentUserId = req.session.userId;
-    if (groupId == undefined) return res.send(400, "Missing id. The Group ID you want to add the tasq too");
-    if (taskId == undefined) return res.send(400, "Missing taskId. The ID of the Tasq you want to add");
+    if (groupId == undefined) return res.status(400).send("Missing id. The Group ID you want to add the tasq too");
+    if (taskId == undefined) return res.status(400).send("Missing taskId. The ID of the Tasq you want to add");
     Community.findById(groupId, function(err, comm) {
         if (err) {
             return handleError(res, err);
         }
         if (!comm) {
-            return res.send(404, "Group no longer exists");
+            return res.status(404).send("Group no longer exists");
         }
         // check to see if the user is in the group or not
         User.findById(currentUserId, function(err, user) {
             if (err) return handleError(res, err);
-            if (!user) return res.send(404, "Please login again");
+            if (!user) return res.status(404).send("Please login again");
             if (_isUserAlreadyInGroup(comm, user)) {
                 Task.findById(taskId, function(err, task) {
                     var taskObj = {
@@ -606,7 +606,7 @@ exports.addTaskToCommunity = function(req, res) {
                     };
                     for (var i = 0; i < task.communitiesIn.length; i++) {
                         if (task.communitiesIn[i].id.equals(comm._id)) {
-                            return res.send(409, "This task is already shared to this community");
+                            return res.status(409).send("This task is already shared to this community");
                         }
                     }
                     var commObj = {
@@ -617,11 +617,11 @@ exports.addTaskToCommunity = function(req, res) {
                     task.communitiesIn.push(commObj);
                     task.save(function(err) {
                         if (err) return handleError(res, err);
-                        return res.send(200, "Tasq shared to " + comm.name);
+                        return res.status(200).send("Tasq shared to " + comm.name);
                     });
                 });
             } else {
-                return res.send(403, "You can only share tasqs to communities you are in");
+                return res.status(403).send("You can only share tasqs to communities you are in");
             }
         });
     });
@@ -636,13 +636,13 @@ exports._joinInternal = function(req, res, groupId, userId) {
         if (err) {
             return handleError(res, err)
         }
-        if (!user) return res.send(404, "User could not be found by id: " + userId);
+        if (!user) return res.status(404).send("User could not be found by id: " + userId);
         Community.findById(groupId, function(err, comm) {
             if (err) {
                 return handleError(res, err);
             }
             if (!comm) {
-                return res.send(404, "Community does not exist");
+                return res.status(404).send("Community does not exist");
             }
             return _addUserToComm(req, res, comm, user);
         });
@@ -681,13 +681,13 @@ exports.join = function(req, res) {
         if (err) {
             return handleError(res, err)
         }
-        if (!user) return res.send(404, "User could not be found by id: " + userId);
+        if (!user) return res.status(404).send("User could not be found by id: " + userId);
         Community.findById(req.params.id, function(err, comm) {
             if (err) {
                 return handleError(res, err);
             }
             if (!comm) {
-                return res.send(404, "Community does not exist");
+                return res.status(404).send("Community does not exist");
             }
             return _addUserToComm(req, res, comm, user);
         });
@@ -695,5 +695,5 @@ exports.join = function(req, res) {
 }
 
 function handleError(res, err) {
-    return res.send(500, err);
+    return res.status(500).send(err);
 }

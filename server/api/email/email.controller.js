@@ -129,36 +129,7 @@ exports.sendForgotPasswordEmail = function(req, res, emailaddress, code1, code2)
     });
 }
 
-/*
- * Send out the new password email to them to use
- * NOTE this is not exported by a route and is on purpose. this is called from
- * User.model.js
- */
-/*exports.sendNewPasswordEmail = function( req, res, emailaddress, newpass ){
-var email = new sendgrid.Email();
-email.addTo(emailaddress);
-email.subject = "Your New Password";
-email.from = 'admin@snaptasq.com';
-email.html = 'Your new password: <strong>'+newpass+'</strong>';
-// add filter settings one at a time 
-email.addFilter('templates', 'enable', 1);
-email.addFilter('templates', 'template_id', '9f8e4341-a8f9-4217-ac15-f769ceea1532');
-email.addSubstitution('-email-', emailaddress);
-
-sendgrid.send(email, function(err, json) {
-  if (err) { 
-    res.status(500).json({ status:"error", message: 'Our Email System is currently down :-(. Please try again later.' })
-  } else {
-    res.status(200).json({ status:"success", message: 'Check your inbox! We sent you your new password to '+emailaddress })
-  }
-});
-}*/
-
-
-
-
-
-exports.resendVerificationSilent = function(emailaddress, code) {
+exports.sendVerificationSilent = function(emailaddress, code) {
     if (config.dontRequireEmailVerification) {
         return 1;
     }
@@ -181,65 +152,8 @@ exports.resendVerificationSilent = function(emailaddress, code) {
     });
 }
 
-/*
-// Get list of emails
-exports.index = function(req, res) {
-  Email.find(function (err, emails) {
-    if(err) { return handleError(res, err); }
-    return res.status(200).json(emails);
-  });
-};
-
-// Get a single email
-exports.show = function(req, res) {
-  Email.findById(req.params.id, function (err, email) {
-    if(err) { return handleError(res, err); }
-    if(!email) { return res.send(404); }
-    return res.json(email);
-  });
-};
-
-// Creates a new email in the DB.
-exports.create = function(req, res) {
-  Email.create(req.body, function(err, email) {
-    if(err) { return handleError(res, err); }
-    return res.status(201).json(email);
-  });
-};
-
-// Updates an existing email in the DB.
-exports.update = function(req, res) {
-  if(req.body._id) { delete req.body._id; }
-  Email.findById(req.params.id, function (err, email) {
-    if (err) { return handleError(res, err); }
-    if(!email) { return res.send(404); }
-    var updated = _.merge(email, req.body);
-    updated.save(function (err) {
-      if (err) { return handleError(res, err); }
-      return res.status(200).json(email);
-    });
-  });
-};
-
-// Deletes a email from the DB.
-exports.destroy = function(req, res) {
-  Email.findById(req.params.id, function (err, email) {
-    if(err) { return handleError(res, err); }
-    if(!email) { return res.send(404); }
-    email.remove(function(err) {
-      if(err) { return handleError(res, err); }
-      return res.send(204);
-    });
-  });
-};
-*/
-
-exports.addEmailToList = function(email, list) {
-
-};
-
 function handleError(res, err) {
-    return res.send(500, err);
+    return res.status(500).send(err);
 }
 
 exports.testSendEmail = function(req, res) {

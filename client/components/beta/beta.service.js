@@ -10,18 +10,6 @@ angular.module('snaptasqApp').factory('Beta', function Beta($resource, $http) {
                 controller: ""
             }
         },
-        addEmailBetaList: {
-            method: "POST",
-            params: {
-                controller: "addEmailBetaList"
-            }
-        },
-        removeEmailBetaList: {
-            method: "POST",
-            params: {
-                controller: "removeEmailBetaList"
-            }
-        },
         userHasValidCode: {
             method: "GET",
             params: {

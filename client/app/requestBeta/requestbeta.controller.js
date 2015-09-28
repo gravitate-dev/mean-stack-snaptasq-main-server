@@ -2,35 +2,6 @@
 angular.module('snaptasqApp').controller('RequestBetaCtrl', function($scope, Beta, $http, $window) {
     $scope._bgcolorSnapYellow();
     $scope._noFooter();
-    $scope.requestBetaErrors = [];
-
-    $scope.requestBeta = function(form) {
-        $scope.submitted = true;
-
-        if (!angular.isUndefined(form.captchaResponse) && !angular.isUndefined(form.email)) {
-            console.log("addEmailBetaList");
-            Beta.addEmailBetaList({
-                captcha: form.captchaResponse
-            }, {
-                email: form.email
-            }, function(data) {
-                console.log("SUCCESS");
-                //onRegisterSuccess(user,form.email.$viewValue)
-            }, function(fail) {
-                console.log("FAIL");
-                //onRegisterFail(form,fail);
-                /*
-                var err = err.data;
-                $scope.requestBetaErrors = [];
-                angular.forEach(err.errors, function(error, field) {
-                  console.log(error.message);
-                    //form[field].$setValidity('mongoose', false);
-                    $scope.requestBetaErrors.push(field+": "+error.message);
-                  });
-                */
-            })
-        }
-    }
 }).directive('betaEmailSignUp', function() {
     return {
         restrict: 'ACE',

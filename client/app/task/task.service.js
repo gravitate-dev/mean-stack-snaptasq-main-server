@@ -46,13 +46,6 @@ angular.module('snaptasqApp')
                     controller: ""
                 }
             },
-            getTasksResponsible: {
-                method: 'GET',
-                isArray: true,
-                params: {
-                    controller: "meResponsible"
-                }
-            },
             setTasker: {
                 method: 'POST',
                 params: {
@@ -208,31 +201,6 @@ angular.module('snaptasqApp')
                 }, function(fail) {
                     deferred.reject(fail.data);
                     return failure(fail.data);
-                });
-                return deferred.promise;
-            },
-            /**
-             * This will return all tasks where the user is the chosen tasker
-             **/
-            getTasksResponsible: function(cb, opts) {
-                var cb = cb || angular.noop;
-                var opts = opts || {};
-                var deferred = $q.defer();
-                Tsk.getTasksResponsible(opts, {}, function(data) {
-                    deferred.resolve(data);
-                    return cb(data);
-                });
-                return deferred.promise;
-            },
-            countResponsibleTasks: function(cb) {
-                var cb = cb || angular.noop;
-                var deferred = $q.defer();
-                $http({
-                    method: "GET",
-                    url: '/api/tasks/countResponsible'
-                }).then(function(response) {
-                    deferred.resolve(response.data);
-                    return cb(response.data);
                 });
                 return deferred.promise;
             },

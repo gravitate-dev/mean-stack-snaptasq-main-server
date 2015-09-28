@@ -11,6 +11,8 @@ function isLoggedIn(req) {
     return req.cookies.token != undefined;
 }
 
+var SCHEMA_USER_HIDE_FROM_ME = '-salt -hashedPassword -verification.code -forgotPassCode -phone.verifyCode -phone.attempts';
+
 function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
     UserController.hasFbPermissionInternalByUserObject(user, 'user_friends', function(hasPermission) {
         if (!hasPermission) {
@@ -69,7 +71,7 @@ function linkFriendsOnSnaptasqToMeAsync(req, user, accessToken, cb) {
                     'fb.id': {
                         $in: notAddedYetIds
                     }
-                }, function(err, newFwends) {
+                }, SCHEMA_USER_HIDE_FROM_ME, function(err, newFwends) {
                     if (err) {
                         console.error(err);
                         return cb(user);
@@ -278,7 +280,7 @@ exports.setup = function(User, config) {
                 if (isLoggedIn(req)) {
                     User.findOne({
                         '_id': currentUserId
-                    }, function(err, user) {
+                    }, SCHEMA_USER_HIDE_FROM_ME, function(err, user) {
                         if (err) return done(err);
                         if (!user) {
                             /** 2b. profile not found by id create a new account **/

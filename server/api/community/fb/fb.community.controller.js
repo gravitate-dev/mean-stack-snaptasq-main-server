@@ -9,9 +9,9 @@ exports.processJoinUrl = function(req, res) {
     //given a url it will see if its facebook
     //https://www.facebook.com/groups/165644006892325/
     //https://www.facebook.com/groups/findyournextopportunity/
-    var url = req.param('url');
-    if (url == undefined) return res.send(500, "Missing url");
-    if (url.indexOf("facebook") == -1) return res.send(500, "Given Url is not a facebook group url");
+    var url = req.body.url;
+    if (url == undefined) return res.status(400).send("Missing url");
+    if (url.indexOf("facebook") == -1) return res.status(422).send("Given Url is not a facebook group url");
 
     _getGroupIdFromUrl(req, res, url, function(groupId) {
         _isUserAllowedToGroup(req, res, groupId, function(allowed) {
@@ -35,7 +35,7 @@ exports.processJoinUrl = function(req, res) {
                         }
                         CommunityModel.create(model, function(err, comm) {
                             if (err) {
-                                return res.send(500, "Could not create a community");
+                                return res.status(500).send("Could not create a community");
                             }
                             // req and res are consumed by this call
                             return Community._joinInternal(req, res, comm._id, req.session.userId);
@@ -56,7 +56,7 @@ exports.processJoinUrl = function(req, res) {
 exports.isUserAllowedToJoinInternal = function(req, res, id, cb) {
         if (id == undefined) {
             console.error("Failed to pass id to function, isUserAllowedToJoinInternal");
-            return res.send(400, "Missing a groupid.");
+            return res.status(400).send("Missing a groupid.");
         }
 
         _isUserAllowedToGroup(req, res, id, function(allowed) {
@@ -69,7 +69,7 @@ exports.isUserAllowedToJoinInternal = function(req, res, id, cb) {
      **/
 function _getGroupIdFromUrl(req, res, url, cb) {
     if (req.token == undefined) {
-        return res.send(400, "You must authenticate with facebook first.");
+        return res.status(400).send("You must authenticate with facebook first.");
     }
     //https://www.facebook.com/groups/165644006892325/
     //https://www.facebook.com/groups/findyournextopportunity/
@@ -90,9 +90,9 @@ function _getGroupIdFromUrl(req, res, url, cb) {
         //get the groupid by doing a search with the fb token
         var query = '/search?q=' + url + '&type=group';
         graph.get(query + "&access_token=" + req.token, function(err, response) {
-            if (err) return res.send(500, err);
-            if (!response) return res.send(404, "No group found from the facebook group link you provided.");
-            if (response.data.length == 0) return res.send(404, "Facebook group not found with the given url");
+            if (err) return res.status(500).send(err);
+            if (!response) return res.status(404).send("No group found from the facebook group link you provided.");
+            if (response.data.length == 0) return res.status(404).send("Facebook group not found with the given url");
             return cb(response.data[0].id)
         });
     }
@@ -104,25 +104,25 @@ function _isUserAllowedToGroup(req, res, groupId, cb) {
     //if they are not allowed the response.data.length==0 or error will be there
     if (req.token == undefined) {
         console.error("Call getFbAccessToken First _isUserAllowedToGroup");
-        return res.send(403, "To join this group you must connect your account with facebook in your <a href='/settings' style='text-decoration: underline;color: #0000EE;'>account settings.</a>");
+        return res.status(403).send("To join this group you must connect your account with facebook in your <a href='/settings' style='text-decoration: underline;color: #0000EE;'>account settings.</a>");
     }
     var query = '/' + groupId + '/members?limit=1';
     graph.get(query + "&access_token=" + req.token, function(err, response) {
-        if (err) return res.send(500, err);
-        if (!response) return res.send(404, "No group found from the facebook group link you provided.");
-        if (response.data.length == 0) return res.send(404, "Not allowed into group");
+        if (err) return res.status(500).send(err);
+        if (!response) return res.status(404).send("No group found from the facebook group link you provided.");
+        if (response.data.length == 0) return res.status(404).send("Not allowed into group");
         return cb(true);
     });
 }
 
 function _getGroupData(req, res, groupId, cb) {
     if (req.token == undefined) {
-        return res.send(400, "Call getFbAccessToken first");
+        return res.status(400).send("Call getFbAccessToken first");
     }
     var query = '/' + groupId + '?fields=id,name,link,cover,description';
     graph.get(query + "&access_token=" + req.token, function(err, response) {
-        if (err) return res.send(500, "Facebook graph query failed in searching for a group");
-        if (!response) return res.send(404, "No Response. Facebook graph query failed in searching for a group");
+        if (err) return res.status(500).send("Facebook graph query failed in searching for a group");
+        if (!response) return res.status(404).send("No Response. Facebook graph query failed in searching for a group");
         return cb(response);
     });
 }

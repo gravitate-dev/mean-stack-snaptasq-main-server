@@ -24,42 +24,10 @@ exports.index = function(req, res) {
 };
 exports.getMyAppliedTasks = function(req, res) {
     var currentUserId = req.session.userId;
-    User.findOne({
-        _id: currentUserId
-    }, SCHEMA_USER_HIDE_FROM_ME, function(err, user) {
-        if (!user || err) return handleError(res, err);
-        if (!user.otherTasks) return handleError(res, err);
-        var query = {};
-        if (req.dsl) query = req.dsl;
-        query['_id'] = {
-            $in: user.otherTasks
-        };
-        Task.find(query, '-__v').sort({
-            'created': -1
-        }).limit(10).exec(function(err, tasks) {
-            if (err) return handleError(res, err);
-            return res.status(200).json(tasks);
-        });
-    });
-}
-exports.countResponsibleTasks = function(req, res) {
-    var currentUserId = req.session.userId;
+    if (currentUserId == undefined) return res.status(401).send("Please login again");
     var query = {};
     if (req.dsl) query = req.dsl;
-    query['tasker.id'] = currentUserId;
-    query['status'] = {
-        $ne: "completed"
-    };
-    Task.count(query, function(err, count) {
-        if (err) return handleError(res, err);
-        return res.status(200).send("" + count);
-    });
-}
-exports.getTasksResponsible = function(req, res) {
-    var currentUserId = req.session.userId;
-    var query = {};
-    if (req.dsl) query = req.dsl;
-    query['tasker.id'] = currentUserId;
+    query['applicants.id'] = currentUserId;
     Task.find(query, '-__v').sort({
         'created': -1
     }).limit(10).exec(function(err, tasks) {
@@ -86,7 +54,7 @@ exports.getUsersTasksByUserId = function(req, res) {
     //TODO check if they are friends
     var currentUserId = req.session.userId;
     var id = req.param('id');
-    if (id == undefined) return res.send(400, "Missing parameter id");
+    if (id == undefined) return res.status(400).send("Missing parameter id");
     var query = {};
     if (req.dsl) query = req.dsl;
     query.ownerId = id;
@@ -125,7 +93,7 @@ exports.show = function(req, res) {
             return handleError(res, err);
         }
         if (!task) {
-            return res.send(404);
+            return res.sendStatus(404);
         }
         return res.json(task);
     });
@@ -134,7 +102,7 @@ exports.show = function(req, res) {
 exports.create = function(req, res) {
     var newTask = new Task(req.body);
     var currentUserId = req.session.userId;
-    if (currentUserId == undefined) return res.send(400, "Please login first. Missing userId");
+    if (currentUserId == undefined) return res.status(400).send("Please login first. Missing userId");
     newTask.ownerId = currentUserId;
     User.findOne({
         _id: currentUserId
@@ -248,7 +216,6 @@ exports.applyToTask = function(req, res) {
                     name: user.name,
                     pic: user.pic
                 });
-                user.otherTasks.push(req.params.id);
                 user.save(function(err) {
                     if (err) {
                         console.log(err);
@@ -294,12 +261,12 @@ exports.applyToTask = function(req, res) {
  **/
 exports.startTask = function(req, res) {
     var taskId = req.param('id');
-    if (taskId == undefined) return res.send(400, "Missing parameter id. For the TaskID");
+    if (taskId == undefined) return res.status(400).send("Missing parameter id. For the TaskID");
     var currentUserId = req.session.userId;
-    if (currentUserId == undefined) return res.send(401, "Please login again");
+    if (currentUserId == undefined) return res.status(401).send("Please login again");
     Task.findById(taskId, function(err, task) {
         if (err) return handleError(res, err);
-        if (!task) return res.send(404, "Tasq not found");
+        if (!task) return res.status(404).send("Tasq not found");
         if (task.tasker != undefined && task.tasker.id != undefined && task.tasker.id.equals(currentUserId)) {
             task.endTime = undefined;
             task.totalTime = undefined;
@@ -338,7 +305,7 @@ exports.startTask = function(req, res) {
                 return res.status(200).json(task);
             });
         } else {
-            return res.send(500, "You are not the current tasker anymore");
+            return res.status(500).send("You are not the current tasker anymore");
         }
     });
 };
@@ -347,14 +314,14 @@ exports.startTask = function(req, res) {
  **/
 exports.finishTask = function(req, res) {
     var taskId = req.param('id');
-    if (taskId == undefined) return res.send(400, "Missing parameter id. For the TaskID");
+    if (taskId == undefined) return res.status(400).send("Missing parameter id. For the TaskID");
     var currentUserId = req.session.userId;
-    if (currentUserId == undefined) return res.send(401, "Please login again");
+    if (currentUserId == undefined) return res.status(401).send("Please login again");
     Task.findById(taskId, function(err, task) {
         if (err) return handleError(res, err);
-        if (!task) return res.send(404, "Tasq not found");
+        if (!task) return res.status(404).send("Tasq not found");
         if (task.startTime == undefined) {
-            return res.send(500, "You must start the tasq first before completeing it.");
+            return res.status(500).send("You must start the tasq first before completeing it.");
         }
         if (task.tasker != undefined && task.tasker.id != undefined && task.tasker.id.equals(currentUserId)) {
             //
@@ -399,7 +366,7 @@ exports.finishTask = function(req, res) {
                 return res.status(200).json(task);
             });
         } else {
-            return res.send(500, "You are not the current tasker anymore");
+            return res.status(500).send("You are not the current tasker anymore");
         }
     });
 };
@@ -416,7 +383,7 @@ exports.finishTask = function(req, res) {
  **/
 exports.setTasker = function(req, res) {
     var taskId = req.param('id');
-    if (taskId == undefined) return res.send(400, "Missing parameter id. For the TaskID");
+    if (taskId == undefined) return res.status(400).send("Missing parameter id. For the TaskID");
     var chosenApplicantId = req.param('applicantId');
     //Not checking for undefined because i allow undefined, when the tasker is set to none.
     Task.findById(taskId, function(err, task) {
@@ -432,7 +399,7 @@ exports.setTasker = function(req, res) {
                 _id: chosenApplicantId
             }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) {
                 if (err) return res.status(500).json(err);
-                if (!user) return res.send(404, "User does not exist");
+                if (!user) return res.status(404).send("User does not exist");
                 task.tasker = {
                     id: user._id,
                     name: user.name,
@@ -558,68 +525,54 @@ function isUserTasker(task, userId) {
  **/
 exports.unapplyToTask = function(req, res) {
     var id = req.param('id');
-    if (id == undefined) return res.send(400, "Missing parameter id. The Task Id");
+    var currentUserId = req.session.userId;
+    if (id == undefined) return res.status(400).send("Missing parameter id. The Task Id");
+    if (currentUserId == undefined) return res.status(401).send("Please login again");
     Task.findById(id, function(err, task) {
         if (err) {
             return handleError(res, err);
         }
         if (!task) {
-            return res.send(404);
+            return res.status(404).send("Tasq not found");
         }
-        var currentUserId = req.session.userId;
-        if (currentUserId == undefined) return res.send(403, "Please login again");
         if (isAppliantToTask(task, currentUserId) == false) {
-            return res.send(200, "Already not applied");
+            return res.status(200).send("Already not applied");
         }
-        User.findOne({
-            _id: currentUserId
-        }, '-salt -hashedPassword -verification.code -forgotPassCode', function(err, user) { // don't ever give out the password or salt
-            if (err) return res.status(500).json(err);
-            if (!user) return res.send(404, "Not logged in");
-            task = removeApplicantFromTaskById(task, user._id);
-            for (var i = user.otherTasks.length - 1; i >= 0; i--) {
-                if (user.otherTasks[i].equals(req.params.id)) {
-                    user.otherTasks.splice(i, 1);
-                }
+        task = removeApplicantFromTaskById(task, currentUserId);
+        var wasTaskerRemoved = false;
+        var taskerName = "";
+        if (isUserTasker(task, currentUserId)) {
+            //this is when the TASKER quits
+            taskerName = task.tasker.name;
+            task.tasker = {
+                id: undefined
+            };
+            task.status = "open";
+            task.startTime = undefined;
+            task.endTime = undefined;
+            task.totalTime = undefined;
+            wasTaskerRemoved = true;
+        }
+        task.save(function(err) {
+            if (err) {
+                return handleError(res, err);
             }
-            user.save(function(err) {
-                if (err) {
-                    return handleError(res, err);
-                }
-                var wasTaskerRemoved = false;
-                if (isUserTasker(task, user._id)) {
-                    //this is when the TASKER quits
-                    task.tasker = {
-                        id: undefined
-                    };
-                    task.status = "open";
-                    task.startTime = undefined;
-                    task.endTime = undefined;
-                    task.totalTime = undefined;
-                    wasTaskerRemoved = true;
-                }
-                task.save(function(err) {
-                    if (err) {
-                        return handleError(res, err);
+            if (wasTaskerRemoved) {
+                Notify.put({
+                    forOne: task.ownerId,
+                    forMany: [],
+                    hrefId: task._id,
+                    code: Notify.CODES.taskOwner.taskerQuit,
+                    params: {
+                        task: task.name,
+                        name: taskerName
                     }
-                    if (wasTaskerRemoved) {
-                        Notify.put({
-                            forOne: task.ownerId,
-                            forMany: [],
-                            hrefId: task._id,
-                            code: Notify.CODES.taskOwner.taskerQuit,
-                            params: {
-                                task: task.name,
-                                name: user.name
-                            }
-                        });
-                    } else {
-                        // no notification if an applicant quits your task.
-                        // by design
-                    }
-                    return res.status(200).json(task);
                 });
-            });
+            } else {
+                // no notification if an applicant quits your task.
+                // by design
+            }
+            return res.status(200).json(task);
         });
     });
 };
@@ -647,7 +600,7 @@ exports.destroy = function(req, res) {
 //delete All Owned Tasks
 exports.destroyAllOwnedTasksForCurrentUser = function(req, res, next) {
     var currentUserId = req.session.userId;
-    if (currentUserId == undefined) return res.send(401, "Please login");
+    if (currentUserId == undefined) return res.status(401).send("Please login");
     Task.find({
         ownerId: currentUserId
     }).remove(function() {
@@ -656,5 +609,5 @@ exports.destroyAllOwnedTasksForCurrentUser = function(req, res, next) {
 };
 
 function handleError(res, err) {
-    return res.send(500, err);
+    return res.status(500).send(err);
 }
