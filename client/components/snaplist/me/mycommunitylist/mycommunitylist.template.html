@@ -5,17 +5,6 @@
     </a>
     <div snaplist-search="searchFilter.text"></div>
     <ul class="list-group" infinite-scroll='showMore()' infinite-scroll-distance='2'>
-        <!-- default group my friends will always be shown -->
-        <!-- <li class="list-group-item" style="cursor:pointer;word-break: break-word;" ng-click="_goToPath('/community/friends')">
-                        <div class="snaplist-result-img-container">
-                                <img src="assets/logos/snaptasq.png" alt="my friends tasqs" class="snaplist-result-img" />
-                        </div>
-                        <div class="col-md-9 col-sm-9 col-xs-9">
-                                <span class="name"><a href="/community/friends">my friend's tasqs</a></span>
-                                <br/>
-                        </div>
-                        <div class="clearfix"></div>
-        </li> -->
         <li class="list-group-item ng-cloak" ng-if="(items | filter:{'name':searchFilter.text}).length==0">
             <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
