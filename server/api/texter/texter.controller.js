@@ -20,6 +20,14 @@ exports.sendTaskerStartedTaskOwner = function(number, tasklink, tasktitle, taske
     sms.text(number, msg);
 };
 
+exports.sendFirstApplicantTaskOwner = function(number, tasklink, tasktitle, taskerName) {
+    if (number == undefined) {
+        return console.error("Number is undefined in sendFirstApplicantTaskOwner, tasklink", tasklink);
+    }
+    var msg = taskerName + " was first to apply to help you with " + tasktitle + ". " + tasklink;
+    sms.text(number, msg);
+};
+
 function handleError(res, err) {
     return res.status(500).send(err);
 }

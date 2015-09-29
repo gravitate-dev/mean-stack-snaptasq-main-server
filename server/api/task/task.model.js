@@ -89,6 +89,10 @@ var TaskSchema = new Schema({
         },
         fbId: String
     }],
+    hasTextedForFirstApplicant: {
+        type: Boolean,
+        default: false
+    },
     location: {
         name: String,
         formattedName: String,

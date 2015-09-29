@@ -228,9 +228,26 @@ exports.applyToTask = function(req, res) {
                         console.log(err);
                         return handleError(res, err);
                     }
+                    var textOwner = false;
+                    if (task.hasTextedForFirstApplicant == false) {
+                        textOwner = true;
+                        task.hasTextedForFirstApplicant = true;
+                    }
                     task.save(function(err) {
                         if (err) {
                             return handleError(res, err);
+                        }
+                        if (textOwner) {
+                            // Text Task Owner, new Applicant only for first applicant
+                            User.findById(task.ownerId, function(err, owner) {
+                                //ignore error if happens
+                                if (owner) {
+                                    var taskUri = config.host.url + "tasq/view/" + task._id;
+                                    if (owner.phone.number != undefined && owner.phone.enableNotifications == true) {
+                                        Texter.sendFirstApplicantTaskOwner(owner.phone.number, taskUri, task.name, user.name);
+                                    }
+                                }
+                            });
                         }
                         // Task Owner, new Applicant
                         Notify.put({

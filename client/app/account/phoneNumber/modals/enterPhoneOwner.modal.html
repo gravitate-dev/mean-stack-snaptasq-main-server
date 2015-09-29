@@ -1,5 +1,5 @@
 <div ng-controller="PhoneNumberModalCtrl">
-    <p>Get notified when your tasq is started via text. Enter your phone number below. This option can be turned off in your <a href="/settings">account page</a></p>
+    <p>Get notified when your first applicant applied and when your tasq is started via text. Enter your phone number below. This option can be turned off in your <a href="/settings">account page</a></p>
     <form ng-if="canEnterVerificationCode==false" class="text-center top-buffer">
         <input type="text" autofocus ng-model="phoneNumber" ui-mask="(999) 999-9999" />&nbsp;
         <button class="btn btn-primary" ng-click="sendCode(phoneNumber)">ok</button>

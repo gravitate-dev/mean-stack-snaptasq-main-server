@@ -1,4 +1,13 @@
 <div class="container top-buffer">
+    <section class="panel panel-info">
+        <div class="panel-heading">
+            Beta Feedback Survey
+        </div>
+        <div class="panel-body">
+            <p>Fill out this survey for 5$. If you haven't already you should have a friend complete a tasq before filling out this survey!</p>
+            <a href="https://www.surveymonkey.com/r/8CB8S8C" target="_tab">Survey Link</a>
+        </div>
+    </section>
     <section ng-if="_me.personalBetaCodes.length>0" class="panel panel-info">
         <div class="panel-heading">
             Friend Invite Codes for Beta
@@ -62,19 +71,39 @@
         </div>
         <div class="panel-body">
             <div ng-if="_me.phone.verified==false">
-                <p>If you would like to be notified by text message if you are chosen to help out. Enter your phone number below.</p>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <p>Taskers receive texts for:</p>
+                        <ul>
+                            <li>Being chosen to help</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <p>Task receive texts for:</p>
+                        <ul>
+                            <li>Only when the first applicant applies for their tasq</li>
+                            <li>When their chosen tasker starts their tasq</li>
+                        </ul>
+                    </div>
+                </div>
                 <form ng-if="canEnterVerificationCode==false" class="top-buffer">
-                    <input type="tel" ng-model="phoneNumber" ui-us-phone-number maxlength="14" />&nbsp;
-                    <button class="btn btn-primary" ng-click="sendCode(phoneNumber)">ok</button>
-                    <div class="text-error" style="color:red;">{{error}}</div>
+                    <p>If you would like to be notified by text message. Enter your phone number below.</p>
+                    <div class="form-group">
+                        <label>Number</label>
+                        <input type="tel" ng-model="phoneNumber" ui-us-phone-number maxlength="14" />&nbsp;
+                        <button class="btn btn-primary" ng-click="sendCode(phoneNumber)">ok</button>
+                        <div class="text-error" style="color:red;">{{error}}</div>
+                    </div>
                 </form>
                 <form ng-if="canEnterVerificationCode" class="top-buffer">
                     <p class="lead">Enter the verification code we sent you below</p>
-                    <input type="text" ng-model="verifyCode" maxlength="4" />&nbsp;
-                    <button class="btn btn-primary" ng-click="redeemCode(verifyCode);">redeem</button>&nbsp;
-                    <button class="btn btn-danger" ng-click="goBack();">cancel</button>
-
-                    <div class="text-error" style="color:red;">{{error}}</div>
+                    <div class="form-group">
+                        <label>Code</label>
+                        <input type="text" ng-model="verifyCode" maxlength="4" />&nbsp;
+                        <button class="btn btn-primary" ng-click="redeemCode(verifyCode);">redeem</button>&nbsp;
+                        <button class="btn btn-danger" ng-click="goBack();">cancel</button>
+                        <div class="text-error" style="color:red;">{{error}}</div>
+                    </div>
                 </form>
             </div>
             <div ng-if="_me.phone.verified==true">
@@ -96,7 +125,6 @@
                     <div class="col-md-12">
                         <p class="lead">
                             <button class="btn btn-primary" ng-click="showEnterPhoneNumber()">Change #</button>&nbsp;Current number {{_me.phone.number | tel}} </p>
-
                     </div>
                 </div>
             </div>
