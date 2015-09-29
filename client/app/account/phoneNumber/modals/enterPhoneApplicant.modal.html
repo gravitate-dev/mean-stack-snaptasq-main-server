@@ -1,5 +1,6 @@
 <div ng-controller="PhoneNumberModalCtrl">
-    <p>Get notified when you are chosen to help out with this tasq. Enter your phone number below. This option can be turned off in your <a href="/settings">account page</a></p>
+    <p>Get notified when you are chosen to help out with this tasq. Having to recheck every hour bites. Let us text you, just enter your phone number below. If you are curious about how often we text, its minimal. Plus, this option can be turned off in your
+        <a href="/settings">account page</a> at any time</p>
     <form ng-if="canEnterVerificationCode==false" class="text-center top-buffer">
         <input type="text" autofocus ng-model="phoneNumber" ui-us-phone-number maxlength="14" />&nbsp;
         <button class="btn btn-primary" ng-click="sendCode(phoneNumber)">ok</button>
