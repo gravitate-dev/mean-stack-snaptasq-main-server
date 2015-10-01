@@ -3,7 +3,13 @@
 angular.module('snaptasqApp')
     .controller('AdminUsersCtrl', function($scope, $http, Auth, User) {
         $scope.users = [];
-        // Use the User $resource to fetch all users
+        $scope.userFilter = {
+                requiresBeta: false,
+                phone: {
+                    verified: false
+                }
+            }
+            // Use the User $resource to fetch all users
         User.getAllUsers(function(users) {
             $scope.users = users;
         });

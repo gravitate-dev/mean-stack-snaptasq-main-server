@@ -1,10 +1,24 @@
 <div class="container top-buffer">
-    <h1>View Users</h1>
+    <h1>View Users ({{ (users | filter:userFilter).length | orderBy:created}})</h1>
+    <div class="row">
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <label>Beta Unlocked</label>
+            <input type="checkbox" ng-model="userFilter.requiresBeta" ng-true-value="false" ng-false-value="true">
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <label>Has PhoneNumber</label>
+            <input type="checkbox" ng-model="userFilter.phone.verified" />
+        </div>
+    </div>
     <ul class="list-group">
-        <li class="list-group-item" ng-repeat="user in users">
+        <li class="list-group-item" ng-repeat="user in users | filter:userFilter">
             <strong>{{user.name}}</strong>
-            <br>
             <span class="text-muted">{{user.email}}</span>
+            <span class="text-muted pull-right">joined on {{user.created | date}}</span>
+            <br>
+            <span ng-if="user.knownIpAddresses.length>0" ng-repeat="ip in user.knownIpAddresses | orderBy:popularity | limitTo:1" class="text-muted">IP:{{ip.ip}}</span>
+            <span ng-if="user.phone.number" class="text-muted">&nbsp;number {{user.phone.number}}</span>
+
             <!-- <a ng-click="delete(user)" class="trash"><span class="glyphicon glyphicon-trash pull-right"></span></a> -->
         </li>
     </ul>
