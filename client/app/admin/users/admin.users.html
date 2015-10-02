@@ -2,16 +2,12 @@
     <h1>View Users ({{ (users | filter:userFilter).length | orderBy:created}})</h1>
     <div class="row">
         <div class="col-md-6 col-sm-6 col-xs-6">
-            <label>Beta Unlocked</label>
-            <input type="checkbox" ng-model="userFilter.requiresBeta" ng-true-value="false" ng-false-value="true">
-        </div>
-        <div class="col-md-6 col-sm-6 col-xs-6">
             <label>Has PhoneNumber</label>
             <input type="checkbox" ng-model="userFilter.phone.verified" />
         </div>
     </div>
     <ul class="list-group">
-        <li class="list-group-item" ng-repeat="user in users | filter:userFilter | orderBy:created">
+        <li class="list-group-item" ng-repeat="user in users | filter:userFilter | orderBy:_id">
             <strong>{{user.name}}</strong>
             <span class="text-muted">{{user.email}}</span>
             <span class="text-muted pull-right">joined on {{user.created | date}}</span>
