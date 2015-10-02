@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="/" class="navbar-brand" style="color:white;font-size:20px;font-weight:bold;" popover-placement="right" popover-popup-delay="1000" popover="A Santa Clara University Project" popover-trigger="mouseenter"><img src="assets/logos/snaptasq_icon.png" width="32px" style="padding-right:5px;" /><span ng-class="{'hidden-xs':isLoggedIn()}">snaptasq</span></a>
+            <a href="/" class="navbar-brand" style="color:white;font-size:20px;font-weight:bold;"><img src="assets/logos/snaptasq_icon.png" width="32px" style="padding-right:5px;" /><span ng-class="{'hidden-xs':isLoggedIn()}">snaptasq</span></a>
             <ul ng-if="!isLoggedIn()" class="nav navbar-nav visible-xs" style="padding-left:15px;">
                 <li style="display: inline-block;" ng-class="{active: isActive('/signin')}"><a href="/signin" style="text-transform:uppercase;">Log In</a></li>
                 <li style="display: inline-block;" ng-if="!isLoggedIn()" ng-class="{active: isActive('/signin')}">
