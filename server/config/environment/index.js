@@ -15,7 +15,7 @@ function requiredProcessEnv(name) {
 var all = {
     env: process.env.NODE_ENV,
 
-    betaTrails: true,
+    betaTrails: false,
 
     sendGridApiKey: "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",
 
