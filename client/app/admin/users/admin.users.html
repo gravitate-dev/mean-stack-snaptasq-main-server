@@ -7,7 +7,7 @@
         </div>
     </div>
     <ul class="list-group">
-        <li class="list-group-item" ng-repeat="user in users | filter:userFilter | orderBy:_id">
+        <li class="list-group-item" ng-repeat="user in users | filter:userFilter | orderBy: '-created'">
             <strong>{{user.name}}</strong>
             <span class="text-muted">{{user.email}}</span>
             <span class="text-muted pull-right">joined on {{user.created | date}}</span>
