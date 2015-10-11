@@ -260,8 +260,9 @@ app.controller('GlobalCtrl', function GlobalCtrl($anchorScroll, $http, $interval
         //When true people who go to sign up, will be required to enter a beta code
         //before they are allowed to login.
         //In the case of continue with faceboook its tricky
-    $scope._beta = true;
-    window._beta = true;
+    $scope._beta = false;
+    $scope._landingPage = true;
+    window._beta = false;
     $scope._badgeAlerts = BadgeAlerts;
     $scope._showFooter = true;
     $scope._bgcolor = "white";

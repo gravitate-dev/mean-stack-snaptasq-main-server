@@ -1,0 +1,192 @@
+<div style="
+    background: url(assets/images/main/top_image.png) no-repeat center 20%;
+    background-size: cover;
+    min-height:750px;">
+    <div ng-attr-style="margin: auto; text-align: center;" class="text-center">
+        <section class="main-top-image-controls">
+            <h1>Friends Help FriendS</h1>
+            <h3>Help on Tasks with Facebook Friends and Groups.</h3>
+            <div class="col-md-8 col-md-push-2">
+                <div class="well" style="text-align:default;">Join us on our journey in building the best way to find, start, complete tasks with people that are on your Facebook. From organizing weddings to opinions on what to wear, sometimes the best person for the job is someone close to you.
+                    </br>Enter your email address for exclusive early access, updates and rewards!
+                    <div class="row">
+                        <div beta-email-sign-up="" style="padding-bottom:10px;"></div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </div>
+</div>
+<div class="container-fluid" ng-attr-style="background:{{snapYellowCSS}};padding-bottom:40px;border-bottom:1px solid black;">
+    <!-- how it works -->
+    <div class="row" style="margin-top:35px;">
+        <h2 class="text-center main-slogans">this is how snaptasq works</h2>
+    </div>
+    <div class="row" style="display: table;margin: 0 auto;">
+        <div style="display: table;margin: 0 auto;">
+            <div class="text-center col-md-4 col-sm-4 col-xs-4" style="padding: 0;display:inline-block;float:left;">
+                <div ng-attr-style="background:{{snapYellowCSS}};">
+                    <img src="assets/images/main/snaptasq_steps1.png" class="" ng-attr-style="background:{{snapYellowCSS}};max-width:100%;" />
+                </div>
+                <h2 class="mini-slogans" style="color:black;">create your tasq</h2>
+                <!-- <h4>describe your tasq.</h4> -->
+            </div>
+            <div class="text-center col-md-4 col-sm-4 col-xs-4" style="padding: 0;display:inline-block;float:left;">
+                <div ng-attr-style="background:{{snapYellowCSS}};">
+                    <img src="assets/images/main/snaptasq_steps2.png" class="" ng-attr-style="background:{{snapYellowCSS}};max-width:100%;" />
+                </div>
+                <h2 class="mini-slogans">share with friends</h2>
+                <!-- <h4>next, share your tasq on your social networks.</h4> -->
+            </div>
+            <div class="text-center col-md-4 col-sm-4 col-xs-4" style="padding: 0;display:inline-block;float:left;">
+                <div ng-attr-style="background:{{snapYellowCSS}};">
+                    <img src="assets/images/main/snaptasq_steps3.png" class="" ng-attr-style="background:{{snapYellowCSS}};max-width:100%;" />
+                </div>
+                <h2 class="mini-slogans">tasq accomplished</h2>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="background:#f5f6f6">
+    <div class="container marketing">
+        <!-- task panels -->
+        <div class="row" style="margin-top:20px;margin-bottom:20px;">
+            <h2 class="text-center main-slogans">get any tasq done in a snap</h2>
+        </div>
+        <div class="visible-xs">
+            <div class="row">
+                <div ng-repeat="task in advertisedTasks  | limitTo:2:0" class="col-xs-6" style="cursor:pointer; padding-right:5px;padding-left:5px;">
+                    <img style="width: 100%;height:100%;object-fit: contain;overflow: hidden;" ng-src="{{task.img}}" />
+                    <div class="text-center" style="position:relative;z-index:2;bottom:100px;color:white;">
+                        <strong style="font-size:1.4em;">{{task.name}}</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div ng-repeat="task in advertisedTasks  | limitTo:2:2" class="col-xs-6" style="cursor:pointer; padding-right:5px;padding-left:5px;">
+                    <img style="width: 100%;height:100%;object-fit: contain;overflow: hidden;" ng-src="{{task.img}}" />
+                    <div class="text-center" style="position:relative;z-index:2;bottom:100px;color:white;">
+                        <strong style="font-size:1.4em;">{{task.name}}</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div ng-repeat="task in advertisedTasks  | limitTo:2:4" class="col-xs-6" style="cursor:pointer; padding-right:5px;padding-left:5px;">
+                    <img style="width: 100%;height:100%;object-fit: contain;overflow: hidden;" ng-src="{{task.img}}" />
+                    <div class="text-center" style="position:relative;z-index:2;bottom:100px;color:white;">
+                        <strong style="font-size:1.4em;">{{task.name}}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hidden-xs">
+            <div class="row">
+                <div ng-repeat="task in advertisedTasks  | limitTo:3:0" class="col-md-4 col-sm-4 col-xs-6" style="cursor:pointer; padding-right:5px;padding-left:5px;">
+                    <img style="width: 100%;height:100%;object-fit: contain;overflow: hidden;" ng-src="{{task.img}}" />
+                    <div class="text-center" style="position:relative;z-index:2;bottom:100px;color:white;">
+                        <strong style="font-size:1.4em;">{{task.name}}</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div ng-repeat="task in advertisedTasks  | limitTo:3:3" class="col-md-4 col-sm-4 col-xs-6" style="cursor:pointer; padding-right:5px;padding-left:5px;">
+                    <img style="width: 100%;height:100%;object-fit: contain;overflow: hidden;" class="mosaicRollover" ng-src="{{task.img}}" ng-click="" />
+                    <div class="text-center" style="position:relative;z-index:2;bottom:100px;color:white;">
+                        <strong style="font-size:1.4em;">{{task.name}}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</div>
+<div class="container marketing">
+    <!-- why use -->
+    <div class="row" style="margin-top:35px;">
+        <h1 class="text-center">why snaptasq?</h1>
+    </div>
+    <div class="hidden-xs hidden-sm">
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 text-center">
+                <img src="assets/images/main/why1.png" width="128px" />
+                <p class="loud">help from your friends</p>
+                <p>Who better to ensure the task gets done right than your friends. You can even handpick who you would like to handle the task.</p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 text-center">
+                <img src="assets/images/main/why2.png" width="128px" />
+                <p class="loud">safety assured</p>
+                <p>Only your friends can see your tasks. This helps keep you safe and protected.</p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 text-center">
+                <img src="assets/images/main/why3.png" width="128px" />
+                <p class="loud">never by strangers</p>
+                <p>Unlike our competitors, we only let your friends apply for your tasks to avoid any issues.</p>
+            </div>
+        </div>
+        <div class="row top-buffer">
+            <div class="col-lg-4 col-md-4 col-sm-4 text-center">
+                <img src="assets/images/main/why4.png" width="128px" />
+                <p class="loud">hassle free communication</p>
+                <p>We send automatic notifications to track your task status for both you and your applicants.</p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 text-center">
+                <img src="assets/images/main/why5.png" width="128px" />
+                <p class="loud">group sourcing</p>
+                <p>We ensure that your task will have multiple backups readily available for you.</p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 text-center">
+                <img src="assets/images/main/why6.png" width="128px" />
+                <p class="loud">offer incentives</p>
+                <p>Our service is free. However, you can offer taskers cash rewards in person.</p>
+            </div>
+        </div>
+    </div>
+    <div class="visible-xs visible-sm">
+        <div class="row">
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-xs-12 text-center">
+                <img src="assets/images/main/why1.png" width="128px" />
+                <p class="loud">help from your friends</p>
+                <p>Who better to ensure the task gets done right than your friends. You can even handpick who you would like to handle the task.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-xs-12 text-center">
+                <img src="assets/images/main/why2.png" width="128px" />
+                <p class="loud">safety assured</p>
+                <p>Only your friends can see your tasks. This helps keep you safe and protected.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-xs-12 text-center">
+                <img src="assets/images/main/why3.png" width="128px" />
+                <p class="loud">never by strangers</p>
+                <p>Unlike our competitors, we only let your friends apply for your tasks to avoid any issues.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-xs-12 text-center">
+                <img src="assets/images/main/why4.png" width="128px" />
+                <p class="loud">hassle free communication</p>
+                <p>We send automatic notifications to track your task status for both you and your applicants.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-xs-12 text-center">
+                <img src="assets/images/main/why5.png" width="128px" />
+                <p class="loud">group sourcing</p>
+                <p>We ensure that your task will have multiple backups readily available for you.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-xs-12 text-center">
+                <img src="assets/images/main/why6.png" width="128px" />
+                <p class="loud">offer incentives</p>
+                <p>Our service is free. However, you can offer taskers cash rewards in person.</p>
+            </div>
+        </div>
+    </div>
+    <!-- /.row -->
+</div>
