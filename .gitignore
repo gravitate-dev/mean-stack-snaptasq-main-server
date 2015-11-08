@@ -12,3 +12,4 @@ local.env.js
 release.txt
 fixtures/bower.json
 fixtures/package.json
+Gruntfile.js.bak
