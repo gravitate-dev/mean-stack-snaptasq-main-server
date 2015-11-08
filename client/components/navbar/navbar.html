@@ -1,10 +1,5 @@
 <div class="navbar navbar-default navbar-static-top" ng-class="{'navbar-full-opacity': !isMainPage }" ng-controller="NavbarCtrl">
-    <div class="container" ng-if="_landingPage==true">
-        <div class="navbar-header">
-            <a href="/" class="navbar-brand" style="color:white;font-size:20px;font-weight:bold;"><img src="assets/logos/snaptasq_icon.png" width="32px" style="padding-right:5px;" /><span ng-class="{'hidden-xs':isLoggedIn()}">snaptasq</span></a>
-        </div>
-    </div>
-    <div class="container" ng-if="_landingPage==false">
+    <div class="container">
         <div class="navbar-header">
             <button ng-show="isLoggedIn()" class="visible-xs navbar-toggle" type="button" ng-click="isNotCollapsed = !isNotCollapsed">
                 <span class="sr-only">Toggle navigation</span>
@@ -24,9 +19,9 @@
                 </li>
             </ul>
             <span id="notifications-bar-mobile" ng-if="!isUserBetaLocked && isLoggedIn()" class="visible-xs pull-right">
-            <button ng-click="_goToPath('/tasqs');" ng-class="{'btn-primary': isActive('/tasqs')}" class="nav-notification-button btn"><i class="fa fa-pencil"></i></button>
-            <button ng-click="_goToPath('/communities');" ng-class="{'btn-primary': isActive('/communities')}" class="nav-notification-button btn"><i class="fa fa-globe"></i></button>
-            <button ng-controller="NavBarNotificationsCtrl" ng-click="readNotificationsCount=notifications.length;_goToPath('/notifications');" ng-class="{'btn-primary': isActive('/notifications')}" class="nav-notification-button btn"><i class="fa fa-bell"></i><span class="badge" style="pointer-events:none;" ng-if="readNotificationsCount!=undefined && readNotificationsCount < notifications.length">{{notifications.length - readNotificationsCount}}</span></button>
+                <button ng-click="_goToPath('/tasqs');" ng-class="{'btn-primary': isActive('/tasqs')}" class="nav-notification-button btn"><i class="fa fa-pencil"></i></button>
+                <button ng-click="_goToPath('/communities');" ng-class="{'btn-primary': isActive('/communities')}" class="nav-notification-button btn"><i class="fa fa-globe"></i></button>
+                <button ng-controller="NavBarNotificationsCtrl" ng-click="readNotificationsCount=notifications.length;_goToPath('/notifications');" ng-class="{'btn-primary': isActive('/notifications')}" class="nav-notification-button btn"><i class="fa fa-bell"></i><span class="badge" style="pointer-events:none;" ng-if="readNotificationsCount!=undefined && readNotificationsCount < notifications.length">{{notifications.length - readNotificationsCount}}</span></button>
             </span>
         </div>
         <div collapse="isNotCollapsed" class="tabbable-line navbar-collapse collapse" id="navbar-main">
@@ -72,6 +67,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <!-- dont apply classes to this guy for sizes-->
+
                 <li class="dropdown hide-when-collapsed-navbar" ng-if="isLoggedIn()">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"><span><img style="height:20px;padding-right:5px;" ng-if="_me.pic" class="ng-cloak" ng-src="{{_me.pic}}"/>{{ accountName }} <span ng-if="_badgeAlerts.size()>0" class="badge">{{_badgeAlerts._size}}</span></span><b class="caret"></b></a>
                     <ul class="dropdown-menu">
